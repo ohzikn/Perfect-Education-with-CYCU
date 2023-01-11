@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct Perfect_Education_with_CYCUApp: App {
+    @StateObject var currentSession = CurrentSession()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(currentSession)
         }
     }
 }

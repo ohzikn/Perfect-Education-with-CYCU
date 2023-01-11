@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5E025606296E1834004E0370 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E025605296E1834004E0370 /* LoginView.swift */; };
+		5E02560A296E2F92004E0370 /* Definitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E025609296E2F92004E0370 /* Definitions.swift */; };
+		5E02560C296E35DD004E0370 /* CurrentSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E02560B296E35DD004E0370 /* CurrentSession.swift */; };
 		5E2AC57A296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC579296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift */; };
 		5E2AC57C296E16AE00722D02 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC57B296E16AE00722D02 /* ContentView.swift */; };
 		5E2AC57E296E16AF00722D02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E2AC57D296E16AF00722D02 /* Assets.xcassets */; };
@@ -14,6 +17,7 @@
 		5E2AC58B296E16AF00722D02 /* Perfect_Education_with_CYCUTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC58A296E16AF00722D02 /* Perfect_Education_with_CYCUTests.swift */; };
 		5E2AC595296E16AF00722D02 /* Perfect_Education_with_CYCUUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC594296E16AF00722D02 /* Perfect_Education_with_CYCUUITests.swift */; };
 		5E2AC597296E16AF00722D02 /* Perfect_Education_with_CYCUUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC596296E16AF00722D02 /* Perfect_Education_with_CYCUUITestsLaunchTests.swift */; };
+		5E4B43AF296F4287005A0215 /* SFSafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4B43AE296F4287005A0215 /* SFSafariView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +38,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5E025605296E1834004E0370 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		5E025609296E2F92004E0370 /* Definitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
+		5E02560B296E35DD004E0370 /* CurrentSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSession.swift; sourceTree = "<group>"; };
 		5E2AC576296E16AE00722D02 /* Perfect Education with CYCU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Perfect Education with CYCU.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E2AC579296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Perfect_Education_with_CYCUApp.swift; sourceTree = "<group>"; };
 		5E2AC57B296E16AE00722D02 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -44,6 +51,7 @@
 		5E2AC590296E16AF00722D02 /* Perfect Education with CYCUUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Perfect Education with CYCUUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E2AC594296E16AF00722D02 /* Perfect_Education_with_CYCUUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Perfect_Education_with_CYCUUITests.swift; sourceTree = "<group>"; };
 		5E2AC596296E16AF00722D02 /* Perfect_Education_with_CYCUUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Perfect_Education_with_CYCUUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		5E4B43AE296F4287005A0215 /* SFSafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSafariView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +79,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5E025607296E2F5F004E0370 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				5E4B43AE296F4287005A0215 /* SFSafariView.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		5E025608296E2F75004E0370 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				5E025609296E2F92004E0370 /* Definitions.swift */,
+				5E02560B296E35DD004E0370 /* CurrentSession.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		5E2AC56D296E16AE00722D02 = {
 			isa = PBXGroup;
 			children = (
@@ -95,7 +120,8 @@
 			isa = PBXGroup;
 			children = (
 				5E2AC579296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift */,
-				5E2AC57B296E16AE00722D02 /* ContentView.swift */,
+				5E2AC5A3296E16EE00722D02 /* Views */,
+				5E025608296E2F75004E0370 /* Model */,
 				5E2AC57D296E16AF00722D02 /* Assets.xcassets */,
 				5E2AC57F296E16AF00722D02 /* Preview Content */,
 			);
@@ -125,6 +151,16 @@
 				5E2AC596296E16AF00722D02 /* Perfect_Education_with_CYCUUITestsLaunchTests.swift */,
 			);
 			path = "Perfect Education with CYCUUITests";
+			sourceTree = "<group>";
+		};
+		5E2AC5A3296E16EE00722D02 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5E2AC57B296E16AE00722D02 /* ContentView.swift */,
+				5E025605296E1834004E0370 /* LoginView.swift */,
+				5E025607296E2F5F004E0370 /* Helpers */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -257,6 +293,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E02560A296E2F92004E0370 /* Definitions.swift in Sources */,
+				5E02560C296E35DD004E0370 /* CurrentSession.swift in Sources */,
+				5E025606296E1834004E0370 /* LoginView.swift in Sources */,
+				5E4B43AF296F4287005A0215 /* SFSafariView.swift in Sources */,
 				5E2AC57C296E16AE00722D02 /* ContentView.swift in Sources */,
 				5E2AC57A296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift in Sources */,
 			);
@@ -423,8 +463,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -452,8 +492,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
