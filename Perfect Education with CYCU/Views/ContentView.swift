@@ -11,49 +11,33 @@ struct ContentView: View {
     @EnvironmentObject var currentSession: CurrentSession
     
     var body: some View {
-        NavigationStack {
+        ZStack {
             TabView {
-                VStack {
-                    Button("Request data") {
-//                        currentSession.requestElectionData(command: .course_get)
+                PortalServicesView()
+                    .tabItem {
+                        Label("線上服務", systemImage: "cloud")
                     }
-//                    List {
-//                        if let navigationData = currentSession.navigationData {
-//                            ForEach(navigationData) { section in
-//                                Section(section.sectionName ?? "") {
-//                                    if let items = section.items {
-//                                        ForEach(items) { item in
-//                                            if let name = item.itemName {
-//                                                Text(name)
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-                }
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
+                AccountView()
+                    .tabItem {
+                        Label("帳戶", systemImage: "person.circle")
+                    }
             }
-            .navigationTitle(currentSession.greetingString)
-            .sheet(isPresented: $currentSession.isLoginSheetPresented) {
-                LoginView()
-                    .interactiveDismissDisabled()
+        }
+        .onAppear {
+            withAnimation(.easeInOut(duration: 0.5)) {
+                
             }
         }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
-    static var sessionData: CurrentSession = {
-        var sessionData = CurrentSession()
-        sessionData.isLoginSheetPresented = false
-        return sessionData
+    static var currentSession: CurrentSession = {
+        var session = CurrentSession()
+        return session
     }()
     static var previews: some View {
         ContentView()
-            .environmentObject(sessionData)
+            .environmentObject(currentSession)
     }
 }

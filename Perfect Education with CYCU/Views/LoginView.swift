@@ -115,7 +115,12 @@ struct LoginView: View {
 }
 
 struct LoginView_Previews: PreviewProvider {
+    static var currentSession: CurrentSession = {
+        var session = CurrentSession()
+        return session
+    }()
     static var previews: some View {
         LoginView()
+            .environmentObject(currentSession)
     }
 }

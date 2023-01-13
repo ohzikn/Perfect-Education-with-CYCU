@@ -16,12 +16,13 @@ struct Definitions {
     struct PortalLocations {
         // Commons
         static let root: URL! = URL(string: "https://myself.cycu.edu.tw")
-        static let login: URL! = URL(string: "/auth/myselfLogin", relativeTo: root)
-        static let auth: URL! = URL(string: "/myself_api_127", relativeTo: root)
-        static let baseInfo: URL! = URL(string: "baseInfo", relativeTo: root)
+        static let login: URL = root.appending(path: "/auth/myselfLogin")
+//        static let auth: URL = root.appending(path: "/myself_api_127")
+        static let baseInfo: URL = root.appending(path: "baseInfo")
         // Requests
-        static let baseApi: URL! = URL(string: "/home/json/ss_loginUser.jsp", relativeTo: auth)
-        static let electionApi: URL! = URL(string: "/elective/mvc/elective_system.jsp", relativeTo: auth)
+//        static let baseApi: URL = auth.appending(path: "/home/json/ss_loginUser.jsp")
+//        static let electionApi: URL = auth.appending(path: "/elective/mvc/elective_system.jsp")
+//        static let workStudy: URL = auth.appending(path: "/Hire_workStudy/mvc/welcome.jsp")
         
         
 //        static let getNavData: URL! = URL(string: "/common/getNavData", relativeTo: base)
@@ -39,6 +40,22 @@ struct Definitions {
 //        static let yearTermCredit: URL! = URL(string: "/std_YearTerm_Credit", relativeTo: _life)
 //        // Navigations (Health)
 //        static let healthReporting: URL! = URL(string: "/healthTracking", relativeTo: _health)
+        
+        static func getAuthenticationLocation(for request: AuthenticateLocations) -> URL {
+            switch request {
+            case .authRoot:
+                return PortalLocations.root.appending(path: AuthenticateLocations.authRoot.rawValue)
+            default:
+                return PortalLocations.root.appending(path: AuthenticateLocations.authRoot.rawValue).appending(path: request.rawValue)
+            }
+        }
+    }
+    
+    enum AuthenticateLocations: String {
+        case authRoot = "/myself_api_127"
+        case base = "/home/json/ss_loginUser.jsp"
+        case election = "/elective/mvc/elective_system.jsp"
+        case workStudy = "/Hire_workStudy/mvc/welcome.jsp"
     }
     
     enum ElectionCommands: String {

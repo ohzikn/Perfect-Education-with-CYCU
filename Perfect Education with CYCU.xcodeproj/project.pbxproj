@@ -17,6 +17,14 @@
 		5E2AC58B296E16AF00722D02 /* Perfect_Education_with_CYCUTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC58A296E16AF00722D02 /* Perfect_Education_with_CYCUTests.swift */; };
 		5E2AC595296E16AF00722D02 /* Perfect_Education_with_CYCUUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC594296E16AF00722D02 /* Perfect_Education_with_CYCUUITests.swift */; };
 		5E2AC597296E16AF00722D02 /* Perfect_Education_with_CYCUUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC596296E16AF00722D02 /* Perfect_Education_with_CYCUUITestsLaunchTests.swift */; };
+		5E3C93F829710C840036B342 /* PortalServicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C93F729710C840036B342 /* PortalServicesView.swift */; };
+		5E3C93FA29710F8B0036B342 /* WorkStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C93F929710F8B0036B342 /* WorkStudyView.swift */; };
+		5E3C93FC297114600036B342 /* MentorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C93FB297114600036B342 /* MentorView.swift */; };
+		5E3C93FE29711C190036B342 /* ElectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C93FD29711C190036B342 /* ElectionView.swift */; };
+		5E3C940029711C240036B342 /* CreditsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C93FF29711C240036B342 /* CreditsView.swift */; };
+		5E3C940229711C900036B342 /* HealthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C940129711C900036B342 /* HealthView.swift */; };
+		5E3C940429711CD60036B342 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C940329711CD60036B342 /* AccountView.swift */; };
+		5E3C94062971247E0036B342 /* ControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C94052971247E0036B342 /* ControllerView.swift */; };
 		5E4B43AF296F4287005A0215 /* SFSafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4B43AE296F4287005A0215 /* SFSafariView.swift */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +59,14 @@
 		5E2AC590296E16AF00722D02 /* Perfect Education with CYCUUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Perfect Education with CYCUUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E2AC594296E16AF00722D02 /* Perfect_Education_with_CYCUUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Perfect_Education_with_CYCUUITests.swift; sourceTree = "<group>"; };
 		5E2AC596296E16AF00722D02 /* Perfect_Education_with_CYCUUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Perfect_Education_with_CYCUUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		5E3C93F729710C840036B342 /* PortalServicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalServicesView.swift; sourceTree = "<group>"; };
+		5E3C93F929710F8B0036B342 /* WorkStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkStudyView.swift; sourceTree = "<group>"; };
+		5E3C93FB297114600036B342 /* MentorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MentorView.swift; sourceTree = "<group>"; };
+		5E3C93FD29711C190036B342 /* ElectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionView.swift; sourceTree = "<group>"; };
+		5E3C93FF29711C240036B342 /* CreditsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditsView.swift; sourceTree = "<group>"; };
+		5E3C940129711C900036B342 /* HealthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthView.swift; sourceTree = "<group>"; };
+		5E3C940329711CD60036B342 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		5E3C94052971247E0036B342 /* ControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControllerView.swift; sourceTree = "<group>"; };
 		5E4B43AE296F4287005A0215 /* SFSafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSafariView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -156,8 +172,16 @@
 		5E2AC5A3296E16EE00722D02 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				5E2AC57B296E16AE00722D02 /* ContentView.swift */,
+				5E3C94052971247E0036B342 /* ControllerView.swift */,
 				5E025605296E1834004E0370 /* LoginView.swift */,
+				5E2AC57B296E16AE00722D02 /* ContentView.swift */,
+				5E3C940329711CD60036B342 /* AccountView.swift */,
+				5E3C93F729710C840036B342 /* PortalServicesView.swift */,
+				5E3C93F929710F8B0036B342 /* WorkStudyView.swift */,
+				5E3C93FB297114600036B342 /* MentorView.swift */,
+				5E3C93FD29711C190036B342 /* ElectionView.swift */,
+				5E3C93FF29711C240036B342 /* CreditsView.swift */,
+				5E3C940129711C900036B342 /* HealthView.swift */,
 				5E025607296E2F5F004E0370 /* Helpers */,
 			);
 			path = Views;
@@ -293,10 +317,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E3C94062971247E0036B342 /* ControllerView.swift in Sources */,
+				5E3C940229711C900036B342 /* HealthView.swift in Sources */,
 				5E02560A296E2F92004E0370 /* Definitions.swift in Sources */,
+				5E3C940029711C240036B342 /* CreditsView.swift in Sources */,
+				5E3C93FE29711C190036B342 /* ElectionView.swift in Sources */,
 				5E02560C296E35DD004E0370 /* CurrentSession.swift in Sources */,
 				5E025606296E1834004E0370 /* LoginView.swift in Sources */,
+				5E3C940429711CD60036B342 /* AccountView.swift in Sources */,
 				5E4B43AF296F4287005A0215 /* SFSafariView.swift in Sources */,
+				5E3C93F829710C840036B342 /* PortalServicesView.swift in Sources */,
+				5E3C93FA29710F8B0036B342 /* WorkStudyView.swift in Sources */,
+				5E3C93FC297114600036B342 /* MentorView.swift in Sources */,
 				5E2AC57C296E16AE00722D02 /* ContentView.swift in Sources */,
 				5E2AC57A296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift in Sources */,
 			);
