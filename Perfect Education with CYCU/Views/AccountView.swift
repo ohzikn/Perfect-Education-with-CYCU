@@ -37,9 +37,7 @@ struct AccountView: View {
                     currentSession.loginState = .notLoggedIn
                     try? KeychainService.resetKeychain()
                 }
-                Button("取消", role: .cancel) {
-                    
-                }
+                Button("取消", role: .cancel) { }
             }
         }
     }

@@ -14,8 +14,27 @@ class KeychainService {
         case unhandledError(status: OSStatus)
     }
     
+    // Query first stored login credential without passsword
+    static func retrieveLoginInformation() throws -> Definitions.LoginCredentials {
+        let searchQuery: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
+                                    kSecMatchLimit as String: kSecMatchLimitAll,
+                                    kSecReturnRef as String: true,
+                                    kSecReturnData as String: true]
+        var item: CFTypeRef?
+        let status = SecItemCopyMatching(searchQuery as CFDictionary, &item)
+        guard status == errSecSuccess else {
+            throw KeychainError.unhandledError(status: status)
+        }
+        
+        // Get the first credential and return username wrapped inside LoginCredentials.
+        guard let firstItem = (item as? [[String: Any]])?.first, let username = firstItem[kSecAttrAccount as String] as? String else {
+            throw KeychainError.unexpectedPasswordData
+        }
+        return .init(username: username, password: nil)
+    }
+    
     // Query for specified login credential
-    static func retrieveLoginInformation(for credentials: Definitions.LoginCredentials) throws {
+    static func retrieveLoginCredentials(for credentials: Definitions.LoginCredentials) throws -> Definitions.LoginCredentials {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccount as String: credentials.username,
                                     kSecMatchLimit as String: kSecMatchLimitOne,
@@ -28,6 +47,8 @@ class KeychainService {
         guard let passwordData = item as? Data, let password = String(data: passwordData, encoding: .utf8) else {
             throw KeychainError.unexpectedPasswordData
         }
+        
+        return .init(username: credentials.username, password: password)
     }
     
     // Creates new login credential

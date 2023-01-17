@@ -26,7 +26,7 @@
 		5E3C940429711CD60036B342 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C940329711CD60036B342 /* AccountView.swift */; };
 		5E3C94062971247E0036B342 /* ControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C94052971247E0036B342 /* ControllerView.swift */; };
 		5E4B43AF296F4287005A0215 /* SFSafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4B43AE296F4287005A0215 /* SFSafariView.swift */; };
-		5E68CF942976892A008AF377 /* ApplicationParamaters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68CF932976892A008AF377 /* ApplicationParamaters.swift */; };
+		5E68CF962976DC3E008AF377 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68CF952976DC3E008AF377 /* Extensions.swift */; };
 		5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF1128229763A0A008A4373 /* KeychainService.swift */; };
 /* End PBXBuildFile section */
 
@@ -70,7 +70,7 @@
 		5E3C940329711CD60036B342 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 		5E3C94052971247E0036B342 /* ControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControllerView.swift; sourceTree = "<group>"; };
 		5E4B43AE296F4287005A0215 /* SFSafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSafariView.swift; sourceTree = "<group>"; };
-		5E68CF932976892A008AF377 /* ApplicationParamaters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationParamaters.swift; sourceTree = "<group>"; };
+		5E68CF952976DC3E008AF377 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		5EF1128229763A0A008A4373 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -110,10 +110,10 @@
 		5E025608296E2F75004E0370 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				5E68CF932976892A008AF377 /* ApplicationParamaters.swift */,
 				5E025609296E2F92004E0370 /* Definitions.swift */,
 				5E02560B296E35DD004E0370 /* CurrentSession.swift */,
 				5EF1128229763A0A008A4373 /* KeychainService.swift */,
+				5E68CF952976DC3E008AF377 /* Extensions.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -333,8 +333,8 @@
 				5E3C940429711CD60036B342 /* AccountView.swift in Sources */,
 				5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */,
 				5E4B43AF296F4287005A0215 /* SFSafariView.swift in Sources */,
-				5E68CF942976892A008AF377 /* ApplicationParamaters.swift in Sources */,
 				5E3C93F829710C840036B342 /* PortalServicesView.swift in Sources */,
+				5E68CF962976DC3E008AF377 /* Extensions.swift in Sources */,
 				5E3C93FA29710F8B0036B342 /* WorkStudyView.swift in Sources */,
 				5E3C93FC297114600036B342 /* MentorView.swift in Sources */,
 				5E2AC57C296E16AE00722D02 /* ContentView.swift in Sources */,
@@ -500,6 +500,7 @@
 				DEVELOPMENT_TEAM = KM5MKB3J43;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "We will use Face ID for you to log into the application.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -529,6 +530,7 @@
 				DEVELOPMENT_TEAM = KM5MKB3J43;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "We will use Face ID for you to log into the application.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -63,13 +63,14 @@ class CurrentSession: ObservableObject {
     
     func requestLogin(username: String, password: String) {
         Task {
+            // Update login state
+            loginState = .processing
             // Create a JSON object that will be posted to the server later.
             let loginCredentials = Definitions.LoginCredentials(username: username, password: password)
             let data = try JSONEncoder().encode(loginCredentials)
             
             // Create a HTTPS POST Request
             let request = getUrlRequest(urlQuery: Definitions.PortalLocations.login, credentialData: data)
-            loginState = .processing
 //            isLoginProcessing = true
             
             // Send login request to server
@@ -85,7 +86,7 @@ class CurrentSession: ObservableObject {
                 }
                 
                 // Determine if keychain item exists for current account
-                if (try? KeychainService.retrieveLoginInformation(for: .init(username: userInformation?.userId ?? "", password: nil))) != nil {
+                if (try? KeychainService.retrieveLoginCredentials(for: .init(username: userInformation?.userId ?? "", password: nil))) != nil {
                     // Keychain item exists
                     loginState = .loggedIn
                 } else {
@@ -99,6 +100,7 @@ class CurrentSession: ObservableObject {
                     try await requestAuthenticateToken(for: Definitions.QueryLocations.getRelatedAuthenticateLocation(.base)())
                 }
             } catch {
+//                print(error)
                 loginState = .failed
             }
         }

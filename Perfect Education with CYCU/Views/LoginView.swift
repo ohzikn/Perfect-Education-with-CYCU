@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import LocalAuthentication
 
 struct LoginView: View {
+    @EnvironmentObject var applicationParameters: ApplicationParameters
     @EnvironmentObject var currentSession: CurrentSession
     
     @Binding var isThisSheetPresented: Bool
@@ -15,6 +17,8 @@ struct LoginView: View {
     @State var isLoginProcessRingPresented = false
     @State var isLoginFailureAlertPresented = false
     @State var isSafariSheetPresented = false
+    
+    @State var isLogoutConfirmationDialogPresented = false
     
     enum Field: Hashable {
         case username
@@ -28,16 +32,59 @@ struct LoginView: View {
     @State private var presentedFunctions: [Functions] = []
     
     @State private var usernameField = ""
+    @State private var isUsernamePlaceholderActive = false
     @State private var passwordField = ""
     
     @FocusState private var focusedField: Field?
     
+    private func requestBiometricLogin() {
+        // FaceId toggle guard
+        guard applicationParameters.usesFaceId else { return }
+        let context = LAContext()
+        context.localizedCancelTitle = "輸入密碼"
+        var error: NSError?
+        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
+            print(error?.localizedDescription ?? "Can't evaluate policy")
+            return
+        }
+        Task {
+            do {
+                try await context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "登入 CYCU Portal")
+                let credentials = try KeychainService.retrieveLoginCredentials(for: try KeychainService.retrieveLoginInformation())
+                requestLogin(credentials: credentials)
+            } catch let error {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    // Biometric login
+    private func requestLogin(credentials: Definitions.LoginCredentials) {
+        // FaceId toggle guard
+        guard applicationParameters.usesFaceId else { return }
+        // Login state check
+        guard (currentSession.loginState == .notLoggedIn || currentSession.loginState == .failed), let password = credentials.password else {
+            return
+        }
+        passwordField = "        " // Placeholder update
+        currentSession.requestLogin(username: credentials.username, password: password)
+    }
+    
+    // Normal login
     private func requestLogin() {
-        // Login guard
+        // Login state check
         guard !usernameField.isEmpty && !passwordField.isEmpty && (currentSession.loginState == .notLoggedIn || currentSession.loginState == .failed) else {
             return
         }
         currentSession.requestLogin(username: usernameField, password: passwordField)
+    }
+    
+    init(isThisSheetPresented: Binding<Bool>) {
+        if let loginInfo = try? KeychainService.retrieveLoginInformation() {
+            usernameField = loginInfo.username
+            isUsernamePlaceholderActive = true
+        }
+        self._isThisSheetPresented = isThisSheetPresented
     }
     
     var body: some View {
@@ -62,6 +109,8 @@ struct LoginView: View {
                             }.frame(width: 100)
                             TextField("學號或教職員編號", text: $usernameField)
                                 .frame(height: 60)
+                                .disabled(isUsernamePlaceholderActive || (currentSession.loginState != .failed && currentSession.loginState != .notLoggedIn))
+                                .foregroundColor(isUsernamePlaceholderActive ? Color.secondary : Color.primary)
                                 .focused($focusedField, equals: .username)
                                 .submitLabel(.next)
                                 .onSubmit {
@@ -81,6 +130,7 @@ struct LoginView: View {
                             }.frame(width: 100)
                             SecureField("必填", text: $passwordField)
                                 .frame(height: 60)
+                                .disabled(currentSession.loginState != .failed && currentSession.loginState != .notLoggedIn)
                                 .focused($focusedField, equals: .password)
                                 .submitLabel(.return)
                                 .onSubmit(requestLogin)
@@ -90,8 +140,40 @@ struct LoginView: View {
                     }
                     .textFieldStyle(.plain)
                     .padding([.top, .bottom], 18)
-                    Button("忘記 CYCU ID ？") {
-                        isSafariSheetPresented.toggle()
+                    if(isUsernamePlaceholderActive) {
+                        VStack(spacing: 18) {
+                            if applicationParameters.usesFaceId {
+                                Button {
+                                    // Login with Face ID
+                                    requestBiometricLogin()
+                                } label: {
+                                    Image(systemName: "faceid")
+                                        .font(.largeTitle)
+                                        .symbolRenderingMode(SymbolRenderingMode.hierarchical)
+                                }
+                                .disabled(!applicationParameters.usesFaceId)
+                            }
+                            Button("使用其他 CYCU ID 登入...") {
+                                isLogoutConfirmationDialogPresented = true
+                            }
+                            .confirmationDialog("使用其他 CYCU ID 登入", isPresented: $isLogoutConfirmationDialogPresented) {
+                                Button("登出並刪除資料", role: .destructive) {
+                                    // Reset keychain and update UI to default state.
+                                    try? KeychainService.resetKeychain()
+                                    withAnimation(Animation.easeInOut(duration: 0.25)) {
+    //                                    usernameField = ""
+                                        isUsernamePlaceholderActive = false
+                                    }
+                                }
+                                Button("取消", role: .cancel) { }
+                            } message: {
+                                Text("要登出這個 CYCU ID 嗎？")
+                            }
+                        }
+                    } else {
+                        Button("忘記 CYCU ID ？") {
+                            isSafariSheetPresented = true
+                        }
                     }
                     VStack(spacing: 20) {
                         Text("你的 CYCU ID 是用來取用所有中原大學校內服務的帳號。")
@@ -150,30 +232,39 @@ struct LoginView: View {
 }
 
 struct LoginWelcomeView: View {
+    @EnvironmentObject var applicationParameters: ApplicationParameters
     @EnvironmentObject var currentSession: CurrentSession
     
     @Binding var isThisSheetPresented: Bool
     
     var body: some View {
-        ScrollView {
-            VStack {
-                VStack(spacing: 8) {
-                    Text("設定 Face ID")
-                        .font(.title)
-                    Text("Face ID 可以讓你在下次登入時不必再次輸入密碼。")
-                        .font(.title2)
-                        .multilineTextAlignment(.center)
-                }
-                .padding([.leading, .trailing])
+        VStack(spacing: 20) {
+            Image(systemName: "faceid")
+                .font(.largeTitle)
+                .symbolRenderingMode(SymbolRenderingMode.hierarchical)
+            Text("設定 Face ID")
+                .font(.title)
+            Text("Face ID 可以讓你在下次登入時不必再次輸入密碼。")
+                .font(.title2)
+                .multilineTextAlignment(.center)
+            Spacer()
+            Button {
+                applicationParameters.usesFaceId = true
+                isThisSheetPresented = false
+            } label: {
+                Text("啟用 Face ID")
+                    .fontWeight(.medium)
+                    .padding([.top, .bottom], 10)
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            Button("稍後設定") {
+                applicationParameters.usesFaceId = false
+                isThisSheetPresented = false
             }
         }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button("稍後設定") {
-                    isThisSheetPresented = false
-                }
-            }
-        }
+        .padding([.top], 40)
+        .padding([.leading, .trailing])
         .navigationBarBackButtonHidden()
     }
 }

@@ -9,12 +9,18 @@ import SwiftUI
 
 @main
 struct Perfect_Education_with_CYCUApp: App {
+    @StateObject var applicationParameters = ApplicationParameters()
     @StateObject var currentSession = CurrentSession()
     
     var body: some Scene {
         WindowGroup {
             ControllerView()
                 .environmentObject(currentSession)
+                .environmentObject(applicationParameters)
         }
     }
+}
+
+final class ApplicationParameters: ObservableObject {
+    @AppStorage(UserDefaults.toggleKeyValues.usesFaceId.rawValue) var usesFaceId: Bool = false
 }
