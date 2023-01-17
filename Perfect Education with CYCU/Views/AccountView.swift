@@ -10,6 +10,8 @@ import SwiftUI
 struct AccountView: View {
     @EnvironmentObject var currentSession: CurrentSession
     
+    @State var isLogoutConfirmationDialogPresented = false
+    
     var body: some View {
         NavigationStack {
             List {
@@ -19,9 +21,26 @@ struct AccountView: View {
                         LabeledContent("CYCU ID", value: information.userId ?? "")
                         LabeledContent("帳戶類型", value: information.userType ?? "")
                     }
+                    Section {
+                        Button("登出") {
+                            isLogoutConfirmationDialogPresented = true
+                        }
+                    }
                 }
             }
             .navigationTitle("帳戶")
+            .confirmationDialog("", isPresented: $isLogoutConfirmationDialogPresented) {
+                Button("登出") {
+                    currentSession.loginState = .notLoggedIn
+                }
+                Button("登出並刪除資料", role: .destructive) {
+                    currentSession.loginState = .notLoggedIn
+                    try? KeychainService.resetKeychain()
+                }
+                Button("取消", role: .cancel) {
+                    
+                }
+            }
         }
     }
 }

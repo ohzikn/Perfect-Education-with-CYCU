@@ -72,7 +72,18 @@ struct Definitions {
         case credits = "/credit/json/ss_loginUser.jsp"
     }
     
-    struct UserInformation: Codable {
+    // Data structure for storing account name and password strings
+    struct LoginCredentials: Codable {
+        let username: String
+        let password: String?
+        
+        private enum CodingKeys: String, CodingKey {
+            case username = "UserNm"
+            case password = "UserPasswd"
+        }
+    }
+    
+    struct UserInformation: Codable, Equatable {
         let userId: String?
         let userName: String?
         let userType: String?

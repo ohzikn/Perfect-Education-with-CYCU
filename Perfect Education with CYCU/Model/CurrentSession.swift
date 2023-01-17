@@ -6,61 +6,71 @@
 //
 
 import Foundation
+import Security
 
 @MainActor
 class CurrentSession: ObservableObject {
-    // Application token information
-    struct ApplicationToken {
-        let authenticateLocation: String
-        let authenticateInformation: Definitions.AuthenticateInformation
+    enum LoginState {
+        case notLoggedIn
+        case processing
+        case failed
+        case loginKeychainSetup
+        case loggedIn
     }
-    
-    @Published var isLoginSheetPresented = true
-    @Published var isLoginProcessing = false
-    @Published var isLoginFailureAlertPresented = false
-    @Published var greetingString:String = "請先登入"
-    @Published var currentApplicationToken: ApplicationToken?
-    
-    // User data queries
-    @Published var userInformation: Definitions.UserInformation? {
-        willSet {
-            if let newValue, newValue.didLogIn == "Y" {
-                isLoginSheetPresented = false
-                greetingString = (newValue.userName == nil || newValue.userName.unsafelyUnwrapped.isEmpty) ? "早安。" : "早安，\(newValue.userName!.trimmingCharacters(in: .whitespaces))。"
-            }else {
-                isLoginSheetPresented = true
-                greetingString = "請先登入"
-            }
-        }
-    }
-    @Published var workStudyInformation: Definitions.WorkStudyInformation?
-    @Published var creditsInformation: Definitions.CreditsInformation?
     
     enum RequestError: Error {
         case authenticateTokenRequestFailed
         case queryRequestFailed
     }
     
-    func requestLogin(username: String, password: String) {
-        // Create a credential data structure that will be converted to JSON data later
-        struct Credentials: Codable {
-            let UserNm: String
-            let UserPasswd: String
-        }
-        
-        Task {
-            defer {
-                // Cleanups
-                Task { @MainActor in
-                    isLoginProcessing = false
-                }
+    // Application token information
+    struct ApplicationToken {
+        let authenticateLocation: String
+        let authenticateInformation: Definitions.AuthenticateInformation
+    }
+    
+    @Published var greetingString:String = "請先登入"
+    
+    // MARK: User session related data start
+    @Published var loginState: LoginState = .notLoggedIn {
+        willSet {
+            switch newValue {
+            case .notLoggedIn, .failed:
+                currentApplicationToken = nil
+                userInformation = nil
+                workStudyInformation = nil
+                creditsInformation = nil
+            default:
+                break
             }
+        }
+    }
+    @Published var currentApplicationToken: ApplicationToken?
+    
+    // User data queries
+    @Published var userInformation: Definitions.UserInformation? {
+        willSet {
+            if let newValue, newValue.didLogIn == "Y" {
+                greetingString = (newValue.userName == nil || newValue.userName.unsafelyUnwrapped.isEmpty) ? "早安。" : "早安，\(newValue.userName!.trimmingCharacters(in: .whitespaces))。"
+            }else {
+                greetingString = "請先登入"
+            }
+        }
+    }
+    @Published var workStudyInformation: Definitions.WorkStudyInformation?
+    @Published var creditsInformation: Definitions.CreditsInformation?
+    // MARK: User session related data end
+    
+    func requestLogin(username: String, password: String) {
+        Task {
             // Create a JSON object that will be posted to the server later.
-            let credentialData = try JSONEncoder().encode(Credentials(UserNm: username, UserPasswd: password))
+            let loginCredentials = Definitions.LoginCredentials(username: username, password: password)
+            let data = try JSONEncoder().encode(loginCredentials)
             
             // Create a HTTPS POST Request
-            let request = getUrlRequest(urlQuery: Definitions.PortalLocations.login, credentialData: credentialData)
-            isLoginProcessing = true
+            let request = getUrlRequest(urlQuery: Definitions.PortalLocations.login, credentialData: data)
+            loginState = .processing
+//            isLoginProcessing = true
             
             // Send login request to server
             do {
@@ -68,17 +78,28 @@ class CurrentSession: ObservableObject {
 //                print(data)
                 userInformation = try JSONDecoder().decode(Definitions.UserInformation.self, from: data)
                 guard userInformation?.didLogIn == "Y" else {
-                    isLoginFailureAlertPresented = true
+                    loginState = .failed
+//                    isLoginFailureAlertPresented = true
                     userInformation = nil
                     return
+                }
+                
+                // Determine if keychain item exists for current account
+                if (try? KeychainService.retrieveLoginInformation(for: .init(username: userInformation?.userId ?? "", password: nil))) != nil {
+                    // Keychain item exists
+                    loginState = .loggedIn
+                } else {
+                    // Keychain item do not exist
+                    loginState = .loginKeychainSetup
+                    // Show welcome screen and save login information to keychain
+                    try? KeychainService.registerLoginInformation(for: loginCredentials)
                 }
                 // Request basic information
                 Task {
                     try await requestAuthenticateToken(for: Definitions.QueryLocations.getRelatedAuthenticateLocation(.base)())
                 }
             } catch {
-                isLoginFailureAlertPresented = true
-                userInformation = nil
+                loginState = .failed
             }
         }
     }
