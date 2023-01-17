@@ -13,11 +13,11 @@ struct AccountView: View {
     var body: some View {
         NavigationStack {
             List {
-                if let information = currentSession.sessionInformation {
+                if let information = currentSession.userInformation {
                     Section("基本資料") {
-                        LabeledContent("姓名", value: information.loginUser_CNAME ?? "")
-                        LabeledContent("CYCU ID", value: information.loginUser_IDCODE ?? "")
-                        LabeledContent("帳戶類型", value: information.loginUser_TYPE ?? "")
+                        LabeledContent("姓名", value: information.userName ?? "")
+                        LabeledContent("CYCU ID", value: information.userId ?? "")
+                        LabeledContent("帳戶類型", value: information.userType ?? "")
                     }
                 }
             }

@@ -10,8 +10,6 @@ import SwiftUI
 struct PortalServicesView: View {
     @EnvironmentObject var currentSession: CurrentSession
     
-    @State private var presentedServices: [Services] = []
-    
     enum Services {
         case workStudy
         case mentor
@@ -21,7 +19,7 @@ struct PortalServicesView: View {
     }
     
     var body: some View {
-        NavigationStack(path: $presentedServices) {
+        NavigationView {
             List {
 //                Section("Developer") {
 //                    Button("Get work study data") {
@@ -29,6 +27,7 @@ struct PortalServicesView: View {
 //                    }
 //                }
                 Section("生活") {
+                    NavigationLink("校內工讀", destination: WorkStudyView())
                     NavigationLink("校內工讀", value: Services.workStudy)
                     NavigationLink("自選學術導師申請", value: Services.mentor)
                 }
@@ -41,6 +40,7 @@ struct PortalServicesView: View {
                 }
             }
             .navigationTitle("線上服務")
+            .navigationBarTitleDisplayMode(.large)
             .navigationDestination(for: Services.self) { service in
                 switch service {
                 case .workStudy:

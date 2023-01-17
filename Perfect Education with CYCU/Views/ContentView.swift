@@ -11,17 +11,15 @@ struct ContentView: View {
     @EnvironmentObject var currentSession: CurrentSession
     
     var body: some View {
-        ZStack {
-            TabView {
-                PortalServicesView()
-                    .tabItem {
-                        Label("線上服務", systemImage: "cloud")
-                    }
-                AccountView()
-                    .tabItem {
-                        Label("帳戶", systemImage: "person.circle")
-                    }
-            }
+        TabView {
+            PortalServicesView()
+                .tabItem {
+                    Label("線上服務", systemImage: "cloud")
+                }
+            AccountView()
+                .tabItem {
+                    Label("帳戶", systemImage: "person.circle")
+                }
         }
         .onAppear {
             withAnimation(.easeInOut(duration: 0.5)) {

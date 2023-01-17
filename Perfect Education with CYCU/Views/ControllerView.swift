@@ -33,13 +33,13 @@ struct ControllerView: View {
         }
         .onChange(of: currentSession.isLoginSheetPresented) { newValue in
             if !newValue {
-                withAnimation(.easeOut(duration: 0.25).delay(0.25)) {
+                withAnimation(.easeOut(duration: 0.5).delay(0)) {
                     isWelcomeMessageShowed = true
                 }
-                withAnimation(.easeIn(duration: 0.25).delay(1.25)) {
+                withAnimation(.easeIn(duration: 0.25).delay(1)) {
                     isWelcomeMessageShowed = false
                 }
-                withAnimation(.easeOut(duration: 0.5).delay(1.5)) {
+                withAnimation(.easeOut(duration: 0.25).delay(1.25)) {
                     isContentViewPresented = true
                 }
             } else {

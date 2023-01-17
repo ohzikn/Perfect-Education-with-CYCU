@@ -9,20 +9,36 @@ import Foundation
 
 @MainActor
 class CurrentSession: ObservableObject {
+    // Application token information
+    struct ApplicationToken {
+        let authenticateLocation: String
+        let authenticateInformation: Definitions.AuthenticateInformation
+    }
+    
     @Published var isLoginSheetPresented = true
     @Published var isLoginProcessing = false
     @Published var isLoginFailureAlertPresented = false
     @Published var greetingString:String = "請先登入"
-    @Published var sessionInformation: Definitions.SessionInformation? {
+    @Published var currentApplicationToken: ApplicationToken?
+    
+    // User data queries
+    @Published var userInformation: Definitions.UserInformation? {
         willSet {
-            if let newValue, newValue.login_YN == "Y" {
+            if let newValue, newValue.didLogIn == "Y" {
                 isLoginSheetPresented = false
-                greetingString = (newValue.loginUser_CNAME == nil || newValue.loginUser_CNAME.unsafelyUnwrapped.isEmpty) ? "早安。" : "早安，\(newValue.loginUser_CNAME!)。"
-            } else {
+                greetingString = (newValue.userName == nil || newValue.userName.unsafelyUnwrapped.isEmpty) ? "早安。" : "早安，\(newValue.userName!.trimmingCharacters(in: .whitespaces))。"
+            }else {
                 isLoginSheetPresented = true
                 greetingString = "請先登入"
             }
         }
+    }
+    @Published var workStudyInformation: Definitions.WorkStudyInformation?
+    @Published var creditsInformation: Definitions.CreditsInformation?
+    
+    enum RequestError: Error {
+        case authenticateTokenRequestFailed
+        case queryRequestFailed
     }
     
     func requestLogin(username: String, password: String) {
@@ -30,15 +46,6 @@ class CurrentSession: ObservableObject {
         struct Credentials: Codable {
             let UserNm: String
             let UserPasswd: String
-        }
-        
-        // Response data
-        struct ResponseData: Codable {
-            var d_Message: String?
-            var done_YN: String?
-            var d_Message_C: String?
-            var login_YN: String?
-            var userID: String?
         }
         
         Task {
@@ -52,100 +59,58 @@ class CurrentSession: ObservableObject {
             let credentialData = try JSONEncoder().encode(Credentials(UserNm: username, UserPasswd: password))
             
             // Create a HTTPS POST Request
-            let request: URLRequest = {
-               var req = URLRequest(url: Definitions.PortalLocations.login, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 15)
-                req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                req.httpMethod = "POST"
-                req.httpBody = credentialData
-                return req
-            }()
+            let request = getUrlRequest(urlQuery: Definitions.PortalLocations.login, credentialData: credentialData)
             isLoginProcessing = true
             
             // Send login request to server
             do {
                 let (data, _) = try await URLSession.shared.data(for: request)
-                let response = try JSONDecoder().decode(ResponseData.self, from: data)
-                guard response.login_YN == "Y" else {
+//                print(data)
+                userInformation = try JSONDecoder().decode(Definitions.UserInformation.self, from: data)
+                guard userInformation?.didLogIn == "Y" else {
                     isLoginFailureAlertPresented = true
-                    sessionInformation = nil
+                    userInformation = nil
                     return
                 }
                 // Request basic information
-                requestBaseInfo(for: .base)
-            } catch {
-                isLoginFailureAlertPresented = true
-                sessionInformation = nil
-            }
-        }
-    }
-    
-    func requestBaseInfo(for request: Definitions.AuthenticateLocations) {
-        // Create a credential data structure that will be converted to JSON data later
-        struct Credentials: Codable {
-            let authUrl: String
-            let authApi: String
-        }
-        
-        Task {
-            // Create a JSON object that will be posted to the server later.
-            let credentialData = try JSONEncoder().encode(Credentials(authUrl: Definitions.AuthenticateLocations.authRoot.rawValue, authApi: request.rawValue))
-            
-            // Create a HTTPS POST Request
-            let request: URLRequest = {
-               var req = URLRequest(url: Definitions.PortalLocations.baseInfo, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 15)
-                req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                req.httpMethod = "POST"
-                req.httpBody = credentialData
-                return req
-            }()
-            
-            // Send request to server
-            do {
-                let (data, _) = try await URLSession.shared.data(for: request)
-                print(String(data: data, encoding: .utf8))
-                sessionInformation = try JSONDecoder().decode(Definitions.SessionInformation.self, from: data)
-                print(sessionInformation)
-                if sessionInformation?.login_YN != "Y" {
-                    isLoginFailureAlertPresented = true
-                    sessionInformation = nil
+                Task {
+                    try await requestAuthenticateToken(for: Definitions.QueryLocations.getRelatedAuthenticateLocation(.base)())
                 }
             } catch {
-                // Logged in, but failed to get base info
                 isLoginFailureAlertPresented = true
-                sessionInformation = nil
+                userInformation = nil
             }
         }
     }
     
-    func requestWorkStudy() {
-        struct Credentials: Codable {
-            let APP_AUTH_token: String
-            let row: [String]
+    func requestWorkStudy(forceReload: Bool = false) {
+        guard workStudyInformation == nil || forceReload else {
+            // Skip request if data exists and no forceReload request
+            return
         }
         
         Task {
-            let urlWithQuery: URL = {
-                var url: URL = Definitions.PortalLocations.getAuthenticationLocation(for: .workStudy)
-                let queries: [URLQueryItem] = [.init(name: "method", value: "query"), .init(name: "loginToken", value: sessionInformation?.loginToken)]
-                url.append(queryItems: queries)
-                return url
-            }()
-            
-            let credentialData = try JSONEncoder().encode(Credentials(APP_AUTH_token: sessionInformation?.APP_AUTH_token ?? "", row: []))
-            
-            let request: URLRequest = {
-                var req = URLRequest(url: urlWithQuery, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 15)
-                req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                req.httpMethod = "POST"
-                req.httpBody = credentialData
-                return req
-            }()
-            
             do {
-                let (data, _) = try await URLSession.shared.data(for: request)
-                print(String(data: data, encoding: .utf8))
+                let data = try await requestDataQuery(for: .workStudy)
+                workStudyInformation = try JSONDecoder().decode(Definitions.WorkStudyInformation.self, from: data)
             } catch {
                 
+            }
+        }
+    }
+    
+    func requestCredits(forceReload: Bool = false) {
+        guard creditsInformation == nil || forceReload else {
+            // Skip request if data exists and no forceReload request
+            return
+        }
+        
+        Task {
+            do {
+                let data = try await requestDataQuery(for: .credits)
+//                print(String(data: data, encoding: .utf8))
+                creditsInformation = try JSONDecoder().decode(Definitions.CreditsInformation.self, from: data)
+//                print(creditsInformation)
             }
         }
     }
@@ -183,4 +148,76 @@ class CurrentSession: ObservableObject {
 //            }
 //        }
 //    }
+}
+
+extension CurrentSession {
+    // Return UrlRequest Object
+    private func getUrlRequest(urlQuery: URL, credentialData: Data) -> URLRequest {
+        var request = URLRequest(url: urlQuery, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        request.httpBody = credentialData
+        return request
+    }
+    
+    // Request data query
+    private func requestDataQuery(for queryLocation: Definitions.QueryLocations) async throws -> Data {
+        struct Credentials: Codable {
+            let APP_AUTH_token: String
+        }
+        
+        // Get app token from stored variable if current category is present, otherwise request a new one immediately.
+        let appToken = currentApplicationToken?.authenticateLocation == Definitions.QueryLocations.getRelatedAuthenticateLocation(queryLocation)() && currentApplicationToken?.authenticateInformation.APP_AUTH_token != nil ? currentApplicationToken?.authenticateInformation.APP_AUTH_token : try await requestAuthenticateToken(for: Definitions.QueryLocations.getRelatedAuthenticateLocation(queryLocation)())
+        
+        let credentialData = try JSONEncoder().encode(Credentials(APP_AUTH_token: appToken ?? ""))
+        
+        let urlWithQuery: URL = {
+            var url: URL = Definitions.QueryLocations.getUrl(queryLocation)()
+            let queries: [URLQueryItem] = [.init(name: "method", value: "query"), .init(name: "loginToken", value: userInformation?.loginToken)]
+            url.append(queryItems: queries)
+            return url
+        }()
+        
+        let request = getUrlRequest(urlQuery: urlWithQuery, credentialData: credentialData)
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            return data
+        } catch {
+            throw RequestError.queryRequestFailed
+        }
+    }
+    
+    // Requests a new application authenticate token
+    // Only pass parameter string returned from Definitions.QueryLocations.getRelatedAuthenticateLocation() method.
+    private func requestAuthenticateToken(for query: String) async throws -> String {
+        // Create a credential data structure that will be converted to JSON data later
+        struct Credentials: Codable {
+            let authUrl: String
+            let authApi: String
+        }
+        
+        do {
+            // Create a JSON object that will be posted to the server later.
+            let credentialData = try JSONEncoder().encode(Credentials(authUrl: "/\(Definitions.PortalLocations.auth.lastPathComponent)", authApi: query))
+            
+            // Create a HTTPS POST Request
+            let request: URLRequest = {
+               var req = URLRequest(url: Definitions.PortalLocations.baseInfo, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 15)
+                req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                req.httpMethod = "POST"
+                req.httpBody = credentialData
+                return req
+            }()
+            
+            // Send request to server
+            let (data, _) = try await URLSession.shared.data(for: request)
+//            print(String(data: data, encoding: .utf8))
+            currentApplicationToken = .init(authenticateLocation: query, authenticateInformation: try JSONDecoder().decode(Definitions.AuthenticateInformation.self, from: data))
+//            print(currentApplicationToken)
+            return currentApplicationToken?.authenticateInformation.APP_AUTH_token ?? ""
+        } catch {
+            throw RequestError.authenticateTokenRequestFailed
+        }
+    }
 }
