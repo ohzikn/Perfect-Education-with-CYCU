@@ -12,21 +12,19 @@ struct CreditsView: View {
     
     var body: some View {
         List {
-            if let information =  currentSession.creditsInformation {
-                Section("個人資訊") {
-                    LabeledContent("姓名", value: information.stdInfo?.userName ?? "")
-                    LabeledContent("學號", value: information.stdInfo?.userId ?? "")
-                    LabeledContent("學院代號", value: information.stdInfo?.departmentCode ?? "")
-                    LabeledContent("年級", value: information.stdInfo?.departmentGradeName ?? "")
-                    LabeledContent("學生身份", value: information.stdInfo?.typeName?.trimmingCharacters(in: .whitespaces) ?? "")
-                }
+            Section("個人資訊") {
+                LabeledContent("姓名", value: currentSession.creditsInformation?.stdInfo?.userName ?? "")
+                LabeledContent("學號", value: currentSession.creditsInformation?.stdInfo?.userId ?? "")
+                LabeledContent("學院代號", value: currentSession.creditsInformation?.stdInfo?.departmentCode ?? "")
+                LabeledContent("年級", value: currentSession.creditsInformation?.stdInfo?.departmentGradeName ?? "")
+                LabeledContent("學生身份", value: currentSession.creditsInformation?.stdInfo?.typeName?.trimmingCharacters(in: .whitespaces) ?? "")
+            }
+            if let courseList = currentSession.creditsInformation?.stdCourseList {
                 Section("修課資訊") {
-                    if let courseList = information.stdCourseList {
-                        ForEach(courseList) { item in
-                            if let courseName = item.courseName {
-                                NavigationLink(value: item) {
-                                    Text(courseName)
-                                }
+                    ForEach(courseList) { item in
+                        if let courseName = item.courseName {
+                            NavigationLink(value: item) {
+                                Text(courseName)
                             }
                         }
                     }
@@ -63,5 +61,6 @@ struct CourseDetailView: View {
 struct CreditsView_Previews: PreviewProvider {
     static var previews: some View {
         CreditsView()
+            .environmentObject(CurrentSession())
     }
 }

@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5E025606296E1834004E0370 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E025605296E1834004E0370 /* LoginView.swift */; };
-		5E02560A296E2F92004E0370 /* Definitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E025609296E2F92004E0370 /* Definitions.swift */; };
+		5E02560A296E2F92004E0370 /* General.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E025609296E2F92004E0370 /* General.swift */; };
 		5E02560C296E35DD004E0370 /* CurrentSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E02560B296E35DD004E0370 /* CurrentSession.swift */; };
 		5E2AC57A296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC579296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift */; };
 		5E2AC57C296E16AE00722D02 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC57B296E16AE00722D02 /* ContentView.swift */; };
@@ -27,6 +27,11 @@
 		5E3C94062971247E0036B342 /* ControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C94052971247E0036B342 /* ControllerView.swift */; };
 		5E4B43AF296F4287005A0215 /* SFSafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4B43AE296F4287005A0215 /* SFSafariView.swift */; };
 		5E68CF962976DC3E008AF377 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68CF952976DC3E008AF377 /* Extensions.swift */; };
+		5E68CF992978FAF3008AF377 /* WorkStudy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68CF982978FAF3008AF377 /* WorkStudy.swift */; };
+		5E68CF9B2978FB2B008AF377 /* Credits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68CF9A2978FB2B008AF377 /* Credits.swift */; };
+		5E68CF9D2978FB83008AF377 /* Election.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68CF9C2978FB83008AF377 /* Election.swift */; };
+		5E68CF9F2978FBDC008AF377 /* Authenticate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68CF9E2978FBDC008AF377 /* Authenticate.swift */; };
+		5E68CFA12978FF0B008AF377 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68CFA02978FF0B008AF377 /* Protocols.swift */; };
 		5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF1128229763A0A008A4373 /* KeychainService.swift */; };
 /* End PBXBuildFile section */
 
@@ -49,7 +54,7 @@
 
 /* Begin PBXFileReference section */
 		5E025605296E1834004E0370 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		5E025609296E2F92004E0370 /* Definitions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Definitions.swift; sourceTree = "<group>"; };
+		5E025609296E2F92004E0370 /* General.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = General.swift; sourceTree = "<group>"; };
 		5E02560B296E35DD004E0370 /* CurrentSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSession.swift; sourceTree = "<group>"; };
 		5E2AC576296E16AE00722D02 /* Perfect Education with CYCU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Perfect Education with CYCU.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E2AC579296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Perfect_Education_with_CYCUApp.swift; sourceTree = "<group>"; };
@@ -71,6 +76,11 @@
 		5E3C94052971247E0036B342 /* ControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControllerView.swift; sourceTree = "<group>"; };
 		5E4B43AE296F4287005A0215 /* SFSafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSafariView.swift; sourceTree = "<group>"; };
 		5E68CF952976DC3E008AF377 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		5E68CF982978FAF3008AF377 /* WorkStudy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkStudy.swift; sourceTree = "<group>"; };
+		5E68CF9A2978FB2B008AF377 /* Credits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Credits.swift; sourceTree = "<group>"; };
+		5E68CF9C2978FB83008AF377 /* Election.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Election.swift; sourceTree = "<group>"; };
+		5E68CF9E2978FBDC008AF377 /* Authenticate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authenticate.swift; sourceTree = "<group>"; };
+		5E68CFA02978FF0B008AF377 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		5EF1128229763A0A008A4373 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -110,7 +120,8 @@
 		5E025608296E2F75004E0370 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				5E025609296E2F92004E0370 /* Definitions.swift */,
+				5E68CFA02978FF0B008AF377 /* Protocols.swift */,
+				5E68CF972978FABD008AF377 /* Definitions */,
 				5E02560B296E35DD004E0370 /* CurrentSession.swift */,
 				5EF1128229763A0A008A4373 /* KeychainService.swift */,
 				5E68CF952976DC3E008AF377 /* Extensions.swift */,
@@ -191,6 +202,18 @@
 				5E025607296E2F5F004E0370 /* Helpers */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		5E68CF972978FABD008AF377 /* Definitions */ = {
+			isa = PBXGroup;
+			children = (
+				5E025609296E2F92004E0370 /* General.swift */,
+				5E68CF9E2978FBDC008AF377 /* Authenticate.swift */,
+				5E68CF982978FAF3008AF377 /* WorkStudy.swift */,
+				5E68CF9A2978FB2B008AF377 /* Credits.swift */,
+				5E68CF9C2978FB83008AF377 /* Election.swift */,
+			);
+			path = Definitions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -325,19 +348,24 @@
 			files = (
 				5E3C94062971247E0036B342 /* ControllerView.swift in Sources */,
 				5E3C940229711C900036B342 /* HealthView.swift in Sources */,
-				5E02560A296E2F92004E0370 /* Definitions.swift in Sources */,
+				5E02560A296E2F92004E0370 /* General.swift in Sources */,
 				5E3C940029711C240036B342 /* CreditsView.swift in Sources */,
 				5E3C93FE29711C190036B342 /* ElectionView.swift in Sources */,
 				5E02560C296E35DD004E0370 /* CurrentSession.swift in Sources */,
+				5E68CF9D2978FB83008AF377 /* Election.swift in Sources */,
 				5E025606296E1834004E0370 /* LoginView.swift in Sources */,
+				5E68CF9F2978FBDC008AF377 /* Authenticate.swift in Sources */,
+				5E68CFA12978FF0B008AF377 /* Protocols.swift in Sources */,
 				5E3C940429711CD60036B342 /* AccountView.swift in Sources */,
 				5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */,
 				5E4B43AF296F4287005A0215 /* SFSafariView.swift in Sources */,
 				5E3C93F829710C840036B342 /* PortalServicesView.swift in Sources */,
+				5E68CF992978FAF3008AF377 /* WorkStudy.swift in Sources */,
 				5E68CF962976DC3E008AF377 /* Extensions.swift in Sources */,
 				5E3C93FA29710F8B0036B342 /* WorkStudyView.swift in Sources */,
 				5E3C93FC297114600036B342 /* MentorView.swift in Sources */,
 				5E2AC57C296E16AE00722D02 /* ContentView.swift in Sources */,
+				5E68CF9B2978FB2B008AF377 /* Credits.swift in Sources */,
 				5E2AC57A296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

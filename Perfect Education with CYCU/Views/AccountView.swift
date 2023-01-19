@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AccountView: View {
+    @EnvironmentObject var applicationParameters: ApplicationParameters
     @EnvironmentObject var currentSession: CurrentSession
     
     @State var isLogoutConfirmationDialogPresented = false
@@ -15,30 +16,31 @@ struct AccountView: View {
     var body: some View {
         NavigationStack {
             List {
-                if let information = currentSession.userInformation {
-                    Section("基本資料") {
-                        LabeledContent("姓名", value: information.userName ?? "")
-                        LabeledContent("CYCU ID", value: information.userId ?? "")
-                        LabeledContent("帳戶類型", value: information.userType ?? "")
+                Section("基本資料") {
+                    LabeledContent("姓名", value: currentSession.userInformation?.userName ?? "")
+                    LabeledContent("CYCU ID", value: currentSession.userInformation?.userId ?? "")
+                    LabeledContent("帳戶類型", value: currentSession.userInformation?.userType ?? "")
+                }
+                Section {
+                    Toggle("使用 Face ID 登入", isOn: applicationParameters.$usesFaceId)
+                }
+                Section {
+                    Button("登出...") {
+                        isLogoutConfirmationDialogPresented = true
                     }
-                    Section {
+                    .confirmationDialog("", isPresented: $isLogoutConfirmationDialogPresented) {
                         Button("登出") {
-                            isLogoutConfirmationDialogPresented = true
+                            currentSession.loginState = .notLoggedIn
                         }
+                        Button("登出並刪除資料", role: .destructive) {
+                            currentSession.loginState = .notLoggedIn
+                            try? KeychainService.resetKeychain()
+                        }
+                        Button("取消", role: .cancel) { }
                     }
                 }
             }
             .navigationTitle("帳戶")
-            .confirmationDialog("", isPresented: $isLogoutConfirmationDialogPresented) {
-                Button("登出") {
-                    currentSession.loginState = .notLoggedIn
-                }
-                Button("登出並刪除資料", role: .destructive) {
-                    currentSession.loginState = .notLoggedIn
-                    try? KeychainService.resetKeychain()
-                }
-                Button("取消", role: .cancel) { }
-            }
         }
     }
 }
@@ -50,6 +52,7 @@ struct AccountView_Previews: PreviewProvider {
     }()
     static var previews: some View {
         AccountView()
+            .environmentObject(ApplicationParameters())
             .environmentObject(currentSession)
     }
 }

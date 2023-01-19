@@ -70,8 +70,7 @@ class CurrentSession: ObservableObject {
             let data = try JSONEncoder().encode(loginCredentials)
             
             // Create a HTTPS POST Request
-            let request = getUrlRequest(urlQuery: Definitions.PortalLocations.login, credentialData: data)
-//            isLoginProcessing = true
+            let request = getURLRequest(urlQuery: Definitions.PortalLocations.login, requestData: data)
             
             // Send login request to server
             do {
@@ -88,6 +87,7 @@ class CurrentSession: ObservableObject {
                 // Determine if keychain item exists for current account
                 if (try? KeychainService.retrieveLoginCredentials(for: .init(username: userInformation?.userId ?? "", password: nil))) != nil {
                     // Keychain item exists
+                    try? KeychainService.updateLoginInformation(for: loginCredentials)
                     loginState = .loggedIn
                 } else {
                     // Keychain item do not exist
@@ -106,12 +106,8 @@ class CurrentSession: ObservableObject {
         }
     }
     
-    func requestWorkStudy(forceReload: Bool = false) {
-        guard workStudyInformation == nil || forceReload else {
-            // Skip request if data exists and no forceReload request
-            return
-        }
-        
+    func requestWorkStudy(skipIfDataExists: Bool = true) {
+        guard workStudyInformation == nil || !skipIfDataExists else { return }
         Task {
             do {
                 let data = try await requestDataQuery(for: .workStudy)
@@ -122,18 +118,33 @@ class CurrentSession: ObservableObject {
         }
     }
     
-    func requestCredits(forceReload: Bool = false) {
-        guard creditsInformation == nil || forceReload else {
-            // Skip request if data exists and no forceReload request
+    func requestCredits(skipIfDataExists: Bool = true) {
+        guard workStudyInformation == nil || !skipIfDataExists else { return }
+        Task {
+            do {
+                let data = try await requestDataQuery(for: .credits)
+                creditsInformation = try JSONDecoder().decode(Definitions.CreditsInformation.self, from: data)
+            }
+        }
+    }
+    
+    func requestElection(skipIfDataExists: Bool = true, method: Definitions.ElectionCommands) {
+        guard workStudyInformation == nil || !skipIfDataExists else { return }
+        
+        // Return unimplemented commands
+        switch method {
+        case .st_info_get, .course_get, .track_insert, .track_del, .take_course_and_register_insert, .take_course_and_register_del, .volunteer_set, .col_checkbox_upd:
+            print("current command (\(method.rawValue)) not implemented.")
             return
+        default:
+            print("executing command (\(method.rawValue)).")
+            break
         }
         
         Task {
             do {
-                let data = try await requestDataQuery(for: .credits)
-//                print(String(data: data, encoding: .utf8))
-                creditsInformation = try JSONDecoder().decode(Definitions.CreditsInformation.self, from: data)
-//                print(creditsInformation)
+                let data = try await requestDataQuery(for: .election, using: method.rawValue)
+                print(String(data: data, encoding: .utf8))
             }
         }
     }
@@ -174,34 +185,41 @@ class CurrentSession: ObservableObject {
 }
 
 extension CurrentSession {
-    // Return UrlRequest Object
-    private func getUrlRequest(urlQuery: URL, credentialData: Data) -> URLRequest {
+    // Returns URLRequest Object
+    private func getURLRequest(urlQuery: URL, requestData: Data) -> URLRequest {
         var request = URLRequest(url: urlQuery, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
-        request.httpBody = credentialData
+        request.httpBody = requestData
         return request
     }
     
-    // Request data query
-    private func requestDataQuery(for queryLocation: Definitions.QueryLocations) async throws -> Data {
-        struct Credentials: Codable {
-            let APP_AUTH_token: String
-        }
+    // Request data query. "query" is the default using parameter if not specified
+    private func requestDataQuery(for queryLocation: Definitions.QueryLocations, using specifiedMethod: String = "query", query specifiedQuery: RequestQueryBase? = nil) async throws -> Data {
         
-        // Get app token from stored variable if current category is present, otherwise request a new one immediately.
-        let appToken = currentApplicationToken?.authenticateLocation == Definitions.QueryLocations.getRelatedAuthenticateLocation(queryLocation)() && currentApplicationToken?.authenticateInformation.APP_AUTH_token != nil ? currentApplicationToken?.authenticateInformation.APP_AUTH_token : try await requestAuthenticateToken(for: Definitions.QueryLocations.getRelatedAuthenticateLocation(queryLocation)())
+        // Create new request query to send along with the request following "RequestQueryBase" protocol
+        var requestQuery = specifiedQuery ?? {
+            struct Credentials: RequestQueryBase, Codable {
+                var APP_AUTH_token: String?
+            }
+            return Credentials()
+        }()
         
-        let credentialData = try JSONEncoder().encode(Credentials(APP_AUTH_token: appToken ?? ""))
+        // Get app token and set into requestQuery from stored variable if current category is present, otherwise request a new one immediately.
+        requestQuery.APP_AUTH_token = currentApplicationToken?.authenticateLocation == Definitions.QueryLocations.getRelatedAuthenticateLocation(queryLocation)() && currentApplicationToken?.authenticateInformation.APP_AUTH_token != nil ? currentApplicationToken?.authenticateInformation.APP_AUTH_token : try await requestAuthenticateToken(for: Definitions.QueryLocations.getRelatedAuthenticateLocation(queryLocation)())
         
+        // Encode requestQuery into data
+        let requestData = try JSONEncoder().encode(requestQuery)
+        
+        // Get URL object
         let urlWithQuery: URL = {
             var url: URL = Definitions.QueryLocations.getUrl(queryLocation)()
-            let queries: [URLQueryItem] = [.init(name: "method", value: "query"), .init(name: "loginToken", value: userInformation?.loginToken)]
-            url.append(queryItems: queries)
+            url.append(queryItems: [.init(name: "method", value: specifiedMethod), .init(name: "loginToken", value: userInformation?.loginToken)])
             return url
         }()
         
-        let request = getUrlRequest(urlQuery: urlWithQuery, credentialData: credentialData)
+        // Get URLRequest object
+        let request = getURLRequest(urlQuery: urlWithQuery, requestData: requestData)
         
         do {
             let (data, _) = try await URLSession.shared.data(for: request)

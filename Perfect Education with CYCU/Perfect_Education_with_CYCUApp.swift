@@ -15,8 +15,8 @@ struct Perfect_Education_with_CYCUApp: App {
     var body: some Scene {
         WindowGroup {
             ControllerView()
-                .environmentObject(currentSession)
                 .environmentObject(applicationParameters)
+                .environmentObject(currentSession)
         }
     }
 }

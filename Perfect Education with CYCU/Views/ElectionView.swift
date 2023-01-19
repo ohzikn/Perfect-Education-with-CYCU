@@ -8,8 +8,18 @@
 import SwiftUI
 
 struct ElectionView: View {
+    @EnvironmentObject var currentSession: CurrentSession
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        List {
+            ForEach(Definitions.ElectionCommands.allCases, id: \.hashValue) { item in
+                Button(item.rawValue) {
+                    currentSession.requestElection(method: item)
+                }
+            }
+        }
+        .navigationTitle("選課")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
