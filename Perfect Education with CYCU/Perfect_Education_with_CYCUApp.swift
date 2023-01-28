@@ -22,5 +22,8 @@ struct Perfect_Education_with_CYCUApp: App {
 }
 
 final class ApplicationParameters: ObservableObject {
+    // Session parameters
+    @Published var hideRootTabbar: Bool = false
+    // Saved paraeters
     @AppStorage(UserDefaults.toggleKeyValues.usesFaceId.rawValue) var usesFaceId: Bool = false
 }

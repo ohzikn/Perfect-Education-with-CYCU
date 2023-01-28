@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var applicationParameters: ApplicationParameters
     @EnvironmentObject var currentSession: CurrentSession
     
     var body: some View {
@@ -16,6 +17,7 @@ struct ContentView: View {
                 .tabItem {
                     Label("線上服務", systemImage: "cloud")
                 }
+                .toolbar(applicationParameters.hideRootTabbar ? .hidden : .automatic, for: .tabBar)
             AccountView()
                 .tabItem {
                     Label("帳戶", systemImage: "person.circle")

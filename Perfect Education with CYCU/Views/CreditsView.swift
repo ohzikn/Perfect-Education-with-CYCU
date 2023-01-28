@@ -32,8 +32,9 @@ struct CreditsView: View {
             }
         }
         .navigationTitle("修課查詢")
-        .navigationDestination(for: Definitions.CreditsInformation.StdCourse.self) { courseItem in
-            CourseDetailView(courseItem: courseItem)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: Definitions.CreditsInformation.StdCourse.self) { value in
+            CourseDetailView(courseItem: value)
         }
         .onAppear {
             currentSession.requestCredits()

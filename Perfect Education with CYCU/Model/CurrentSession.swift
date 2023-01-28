@@ -40,6 +40,9 @@ class CurrentSession: ObservableObject {
                 userInformation = nil
                 workStudyInformation = nil
                 creditsInformation = nil
+                electionInformation_stageControl = nil
+                electionInformation_studentInformation = nil
+                electionInformation_announcement = nil
             default:
                 break
             }
@@ -52,13 +55,16 @@ class CurrentSession: ObservableObject {
         willSet {
             if let newValue, newValue.didLogIn == "Y" {
                 greetingString = (newValue.userName == nil || newValue.userName.unsafelyUnwrapped.isEmpty) ? "早安。" : "早安，\(newValue.userName!.trimmingCharacters(in: .whitespaces))。"
-            }else {
+            } else {
                 greetingString = "請先登入"
             }
         }
     }
     @Published var workStudyInformation: Definitions.WorkStudyInformation?
     @Published var creditsInformation: Definitions.CreditsInformation?
+    @Published var electionInformation_stageControl: Definitions.ElectionInformation.StageControl?
+    @Published var electionInformation_studentInformation: Definitions.ElectionInformation.StudentBaseInformation?
+    @Published var electionInformation_announcement: Definitions.ElectionInformation.Announcement?
     // MARK: User session related data end
     
     func requestLogin(username: String, password: String) {
@@ -144,44 +150,25 @@ class CurrentSession: ObservableObject {
         Task {
             do {
                 let data = try await requestDataQuery(for: .election, using: method.rawValue)
-                print(String(data: data, encoding: .utf8))
+                // Decode response referring by method type
+                switch method {
+                case .stage_control_get:
+                    electionInformation_stageControl = try JSONDecoder().decode(Definitions.ElectionInformation.StageControl.self, from: data)
+                case .st_base_info:
+                    electionInformation_studentInformation = try JSONDecoder().decode(Definitions.ElectionInformation.StudentBaseInformation.self, from: data)
+                case .ann_get:
+                    electionInformation_announcement = try JSONDecoder().decode(Definitions.ElectionInformation.Announcement.self, from: data)
+                default:
+                    break
+                }
+                
+                let responseString = String(data: data, encoding: .utf8)
+//                print(responseString)
+            } catch {
+                print(error)
             }
         }
     }
-    
-//    func requestElectionData(command: Definitions.ElectionCommands) {
-//        // Create a comand structure that will be converted to JSON later
-////        struct Credentials: Codable {
-////            let method: String
-////            let loginToken: String
-////        }
-//        struct Credentials: Codable {
-//            let APP_AUTH_token: String
-//            let mobile: String
-//        }
-//
-//        Task {
-//            // Create a JSON object that will be posted to the server later.
-//            let credentialData = try JSONEncoder().encode(Credentials(APP_AUTH_token: userinfo, mobile: <#T##String#>))
-//
-//            // Creates a HTTPS POST request
-//            let request: URLRequest = {
-//                var req = URLRequest(url: Definitions.PortalLocations.election, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 15)
-//                req.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//                req.httpMethod = "POST"
-//                req.httpBody = credentialData
-//                return req
-//            }()
-//
-//            // Send request to server
-//            do {
-//                let (data, _) = try await URLSession.shared.data(for: request)
-//                print(String(data: data, encoding: .utf8))
-//            } catch {
-//                print(error)
-//            }
-//        }
-//    }
 }
 
 extension CurrentSession {

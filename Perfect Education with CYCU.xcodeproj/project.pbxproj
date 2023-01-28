@@ -33,6 +33,7 @@
 		5E68CF9F2978FBDC008AF377 /* Authenticate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68CF9E2978FBDC008AF377 /* Authenticate.swift */; };
 		5E68CFA12978FF0B008AF377 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68CFA02978FF0B008AF377 /* Protocols.swift */; };
 		5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF1128229763A0A008A4373 /* KeychainService.swift */; };
+		5EFB304A29858731006F8D9E /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB304929858731006F8D9E /* WebView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +83,7 @@
 		5E68CF9E2978FBDC008AF377 /* Authenticate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authenticate.swift; sourceTree = "<group>"; };
 		5E68CFA02978FF0B008AF377 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		5EF1128229763A0A008A4373 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		5EFB304929858731006F8D9E /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				5E4B43AE296F4287005A0215 /* SFSafariView.swift */,
+				5EFB304929858731006F8D9E /* WebView.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -367,6 +370,7 @@
 				5E2AC57C296E16AE00722D02 /* ContentView.swift in Sources */,
 				5E68CF9B2978FB2B008AF377 /* Credits.swift in Sources */,
 				5E2AC57A296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift in Sources */,
+				5EFB304A29858731006F8D9E /* WebView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -539,8 +543,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.zyozi.Perfect-Education-with-CYCU";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_DISABLE_SAFETY_CHECKS = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -569,8 +575,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.zyozi.Perfect-Education-with-CYCU";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_DISABLE_SAFETY_CHECKS = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

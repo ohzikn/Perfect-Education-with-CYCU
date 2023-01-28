@@ -187,8 +187,8 @@ struct LoginView: View {
                     .padding([.top], 40)
                 }
             }
-            .navigationDestination(for: Functions.self) { destination in
-                switch destination {
+            .navigationDestination(for: Functions.self) { value in
+                switch value {
                 case .loginWelcome:
                     LoginWelcomeView(isThisSheetPresented: $isThisSheetPresented)
                 }

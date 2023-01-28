@@ -23,7 +23,8 @@ struct PortalServicesView: View {
                     NavigationLink("自選學術導師申請", destination: MentorView())
                 }
                 Section("課業") {
-                    NavigationLink("選課", destination: ElectionView())
+                    NavigationLink("選課", destination: ElectionPlaceholderView())
+                    NavigationLink("選課（開發）", destination: ElectionViewDev())
                     NavigationLink("修課查詢", destination: CreditsView())
                 }
                 Section("健康") {
