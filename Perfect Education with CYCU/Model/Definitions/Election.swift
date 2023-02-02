@@ -174,8 +174,8 @@ extension Definitions {
                 var enter2Bits: [Int]? { _enter2Bits?.toIntArray() }
                 var enterBits: [Int]? { _enterBits?.toIntArray() }
                 var actionBits: [Int]? { _actionBits?.toIntArray() }
-                var snStageType: Int? { Int(_snStageType ?? "") ?? 0 }
-                var sn: Int? { Int(_sn ?? "") ?? 0 }
+                var snStageType: Int? { Int(_snStageType ?? "") ?? nil }
+                var sn: Int? { Int(_sn ?? "") ?? nil }
                 var beginTime: Date? {
                     let formatter = DateFormatter()
                     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -209,8 +209,23 @@ extension Definitions {
             }
             
             struct StudentInformation: Codable {
-                let creditTotalNormal, crossBits, crossBitsNameC, crossBitsNameE, deptBlnAdmin, deptNameE, enterBit, extraCreditsTotal, idcode, maxExtra, maxMark, mdieCreditsTotal, originalExtraCredits, stmdCOMTel, stmdCellTel, stmdCurDpt, stmdDiv, stmdDptName, stmdName, stmdNew, stmdRegDpt, stmdSex, stmdTypeName, surveyFinishRate, topicCredit, topicRCredit: String?
+                private let _creditTotalNormal, _crossBits, _enterBit, _extraCreditsTotal, _maxExtra, _maxMark, _mdieCreditsTotal, _originalExtraCredits, _stmdNew, _surveyFinishRate, _topicCredit, _topicRCredit: String?
+                
+                let crossBitsNameC, crossBitsNameE, deptBlnAdmin, deptNameE, idcode, stmdCOMTel, stmdCellTel, stmdCurDpt, stmdDiv, stmdDptName, stmdName, stmdRegDpt, stmdSex, stmdTypeName: String?
                 let creditAssist, creditCross, creditDual, creditEduc, creditEmpl, creditMicro, creditPre, creditTotal, extraCredits, maxLimit, maxLimit0, topicCredits: Int?
+                
+                var creditTotalNormal: Int? { Int(_creditTotalNormal ?? "") ?? nil }
+                var crossBits: [Int]? { _crossBits?.toIntArray() }
+                var enterBit: Int? { Int(_enterBit ?? "") ?? nil }
+                var extraCreditsTotal: Int? { Int(_extraCreditsTotal ?? "") ?? nil }
+                var maxExtra: Int? { Int(_maxExtra ?? "") ?? nil }
+                var maxMark: Int? { Int(_maxMark ?? "") ?? nil }
+                var mdieCreditsTotal: Int? { Int(_mdieCreditsTotal ?? "") ?? nil }
+                var originalExtraCredits: Int? { Int(_originalExtraCredits ?? "") ?? nil }
+                var stmdNew: Int? { Int(_stmdNew ?? "") ?? nil }
+                var surveyFinishRate: Int? { Int(_surveyFinishRate ?? "") ?? nil }
+                var topicCredit: Int? { Int(_topicCredit ?? "") ?? nil }
+                var topicRCredit: Int? { Int(_topicRCredit ?? "") ?? nil }
                 
                 private enum CodingKeys: String, CodingKey {
                     case creditAssist = "CREDIT_ASSIST"
@@ -221,36 +236,36 @@ extension Definitions {
                     case creditMicro = "CREDIT_MICRO"
                     case creditPre = "CREDIT_PRE"
                     case creditTotal = "CREDIT_TOTAL"
-                    case creditTotalNormal = "CREDIT_TOTAL_NORMAL"
-                    case crossBits = "CROSS_BITS"
+                    case _creditTotalNormal = "CREDIT_TOTAL_NORMAL"
+                    case _crossBits = "CROSS_BITS"
                     case crossBitsNameC = "CROSS_BITS_NAME_C"
                     case crossBitsNameE = "CROSS_BITS_NAME_E"
                     case deptBlnAdmin = "DEPT_BLN_ADMIN"
                     case deptNameE = "DEPT_NAME_E"
-                    case enterBit = "ENTER_BIT"
+                    case _enterBit = "ENTER_BIT"
                     case extraCredits = "EXTRA_CREDITS"
-                    case extraCreditsTotal = "EXTRA_CREDITS_TOTAL"
+                    case _extraCreditsTotal = "EXTRA_CREDITS_TOTAL"
                     case idcode = "IDCODE"
-                    case maxExtra = "MAX_EXTRA"
+                    case _maxExtra = "MAX_EXTRA"
                     case maxLimit = "MAX_LIMIT"
                     case maxLimit0 = "MAX_LIMIT_0"
-                    case maxMark = "MAX_MARK"
-                    case mdieCreditsTotal = "MDIE_CREDITS_TOTOAL"
-                    case originalExtraCredits = "ORIGINAL_EXTRA_CREDITS"
+                    case _maxMark = "MAX_MARK"
+                    case _mdieCreditsTotal = "MDIE_CREDITS_TOTOAL"
+                    case _originalExtraCredits = "ORIGINAL_EXTRA_CREDITS"
                     case stmdCOMTel = "STMD_COM_TEL"
                     case stmdCellTel = "STMD_CELL_TEL"
                     case stmdCurDpt = "STMD_CUR_DPT"
                     case stmdDiv = "STMD_DIV"
                     case stmdDptName = "STMD_DPT_NAME"
                     case stmdName = "STMD_NAME"
-                    case stmdNew = "STMD_NEW"
+                    case _stmdNew = "STMD_NEW"
                     case stmdRegDpt = "STMD_REG_DPT"
                     case stmdSex = "STMD_SEX"
                     case stmdTypeName = "STMD_TYPE_NAME"
-                    case surveyFinishRate = "SURVEY_FINISH_RATE"
-                    case topicCredit = "TOPIC_CREDIT"
+                    case _surveyFinishRate = "SURVEY_FINISH_RATE"
+                    case _topicCredit = "TOPIC_CREDIT"
                     case topicCredits = "TOPIC_CREDITS"
-                    case topicRCredit = "TOPIC_R_CREDIT"
+                    case _topicRCredit = "TOPIC_R_CREDIT"
                 }
             }
         }

@@ -69,6 +69,7 @@ struct ElectionView: View {
         case none
         case announcements
         case events
+        case studentInfo
     }
     
     @State private var currentSubsheetView: SubsheetViews = .none
@@ -99,7 +100,7 @@ struct ElectionView: View {
                             currentSubsheetView = .events
                         }
                         Button("個人資訊") {
-                            
+                            currentSubsheetView = .studentInfo
                         }
                     } label: {
                         Image(systemName: "ellipsis.circle")
@@ -115,6 +116,8 @@ struct ElectionView: View {
                 ElectionAnnouncementView()
             case .events:
                 ElectionEventView()
+            case .studentInfo:
+                ElectionStudentInformationView()
             }
         }
         .onChange(of: isSubSheetPresented) { newValue in
@@ -319,6 +322,37 @@ struct ElectionEventDetailView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("完成") { parentDismiss() }
+            }
+        }
+    }
+}
+
+struct ElectionStudentInformationView: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var currentSession: CurrentSession
+    
+    var body: some View {
+        NavigationStack {
+            Form {
+                if let info = currentSession.electionInformation_studentInformation?.studentsInformation?.first {
+                    Section {
+                        LabeledContent("姓名", value: info.stmdName ?? "-")
+                        LabeledContent("學號", value: info.idcode ?? "-")
+                        LabeledContent("班級", value: info.stmdDptName ?? "-")
+                    }
+                    Section {
+                        LabeledContent("教學評量問卷完成率", value: info.surveyFinishRate != nil ? "\(info.surveyFinishRate.unsafelyUnwrapped)%" : "-")
+                        LabeledContent("可修習總學分上限", value: info.maxLimit != nil ? "\(info.maxLimit.unsafelyUnwrapped)" : "-")
+                        LabeledContent("已選修總學分", value: info.creditTotal != nil ? "\(info.creditTotal.unsafelyUnwrapped)" : "-")
+                    }
+                }
+            }
+            .navigationTitle("個人資訊")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("完成") { dismiss() }
+                }
             }
         }
     }
