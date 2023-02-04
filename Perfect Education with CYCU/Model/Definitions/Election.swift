@@ -139,11 +139,11 @@ extension Definitions {
             func getName(inChinese: Bool) -> String {
                 switch self {
                 case .guide:
-                    return inChinese ? "系統操作說明" : "Guide"
+                    return inChinese ? "操作說明" : "Guide"
                 case .onlineForm:
-                    return inChinese ? "線上表單選課作業專區" : "Online form election"
+                    return inChinese ? "線上表單選課" : "Online form election"
                 case .auxiliaryAndDoubleMajor:
-                    return inChinese ? "輔系雙主修預研生專區" : "Auxiliary and Double majoring"
+                    return inChinese ? "輔系雙主修預研生" : "Auxiliary and Double majoring"
                 case .courseAnnouncements:
                     return inChinese ? "課程公告" : "Course Announcement"
                 }
@@ -228,13 +228,15 @@ extension Definitions {
                 var topicRCredit: Int? { Int(_topicRCredit ?? "") ?? nil }
                 
                 private enum CodingKeys: String, CodingKey {
-                    case creditAssist = "CREDIT_ASSIST"
-                    case creditCross = "CREDIT_CROSS"
-                    case creditDual = "CREDIT_DUAL"
-                    case creditEduc = "CREDIT_EDUC"
-                    case creditEmpl = "CREDIT_EMPL"
-                    case creditMicro = "CREDIT_MICRO"
-                    case creditPre = "CREDIT_PRE"
+                    // 【輔雙/學程】外加學分
+                    case creditAssist = "CREDIT_ASSIST" // 輔系
+                    case creditCross = "CREDIT_CROSS" // 跨領域學程
+                    case creditDual = "CREDIT_DUAL" // 雙主修
+                    case creditEduc = "CREDIT_EDUC" // 教育學程
+                    case creditEmpl = "CREDIT_EMPL" // 就業學程
+                    case creditMicro = "CREDIT_MICRO" // 微型學程
+                    case creditPre = "CREDIT_PRE" // 預研生(預備研究生)
+                    
                     case creditTotal = "CREDIT_TOTAL"
                     case _creditTotalNormal = "CREDIT_TOTAL_NORMAL"
                     case _crossBits = "CROSS_BITS"

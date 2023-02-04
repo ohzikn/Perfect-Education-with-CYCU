@@ -130,6 +130,8 @@ class CurrentSession: ObservableObject {
             do {
                 let data = try await requestDataQuery(for: .credits)
                 creditsInformation = try JSONDecoder().decode(Definitions.CreditsInformation.self, from: data)
+            } catch {
+                print(error)
             }
         }
     }

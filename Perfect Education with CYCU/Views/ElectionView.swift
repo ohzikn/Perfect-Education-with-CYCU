@@ -11,7 +11,7 @@ struct ElectionPlaceholderView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var applicationParameters: ApplicationParameters
     
-    @State var isWelcomeSheetPresented: Bool = true
+    @State var isWelcomeSheetPresented: Bool = false
     @State var didAcceptTerms: Bool = false
     
     var body: some View {
@@ -54,6 +54,9 @@ struct ElectionPlaceholderView: View {
                 }
             }
             .interactiveDismissDisabled()
+        }
+        .onAppear {
+            isWelcomeSheetPresented = true
         }
     }
 }
@@ -142,21 +145,21 @@ struct ElectionAnnouncementView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var currentSession: CurrentSession
     
+    @State var selectedAnnouncement: Definitions.ElectionDefinitions.AnnouncementRoles = .guide
+    
     var body: some View {
         NavigationStack {
-            List(Definitions.ElectionDefinitions.AnnouncementRoles.allCases, id: \.hashValue) { item in
-                NavigationLink(item.getName(inChinese: true), value: item)
-            }
-            .navigationTitle("選課公告")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("完成") { dismiss() }
+            VStack {
+                Picker("Announcement Type", selection: $selectedAnnouncement) {
+                    ForEach(Definitions.ElectionDefinitions.AnnouncementRoles.allCases, id: \.hashValue) { item in
+                        Text(item.getName(inChinese: true))
+                            .tag(item)
+                    }
                 }
-            }
-            .navigationDestination(for: Definitions.ElectionDefinitions.AnnouncementRoles.self) { value in
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
                 List {
-                    if let billBoard = currentSession.electionInformation_announcement?.billboard, let filteredBillboard = billBoard.filter({ $0.announcementType == value.rawValue }), !filteredBillboard.isEmpty {
+                    if let billBoard = currentSession.electionInformation_announcement?.billboard, let filteredBillboard = billBoard.filter({ $0.announcementType == selectedAnnouncement.rawValue }), !filteredBillboard.isEmpty {
                         ForEach(filteredBillboard) { item in
                             NavigationLink(item.title ?? "沒有標題", value: item)
                         }
@@ -165,12 +168,12 @@ struct ElectionAnnouncementView: View {
                             .foregroundColor(.secondary)
                     }
                 }
-                .navigationTitle(value.getName(inChinese: true))
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("完成") { dismiss() }
-                    }
+            }
+            .navigationTitle(selectedAnnouncement.getName(inChinese: true))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("完成") { dismiss() }
                 }
             }
             .navigationDestination(for: Definitions.ElectionInformation.Announcement.Billboard.self) { value in
@@ -331,22 +334,80 @@ struct ElectionStudentInformationView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var currentSession: CurrentSession
     
+    enum CreditType: String, CaseIterable {
+        
+        case general = "一般學分"
+        case doubleMajor = "輔雙／學程外加學分"
+        case overStudyByApply = "申請超修外加學分"
+        case overStudyByResearch = "專題超修外加學分"
+        
+//        private func getAvailableCredits(_ studentInformation: Definitions.ElectionInformation.StudentBaseInformation.StudentInformation) -> Int? {
+//            switch self {
+//            case .general:
+//                return studentInformation.maxLimit0 ?? nil
+//            case .doubleMajor:
+//                return studentInformation.maxExtra ?? nil
+//            case .overStudyByApply:
+//                return studentInformation.extraCredits ?? nil
+//            case .overStudyByResearch:
+//                return studentInformation.topicCredit ?? nil
+//            }
+//        }
+        
+        func getCreditDetail(_ studentInformation: Definitions.ElectionInformation.StudentBaseInformation.StudentInformation) -> CreditDetail? {
+            switch self {
+            case .general:
+                if let maxLimit0 = studentInformation.maxLimit0, let creditTotalNormal = studentInformation.creditTotalNormal {
+                    return .init(totalCredits: maxLimit0, usedCredits: creditTotalNormal)
+                }
+            case .doubleMajor:
+                if let maxExtra = studentInformation.maxExtra, let creditAssist = studentInformation.creditAssist, let creditCross = studentInformation.creditCross, let creditDual = studentInformation.creditDual, let creditEduc = studentInformation.creditEduc, let creditEmpl = studentInformation.creditEmpl, let creditMicro = studentInformation.creditMicro, let creditPre = studentInformation.creditPre {
+                     return .init(totalCredits: maxExtra, usedCredits: creditAssist + creditCross + creditDual + creditEduc + creditEmpl + creditMicro + creditPre)
+                }
+            case .overStudyByApply:
+                if let extraCredits = studentInformation.extraCredits, let extraCreditsTotal = studentInformation.extraCreditsTotal {
+                    return .init(totalCredits: extraCredits, usedCredits: extraCreditsTotal)
+                }
+            case .overStudyByResearch:
+                if let topicCredit = studentInformation.topicCredit, let topicRCredit = studentInformation.topicRCredit {
+                    return .init(totalCredits: topicCredit, usedCredits: topicRCredit)
+                }
+            }
+            return nil
+        }
+    }
+    
+    struct CreditDetail: Identifiable {
+        let id = UUID()
+        let totalCredits: Int
+        let usedCredits: Int
+    }
+    
     var body: some View {
         NavigationStack {
             Form {
                 if let info = currentSession.electionInformation_studentInformation?.studentsInformation?.first {
-                    Section {
+                    Section("基本資訊") {
                         LabeledContent("姓名", value: info.stmdName ?? "-")
                         LabeledContent("學號", value: info.idcode ?? "-")
                         LabeledContent("班級", value: info.stmdDptName ?? "-")
-                    }
-                    Section {
                         LabeledContent("教學評量問卷完成率", value: info.surveyFinishRate != nil ? "\(info.surveyFinishRate.unsafelyUnwrapped)%" : "-")
                         LabeledContent("可修習總學分上限", value: info.maxLimit != nil ? "\(info.maxLimit.unsafelyUnwrapped)" : "-")
                         LabeledContent("已選修總學分", value: info.creditTotal != nil ? "\(info.creditTotal.unsafelyUnwrapped)" : "-")
                     }
+                    ForEach(CreditType.allCases, id: \.hashValue) { item in
+                        if let creditDetail = item.getCreditDetail(info) {
+                            Section("\(item.rawValue) (\(creditDetail.totalCredits))") {
+                                LabeledContent("已選學分", value: "\(creditDetail.usedCredits)")
+                                LabeledContent("剩餘學分", value: "\(creditDetail.totalCredits - creditDetail.usedCredits)")
+                            }
+                        }
+                    }
                 }
             }
+//            .navigationDestination(for: RequestDestination.self) { value in
+//                ElectionStudentInformationDetailView(requestDestination: value, parentDismiss: dismiss)
+//            }
             .navigationTitle("個人資訊")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
