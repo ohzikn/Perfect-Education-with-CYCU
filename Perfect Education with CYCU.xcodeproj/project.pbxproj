@@ -20,7 +20,7 @@
 		5E3C93F829710C840036B342 /* PortalServicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C93F729710C840036B342 /* PortalServicesView.swift */; };
 		5E3C93FA29710F8B0036B342 /* WorkStudyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C93F929710F8B0036B342 /* WorkStudyView.swift */; };
 		5E3C93FC297114600036B342 /* MentorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C93FB297114600036B342 /* MentorView.swift */; };
-		5E3C93FE29711C190036B342 /* ElectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C93FD29711C190036B342 /* ElectionView.swift */; };
+		5E3C93FE29711C190036B342 /* ElectionRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C93FD29711C190036B342 /* ElectionRootView.swift */; };
 		5E3C940029711C240036B342 /* CreditsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C93FF29711C240036B342 /* CreditsView.swift */; };
 		5E3C940229711C900036B342 /* HealthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C940129711C900036B342 /* HealthView.swift */; };
 		5E3C940429711CD60036B342 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E3C940329711CD60036B342 /* AccountView.swift */; };
@@ -32,6 +32,11 @@
 		5E68CF9D2978FB83008AF377 /* Election.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68CF9C2978FB83008AF377 /* Election.swift */; };
 		5E68CF9F2978FBDC008AF377 /* Authenticate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68CF9E2978FBDC008AF377 /* Authenticate.swift */; };
 		5E68CFA12978FF0B008AF377 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68CFA02978FF0B008AF377 /* Protocols.swift */; };
+		5EC73A3E299071BC00E66CB6 /* ElectionAnnouncementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC73A3D299071BC00E66CB6 /* ElectionAnnouncementView.swift */; };
+		5EC73A40299071F800E66CB6 /* ElectionEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC73A3F299071F800E66CB6 /* ElectionEventView.swift */; };
+		5EC73A422990722200E66CB6 /* ElectionStudentBaseInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC73A412990722200E66CB6 /* ElectionStudentBaseInformationView.swift */; };
+		5EC73A442990723C00E66CB6 /* ElectionHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC73A432990723C00E66CB6 /* ElectionHistoryView.swift */; };
+		5EC73A462990725500E66CB6 /* ElectionCourseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC73A452990725500E66CB6 /* ElectionCourseListView.swift */; };
 		5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF1128229763A0A008A4373 /* KeychainService.swift */; };
 		5EFB304A29858731006F8D9E /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB304929858731006F8D9E /* WebView.swift */; };
 /* End PBXBuildFile section */
@@ -70,7 +75,7 @@
 		5E3C93F729710C840036B342 /* PortalServicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortalServicesView.swift; sourceTree = "<group>"; };
 		5E3C93F929710F8B0036B342 /* WorkStudyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkStudyView.swift; sourceTree = "<group>"; };
 		5E3C93FB297114600036B342 /* MentorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MentorView.swift; sourceTree = "<group>"; };
-		5E3C93FD29711C190036B342 /* ElectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionView.swift; sourceTree = "<group>"; };
+		5E3C93FD29711C190036B342 /* ElectionRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionRootView.swift; sourceTree = "<group>"; };
 		5E3C93FF29711C240036B342 /* CreditsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditsView.swift; sourceTree = "<group>"; };
 		5E3C940129711C900036B342 /* HealthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthView.swift; sourceTree = "<group>"; };
 		5E3C940329711CD60036B342 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
@@ -82,6 +87,11 @@
 		5E68CF9C2978FB83008AF377 /* Election.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Election.swift; sourceTree = "<group>"; };
 		5E68CF9E2978FBDC008AF377 /* Authenticate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authenticate.swift; sourceTree = "<group>"; };
 		5E68CFA02978FF0B008AF377 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
+		5EC73A3D299071BC00E66CB6 /* ElectionAnnouncementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionAnnouncementView.swift; sourceTree = "<group>"; };
+		5EC73A3F299071F800E66CB6 /* ElectionEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionEventView.swift; sourceTree = "<group>"; };
+		5EC73A412990722200E66CB6 /* ElectionStudentBaseInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionStudentBaseInformationView.swift; sourceTree = "<group>"; };
+		5EC73A432990723C00E66CB6 /* ElectionHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionHistoryView.swift; sourceTree = "<group>"; };
+		5EC73A452990725500E66CB6 /* ElectionCourseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionCourseListView.swift; sourceTree = "<group>"; };
 		5EF1128229763A0A008A4373 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		5EFB304929858731006F8D9E /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -199,7 +209,7 @@
 				5E3C93F729710C840036B342 /* PortalServicesView.swift */,
 				5E3C93F929710F8B0036B342 /* WorkStudyView.swift */,
 				5E3C93FB297114600036B342 /* MentorView.swift */,
-				5E3C93FD29711C190036B342 /* ElectionView.swift */,
+				5EC73A3C2990718800E66CB6 /* ElectionViews */,
 				5E3C93FF29711C240036B342 /* CreditsView.swift */,
 				5E3C940129711C900036B342 /* HealthView.swift */,
 				5E025607296E2F5F004E0370 /* Helpers */,
@@ -217,6 +227,19 @@
 				5E68CF9C2978FB83008AF377 /* Election.swift */,
 			);
 			path = Definitions;
+			sourceTree = "<group>";
+		};
+		5EC73A3C2990718800E66CB6 /* ElectionViews */ = {
+			isa = PBXGroup;
+			children = (
+				5E3C93FD29711C190036B342 /* ElectionRootView.swift */,
+				5EC73A3D299071BC00E66CB6 /* ElectionAnnouncementView.swift */,
+				5EC73A3F299071F800E66CB6 /* ElectionEventView.swift */,
+				5EC73A412990722200E66CB6 /* ElectionStudentBaseInformationView.swift */,
+				5EC73A432990723C00E66CB6 /* ElectionHistoryView.swift */,
+				5EC73A452990725500E66CB6 /* ElectionCourseListView.swift */,
+			);
+			path = ElectionViews;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -349,23 +372,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5EC73A442990723C00E66CB6 /* ElectionHistoryView.swift in Sources */,
 				5E3C94062971247E0036B342 /* ControllerView.swift in Sources */,
 				5E3C940229711C900036B342 /* HealthView.swift in Sources */,
 				5E02560A296E2F92004E0370 /* General.swift in Sources */,
 				5E3C940029711C240036B342 /* CreditsView.swift in Sources */,
-				5E3C93FE29711C190036B342 /* ElectionView.swift in Sources */,
+				5E3C93FE29711C190036B342 /* ElectionRootView.swift in Sources */,
 				5E02560C296E35DD004E0370 /* CurrentSession.swift in Sources */,
+				5EC73A422990722200E66CB6 /* ElectionStudentBaseInformationView.swift in Sources */,
 				5E68CF9D2978FB83008AF377 /* Election.swift in Sources */,
 				5E025606296E1834004E0370 /* LoginView.swift in Sources */,
 				5E68CF9F2978FBDC008AF377 /* Authenticate.swift in Sources */,
 				5E68CFA12978FF0B008AF377 /* Protocols.swift in Sources */,
+				5EC73A3E299071BC00E66CB6 /* ElectionAnnouncementView.swift in Sources */,
 				5E3C940429711CD60036B342 /* AccountView.swift in Sources */,
 				5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */,
 				5E4B43AF296F4287005A0215 /* SFSafariView.swift in Sources */,
 				5E3C93F829710C840036B342 /* PortalServicesView.swift in Sources */,
 				5E68CF992978FAF3008AF377 /* WorkStudy.swift in Sources */,
+				5EC73A462990725500E66CB6 /* ElectionCourseListView.swift in Sources */,
 				5E68CF962976DC3E008AF377 /* Extensions.swift in Sources */,
 				5E3C93FA29710F8B0036B342 /* WorkStudyView.swift in Sources */,
+				5EC73A40299071F800E66CB6 /* ElectionEventView.swift in Sources */,
 				5E3C93FC297114600036B342 /* MentorView.swift in Sources */,
 				5E2AC57C296E16AE00722D02 /* ContentView.swift in Sources */,
 				5E68CF9B2978FB2B008AF377 /* Credits.swift in Sources */,

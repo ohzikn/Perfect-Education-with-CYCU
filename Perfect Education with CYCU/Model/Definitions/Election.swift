@@ -149,6 +149,7 @@ extension Definitions {
                 }
             }
         }
+        
     }
     
     // MARK: Data structure
@@ -273,6 +274,104 @@ extension Definitions {
             }
         }
         
+        struct StudentInformation: Codable {
+            let alertText, distinctIPIDCODEAlert, language, courseCacheKey, announcementText, dataSource: String?
+            let isAuthorized: Bool?
+            
+            // Definitions
+            let crossTypeDefinitions: [CrossType]?
+            let departmentGroupDefinitions: [DepartmentGroup]?
+            let depqrtmentBuildingDefinitions: [DepartmentBuilding]?
+            let departmentDefinitions: [DepartmentType]?
+            let generalOpDefinitions: [GeneralOpType]?
+            
+            // Course Lists
+            let takeCourseList: [CourseInformation]? // 修課清單
+            let trackList: [CourseInformation]? // 追蹤清單
+            let registerList: [CourseInformation]? // 登記清單
+            let makeUpList: [CourseInformation]? // 遞補清單
+            
+            private enum CodingKeys: String, CodingKey {
+                case alertText = "alert_text"
+                case announcementText = "announcement_td"
+                case courseCacheKey = "cacheKey_course_get"
+                case crossTypeDefinitions = "cross_type_get"
+                case dataSource = "dataFrom"
+                case departmentDefinitions = "department_get"
+                case departmentGroupDefinitions = "dept_div"
+                case depqrtmentBuildingDefinitions = "dept_bln_get"
+                case distinctIPIDCODEAlert = "distinct_IP_IDCODE_alert"
+                case generalOpDefinitions = "general_op_type_get"
+                case isAuthorized = "is_auth_ok"
+                case language
+                case makeUpList = "make_up_get"
+                case registerList = "register_get"
+                case takeCourseList = "take_course_get"
+                case trackList = "track_get"
+            }
+            
+            struct CrossType: Codable {
+                let crossType, name: String?
+                let crossIdentifiers: [CrossIdentifier]?
+                
+                private enum CodingKeys: String, CodingKey {
+                    case crossType = "CROSS_TYPE"
+                    case name = "NAME"
+                    case crossIdentifiers = "cross_id_get"
+                }
+                
+                struct CrossIdentifier: Codable {
+                    let crossName: String?
+                    let crossCode: String?
+                    
+                    private enum CodingKeys: String, CodingKey {
+                        case crossName = "CROSS_NAME"
+                        case crossCode = "CROSS_CODE"
+                    }
+                }
+            }
+            
+            struct DepartmentGroup: Codable {
+                let deptDiv, sn, name: String?
+
+                private enum CodingKeys: String, CodingKey {
+                    case deptDiv = "DEPT_DIV"
+                    case sn = "SN"
+                    case name = "NAME"
+                }
+            }
+            
+            struct DepartmentBuilding: Codable {
+                let codName, deptBlnCod: String?
+
+                private enum CodingKeys: String, CodingKey {
+                    case codName = "COD_NAME"
+                    case deptBlnCod = "DEPT_BLN_COD"
+                }
+            }
+            
+            struct DepartmentType: Codable {
+                let codName, adminDeptName, adminCode, deptBlnCod: String?
+                
+                private enum CodingKeys: String, CodingKey {
+                    case codName = "COD_NAME"
+                    case adminDeptName = "ADMIN_DEPT_NAME"
+                    case adminCode = "ADMIN_CODE"
+                    case deptBlnCod = "DEPT_BLN_COD"
+                }
+            }
+            
+            struct GeneralOpType: Codable {
+                let opType, sn, name: String?
+
+                private enum CodingKeys: String, CodingKey {
+                    case opType = "OP_TYPE"
+                    case sn = "SN"
+                    case name = "NAME"
+                }
+            }
+        }
+        
         struct Announcement: Codable {
             let billboard: [Billboard]?
             let dataSource, cacheKeySource: String?
@@ -318,18 +417,10 @@ extension Definitions {
             }
         }
         
-        struct TrackingList: Codable {
-            let courses: [CourseInformation]?
-
-            enum CodingKeys: String, CodingKey {
-                case courses = "track_get"
-            }
-        }
-        
         struct History: Codable {
             let historyList: [HistoryItem]?
             
-            enum CodingKeys: String, CodingKey {
+            private enum CodingKeys: String, CodingKey {
                 case historyList = "log_get"
             }
             
@@ -353,7 +444,7 @@ extension Definitions {
                     return temp
                 }
                 
-                enum CodingKeys: String, CodingKey {
+                private enum CodingKeys: String, CodingKey {
                     case opCode = "OP_CODE"
                     case deptName = "DEPT_NAME"
                     case opType = "OP_TYPE"
@@ -374,10 +465,30 @@ extension Definitions {
         // MARK: Shared
         struct CourseInformation: Codable, Identifiable {
             let id = UUID()
-            let typeBit, deptName, opTime123, opRmName1, cursCode, betBln, cname, actionBits, snCourseType, betDept, opCode, distance, deptCode, opStdy, opType, dataToken, opTime1, opCredit, autoset, opQuality, teacher, crossName, memo1, crossType, opRmName2, opTime2, nameStatus, mgDeptCode, opRmName123, updateTime, opStdyDept: String?
+            let typeBit, deptName, opTime123, opRmName1, cursCode, betBln, cname, actionBits, betDept, opCode, distance, deptCode, opStdy, opType, dataToken, opTime1, opCredit, autoset, opQuality, teacher, crossName, memo1, crossType, opRmName2, opTime2, nameStatus, mgDeptCode, opRmName123, updateTime, opStdyDept: String?
             let betBlnR, betBlnMdie, opManSum, openMan, betBlnMd, remain, lastRegMan, nonStop, betBlnB, man, opMan, ord, snStatus, ordAppend, dropAutoset: Int?
-
-            enum CodingKeys: String, CodingKey {
+            
+            @StringToInt var _snCourseType: Int?
+            
+            @propertyWrapper
+            struct StringToInt: Codable {
+                var wrappedValue: Int?
+                
+                init(wrappedValue: Int? = nil) {
+                    self.wrappedValue = wrappedValue
+                }
+                
+                public init(from decoder: Decoder) throws {
+                    let container = try decoder.singleValueContainer()
+                    if let value = try? container.decode(Int.self) {
+                        wrappedValue = value
+                    } else if let value = try? container.decode(String.self) {
+                        wrappedValue = Int(value)
+                    }
+                }
+            }
+            
+            private enum CodingKeys: String, CodingKey {
                 case actionBits = "ACTION_BITS"
                 case autoset = "AUTOSET"
                 case betBln = "BET_BLN"
@@ -419,7 +530,7 @@ extension Definitions {
                 case ord = "ORD"
                 case ordAppend = "ORD_APPEND"
                 case remain = "REMAIN"
-                case snCourseType = "SN_COURSE_TYPE"
+                case _snCourseType = "SN_COURSE_TYPE"
                 case snStatus = "SN_STATUS"
                 case teacher = "TEACHER"
                 case typeBit = "TYPE_BIT"

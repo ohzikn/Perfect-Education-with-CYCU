@@ -41,10 +41,10 @@ class CurrentSession: ObservableObject {
                 workStudyInformation = nil
                 creditsInformation = nil
                 electionInformation_stageControl = nil
+                electionInformation_studentBaseInformation = nil
                 electionInformation_studentInformation = nil
                 electionInformation_announcement = nil
                 electionInformation_history = nil
-                electionInformation_trackingList = nil
             default:
                 break
             }
@@ -65,10 +65,10 @@ class CurrentSession: ObservableObject {
     @Published var workStudyInformation: Definitions.WorkStudyInformation?
     @Published var creditsInformation: Definitions.CreditsInformation?
     @Published var electionInformation_stageControl: Definitions.ElectionInformation.StageControl?
-    @Published var electionInformation_studentInformation: Definitions.ElectionInformation.StudentBaseInformation?
+    @Published var electionInformation_studentBaseInformation: Definitions.ElectionInformation.StudentBaseInformation?
+    @Published var electionInformation_studentInformation: Definitions.ElectionInformation.StudentInformation?
     @Published var electionInformation_announcement: Definitions.ElectionInformation.Announcement?
     @Published var electionInformation_history: Definitions.ElectionInformation.History?
-    @Published var electionInformation_trackingList: Definitions.ElectionInformation.TrackingList?
     // MARK: User session related data end
     
     func requestLogin(username: String, password: String) {
@@ -179,19 +179,23 @@ class CurrentSession: ObservableObject {
                 case .stage_control_get:
                     electionInformation_stageControl = try JSONDecoder().decode(Definitions.ElectionInformation.StageControl.self, from: data)
                 case .st_base_info:
-                    electionInformation_studentInformation = try JSONDecoder().decode(Definitions.ElectionInformation.StudentBaseInformation.self, from: data)
+                    electionInformation_studentBaseInformation = try JSONDecoder().decode(Definitions.ElectionInformation.StudentBaseInformation.self, from: data)
+                case .st_info_get:
+                    electionInformation_studentInformation = try JSONDecoder().decode(Definitions.ElectionInformation.StudentInformation.self, from: data)
                 case .ann_get:
                     electionInformation_announcement = try JSONDecoder().decode(Definitions.ElectionInformation.Announcement.self, from: data)
                 case .st_record:
                     electionInformation_history = try JSONDecoder().decode(Definitions.ElectionInformation.History.self, from: data)
                 case .track_get:
-                    electionInformation_trackingList = try JSONDecoder().decode(Definitions.ElectionInformation.TrackingList.self, from: data)
+                    // Deprecated
+//                    electionInformation_trackingList = try JSONDecoder().decode(Definitions.ElectionInformation.TrackingList.self, from: data)
+                    break
                 default:
                     break
                 }
                 
                 let responseString = String(data: data, encoding: .utf8)
-                print(responseString)
+//                print(responseString)
             } catch {
                 print(error)
             }
