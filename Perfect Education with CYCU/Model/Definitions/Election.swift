@@ -153,6 +153,7 @@ extension Definitions {
     
     // MARK: Data structure
     struct ElectionInformation {
+        // MARK: Statics
         struct StageControl: Codable {
             let dataSource, cacheKeySource: String?
             let stageEvents: [StageEvent]?
@@ -316,5 +317,115 @@ extension Definitions {
                 }
             }
         }
+        
+        struct TrackingList: Codable {
+            let courses: [CourseInformation]?
+
+            enum CodingKeys: String, CodingKey {
+                case courses = "track_get"
+            }
+        }
+        
+        struct History: Codable {
+            let historyList: [HistoryItem]?
+            
+            enum CodingKeys: String, CodingKey {
+                case historyList = "log_get"
+            }
+            
+            struct HistoryItem: Codable, Identifiable, Hashable {
+                let id = UUID()
+                
+                private let _updateTime, _opTime123: String?
+                
+                let opCode, deptName, opType, statusName, opStdyDept, itemOperator, opQuality, cname, insUser, teacher: String?
+                let opCredit: Int?
+                
+                var updateTime: Date? {
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                    return formatter.date(from: _updateTime ?? "")
+                }
+                
+                var opTime123: String? {
+                    var temp = _opTime123
+                    while temp?.last?.isWhitespace == true { temp?.removeLast() }
+                    return temp
+                }
+                
+                enum CodingKeys: String, CodingKey {
+                    case opCode = "OP_CODE"
+                    case deptName = "DEPT_NAME"
+                    case opType = "OP_TYPE"
+                    case _updateTime = "UPDATE_TIME"
+                    case _opTime123 = "OP_TIME_123"
+                    case statusName = "STATUS_NAME"
+                    case opStdyDept = "OP_STDY_DEPT"
+                    case opCredit = "OP_CREDIT"
+                    case itemOperator = "OPERATOR"
+                    case opQuality = "OP_QUALITY"
+                    case cname = "CNAME"
+                    case insUser = "INS_USER"
+                    case teacher = "TEACHER"
+                }
+            }
+        }
+        
+        // MARK: Shared
+        struct CourseInformation: Codable, Identifiable {
+            let id = UUID()
+            let typeBit, deptName, opTime123, opRmName1, cursCode, betBln, cname, actionBits, snCourseType, betDept, opCode, distance, deptCode, opStdy, opType, dataToken, opTime1, opCredit, autoset, opQuality, teacher, crossName, memo1, crossType, opRmName2, opTime2, nameStatus, mgDeptCode, opRmName123, updateTime, opStdyDept: String?
+            let betBlnR, betBlnMdie, opManSum, openMan, betBlnMd, remain, lastRegMan, nonStop, betBlnB, man, opMan, ord, snStatus, ordAppend, dropAutoset: Int?
+
+            enum CodingKeys: String, CodingKey {
+                case actionBits = "ACTION_BITS"
+                case autoset = "AUTOSET"
+                case betBln = "BET_BLN"
+                case betBlnB = "BET_BLN_B"
+                case betBlnMd = "BET_BLN_MD"
+                case betBlnMdie = "BET_BLN_MDIE"
+                case betBlnR = "BET_BLN_R"
+                case betDept = "BET_DEPT"
+                case cname = "CNAME"
+                case crossName = "CROSS_NAME"
+                case crossType = "CROSS_TYPE"
+                case cursCode = "CURS_CODE"
+                case dataToken = "DATA_Token"
+                case deptCode = "DEPT_CODE"
+                case deptName = "DEPT_NAME"
+                case distance = "DISTANCE"
+                case dropAutoset = "DROP_AUTOSET"
+                case lastRegMan = "LAST_REG_MAN"
+                case man = "MAN"
+                case memo1 = "MEMO1"
+                case mgDeptCode = "MG_DEPT_CODE"
+                case nameStatus = "NAME_STATUS"
+                case nonStop = "NON_STOP"
+                case opCode = "OP_CODE"
+                case opCredit = "OP_CREDIT"
+                case opMan = "OP_MAN"
+                case opManSum = "OpManSum"
+                case opQuality = "OP_QUALITY"
+                case opRmName1 = "OP_RM_NAME_1"
+                case opRmName123 = "OP_RM_NAME_123"
+                case opRmName2 = "OP_RM_NAME_2"
+                case opStdy = "OP_STDY"
+                case opStdyDept = "OP_STDY_DEPT"
+                case opTime1 = "OP_TIME_1"
+                case opTime123 = "OP_TIME_123"
+                case opTime2 = "OP_TIME_2"
+                case opType = "OP_TYPE"
+                case openMan = "OPEN_MAN"
+                case ord = "ORD"
+                case ordAppend = "ORD_APPEND"
+                case remain = "REMAIN"
+                case snCourseType = "SN_COURSE_TYPE"
+                case snStatus = "SN_STATUS"
+                case teacher = "TEACHER"
+                case typeBit = "TYPE_BIT"
+                case updateTime = "UPDATE_TIME"
+            }
+        }
+
     }
 }

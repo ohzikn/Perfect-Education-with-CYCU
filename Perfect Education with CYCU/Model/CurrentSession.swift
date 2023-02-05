@@ -23,7 +23,7 @@ class CurrentSession: ObservableObject {
         case queryRequestFailed
     }
     
-    // Application token information
+    // Application token structure
     struct ApplicationToken {
         let authenticateLocation: String
         let authenticateInformation: Definitions.AuthenticateInformation
@@ -43,6 +43,8 @@ class CurrentSession: ObservableObject {
                 electionInformation_stageControl = nil
                 electionInformation_studentInformation = nil
                 electionInformation_announcement = nil
+                electionInformation_history = nil
+                electionInformation_trackingList = nil
             default:
                 break
             }
@@ -65,6 +67,8 @@ class CurrentSession: ObservableObject {
     @Published var electionInformation_stageControl: Definitions.ElectionInformation.StageControl?
     @Published var electionInformation_studentInformation: Definitions.ElectionInformation.StudentBaseInformation?
     @Published var electionInformation_announcement: Definitions.ElectionInformation.Announcement?
+    @Published var electionInformation_history: Definitions.ElectionInformation.History?
+    @Published var electionInformation_trackingList: Definitions.ElectionInformation.TrackingList?
     // MARK: User session related data end
     
     func requestLogin(username: String, password: String) {
@@ -106,25 +110,25 @@ class CurrentSession: ObservableObject {
                     try await requestAuthenticateToken(for: Definitions.QueryLocations.getRelatedAuthenticateLocation(.base)())
                 }
             } catch {
-//                print(error)
+                print(error)
                 loginState = .failed
             }
         }
     }
     
-    func requestWorkStudy(skipIfDataExists: Bool = true) {
+    func requestWorkStudy(skipIfDataExists: Bool = false) {
         guard workStudyInformation == nil || !skipIfDataExists else { return }
         Task {
             do {
                 let data = try await requestDataQuery(for: .workStudy)
                 workStudyInformation = try JSONDecoder().decode(Definitions.WorkStudyInformation.self, from: data)
             } catch {
-                
+                print(error)
             }
         }
     }
     
-    func requestCredits(skipIfDataExists: Bool = true) {
+    func requestCredits(skipIfDataExists: Bool = false) {
         guard workStudyInformation == nil || !skipIfDataExists else { return }
         Task {
             do {
@@ -136,12 +140,12 @@ class CurrentSession: ObservableObject {
         }
     }
     
-    func requestElection(skipIfDataExists: Bool = true, method: Definitions.ElectionCommands) {
+    func requestElection(skipIfDataExists: Bool = false, method: Definitions.ElectionCommands) {
         guard workStudyInformation == nil || !skipIfDataExists else { return }
         
         // Return unimplemented commands
         switch method {
-        case .st_info_get, .course_get, .track_insert, .track_del, .take_course_and_register_insert, .take_course_and_register_del, .volunteer_set, .col_checkbox_upd:
+        case .course_get, .track_insert, .track_del, .take_course_and_register_insert, .take_course_and_register_del, .volunteer_set, .col_checkbox_upd:
             print("current command (\(method.rawValue)) not implemented.")
             return
         default:
@@ -151,8 +155,26 @@ class CurrentSession: ObservableObject {
         
         Task {
             do {
-                let data = try await requestDataQuery(for: .election, using: method.rawValue)
-                // Decode response referring by method type
+                // Initialize variables
+                var data: Data?
+                
+                // Send request reffering by method type
+                switch method {
+                case .st_info_get:
+                    struct SpecifiedQuery: RequestQueryBase, Codable {
+                        var APP_AUTH_token: String?
+                        var mobile: String = "N"
+                    }
+                    data = try await requestDataQuery(for: .election, using: method.rawValue, query: SpecifiedQuery())
+                default:
+                    // Default behaviour
+                    data = try await requestDataQuery(for: .election, using: method.rawValue)
+                }
+                
+                // Escape if data do not exist
+                guard let data else { return }
+                
+                // Recieve and decode response referring by method type
                 switch method {
                 case .stage_control_get:
                     electionInformation_stageControl = try JSONDecoder().decode(Definitions.ElectionInformation.StageControl.self, from: data)
@@ -160,12 +182,16 @@ class CurrentSession: ObservableObject {
                     electionInformation_studentInformation = try JSONDecoder().decode(Definitions.ElectionInformation.StudentBaseInformation.self, from: data)
                 case .ann_get:
                     electionInformation_announcement = try JSONDecoder().decode(Definitions.ElectionInformation.Announcement.self, from: data)
+                case .st_record:
+                    electionInformation_history = try JSONDecoder().decode(Definitions.ElectionInformation.History.self, from: data)
+                case .track_get:
+                    electionInformation_trackingList = try JSONDecoder().decode(Definitions.ElectionInformation.TrackingList.self, from: data)
                 default:
                     break
                 }
                 
                 let responseString = String(data: data, encoding: .utf8)
-//                print(responseString)
+                print(responseString)
             } catch {
                 print(error)
             }
@@ -188,10 +214,10 @@ extension CurrentSession {
         
         // Create new request query to send along with the request following "RequestQueryBase" protocol
         var requestQuery = specifiedQuery ?? {
-            struct Credentials: RequestQueryBase, Codable {
+            struct DefaultQuery: RequestQueryBase, Codable {
                 var APP_AUTH_token: String?
             }
-            return Credentials()
+            return DefaultQuery()
         }()
         
         // Get app token and set into requestQuery from stored variable if current category is present, otherwise request a new one immediately.

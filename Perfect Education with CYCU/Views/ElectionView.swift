@@ -25,7 +25,10 @@ struct ElectionPlaceholderView: View {
             NavigationStack {
                 VStack {
                     Form {
-                        Text("這裡應該要寫很多東西，但原意只是要表達此應用程式不為任何損失負任何責任。")
+                        Text("此選課功能為研究用途所開發，與中原大學沒有任何關係，中原大學不為此應用程式提供任何協助及技術支援。")
+                        Text("此應用程式仍在開發階段，我們無法保證此應用程式的穩定性。")
+                        Text("我們無法為此應用程式造成的任何損失負責，請留意。")
+                        Text("按下同意表示你已暸解上述內容並且希望繼續前往選課功能。")
                     }
                 }
                 .navigationTitle("條款與約定")
@@ -73,6 +76,8 @@ struct ElectionView: View {
         case announcements
         case events
         case studentInfo
+        case history
+        case courseList
     }
     
     @State private var currentSubsheetView: SubsheetViews = .none
@@ -105,8 +110,16 @@ struct ElectionView: View {
                         Button("個人資訊") {
                             currentSubsheetView = .studentInfo
                         }
+                        Button("選課紀錄") {
+                            currentSubsheetView = .history
+                        }
                     } label: {
                         Image(systemName: "ellipsis.circle")
+                    }
+                }
+                ToolbarItem(placement: .bottomBar) {
+                    Button("課程清單") {
+                        currentSubsheetView = .courseList
                     }
                 }
             }
@@ -117,27 +130,35 @@ struct ElectionView: View {
                 EmptyView()
             case .announcements:
                 ElectionAnnouncementView()
+                    .presentationDetents([.large])
             case .events:
                 ElectionEventView()
+                    .presentationDetents([.large])
             case .studentInfo:
                 ElectionStudentInformationView()
+                    .presentationDetents([.large])
+            case .history:
+                ElectionHistoryView()
+                    .presentationDetents([.large])
+            case .courseList:
+                ElectionCourseListView()
+                    .presentationDetents([.large])
             }
         }
+        .onAppear {
+            applicationParameters.hideRootTabbar = true
+        }
+        .onDisappear {
+            applicationParameters.hideRootTabbar = false
+        }
+        // Sync subsheet view with isSubSheetPresented
         .onChange(of: isSubSheetPresented) { newValue in
             if !newValue { currentSubsheetView = .none }
         }
         .onChange(of: currentSubsheetView) { newValue in
             isSubSheetPresented = (newValue != .none)
         }
-        .onAppear {
-            applicationParameters.hideRootTabbar = true
-            currentSession.requestElection(method: .stage_control_get)
-            currentSession.requestElection(method: .st_base_info)
-            currentSession.requestElection(method: .ann_get)
-        }
-        .onDisappear {
-            applicationParameters.hideRootTabbar = false
-        }
+        // Sync end
     }
 }
 
@@ -168,6 +189,7 @@ struct ElectionAnnouncementView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+                .listStyle(.plain)
             }
             .navigationTitle(selectedAnnouncement.getName(inChinese: true))
             .navigationBarTitleDisplayMode(.inline)
@@ -180,6 +202,9 @@ struct ElectionAnnouncementView: View {
                 ElectionAnnouncementDetailView(parentDismiss: dismiss, billboard: value)
             }
         }
+        .onAppear {
+            currentSession.requestElection(method: .ann_get)
+        }
     }
 }
 
@@ -191,10 +216,12 @@ struct ElectionAnnouncementDetailView: View {
         VStack {
             Text(billboard.title ?? "沒有標題")
                 .font(.headline)
+                .padding([.horizontal])
             Divider()
+                .padding([.horizontal])
             WebView(markdown: billboard.content ?? "")
+                .ignoresSafeArea()
         }
-        .padding([.horizontal])
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button("完成") { parentDismiss() }
@@ -246,6 +273,9 @@ struct ElectionEventView: View {
             .navigationDestination(for: Definitions.ElectionInformation.StageControl.StageEvent.self) { value in
                 ElectionEventDetailView(parentDismiss: dismiss, event: value)
             }
+        }
+        .onAppear {
+            currentSession.requestElection(method: .stage_control_get)
         }
     }
 }
@@ -416,6 +446,146 @@ struct ElectionStudentInformationView: View {
                 }
             }
         }
+        .onAppear {
+            currentSession.requestElection(method: .st_base_info)
+        }
+    }
+}
+
+struct ElectionHistoryView: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var currentSession: CurrentSession
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                if let history = currentSession.electionInformation_history?.historyList {
+                    ForEach(history) { item in
+                        NavigationLink(value: item) {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(item.cname ?? "-")
+                                        .lineLimit(1)
+                                    Text(item.updateTime?.getString() ?? "")
+                                        .monospacedDigit()
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Text(item.statusName ?? "")
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("選課紀錄")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: Definitions.ElectionInformation.History.HistoryItem.self) { value in
+                List {
+                    Group {
+                        LabeledContent("課程名稱", value: value.cname ?? "-")
+                        LabeledContent("課程類別", value: value.opType ?? "-")
+                        LabeledContent("開課班級", value: value.deptName ?? "-")
+                        LabeledContent("課程代碼", value: value.opCode ?? "-")
+                        LabeledContent("必/選修", value: value.opStdyDept ?? "-")
+                        LabeledContent("學分數", value: String(value.opCredit ?? 0))
+                        LabeledContent("授課老師", value: value.teacher ?? "-")
+                        LabeledContent("上課時間", value: value.opTime123 ?? "-")
+                    }
+                    Group {
+                        LabeledContent("期程", value: value.opQuality ?? "-")
+                        LabeledContent("選課狀態", value: value.statusName ?? "-")
+                        LabeledContent("操作者", value: value.itemOperator ?? "-")
+                        LabeledContent("記錄時間", value: value.updateTime?.getString() ?? "")
+                            .monospacedDigit()
+                    }
+                }
+                .navigationTitle(value.cname ?? "-")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("完成") { dismiss() }
+                    }
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("完成") { dismiss() }
+                }
+            }
+        }
+        .onAppear {
+            currentSession.requestElection(method: .st_record)
+        }
+    }
+}
+
+struct ElectionCourseListView: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var currentSession: CurrentSession
+    
+    private enum CourseListType: String, CaseIterable {
+        case takingList = "修課清單"
+        case trackingList = "追蹤清單"
+        case registrationList = "登記清單"
+        case watingList = "遞補清單"
+    }
+    
+    @State private var selectedCourseListType: CourseListType = .takingList
+    
+    private func updateCourseList() {
+        switch selectedCourseListType {
+        case .takingList:
+            break
+        case .trackingList:
+            currentSession.requestElection(method: .track_get)
+        case .registrationList:
+            break
+        case .watingList:
+            break
+        }
+    }
+    
+    var body: some View {
+        NavigationStack {
+            Picker("Course List Type", selection: $selectedCourseListType) {
+                ForEach(CourseListType.allCases, id: \.hashValue) { item in
+                    Text(item.rawValue)
+                        .tag(item)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding([.horizontal])
+            List {
+                if selectedCourseListType == .takingList {
+                    
+                }
+                if selectedCourseListType == .trackingList {
+                    if let courses = currentSession.electionInformation_trackingList?.courses {
+                        ForEach(courses) { course in
+                            Text(course.cname ?? "")
+                        }
+                    }
+                }
+                if selectedCourseListType == .registrationList {
+                    
+                }
+                if selectedCourseListType == .watingList {
+                    
+                }
+            }
+            .listStyle(.plain)
+            .navigationTitle(selectedCourseListType.rawValue)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("完成") { dismiss() }
+                }
+            }
+        }
+        .onAppear { updateCourseList() }
+        .onChange(of: selectedCourseListType) { _ in updateCourseList() }
     }
 }
 
