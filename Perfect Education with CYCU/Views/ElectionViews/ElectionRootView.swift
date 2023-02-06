@@ -81,8 +81,11 @@ struct ElectionView: View {
         case courseList
     }
     
+    @State private var searchEntry: String = ""
+    
     @State private var currentSubsheetView: SubsheetViews = .none
     @State private var isSubSheetPresented = false
+    @State private var isFilterSheetPresented = false
     
     var body: some View {
         NavigationStack {
@@ -91,14 +94,15 @@ struct ElectionView: View {
             }
             .navigationTitle("選課")
             .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $searchEntry)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("離開") {
-                        // Dismiss current fullscreen cover
-                        dismiss()
-                        // Dismiss root navigation
-                        rootDismiss()
+                    Button {
+                        isFilterSheetPresented.toggle()
+                    } label: {
+                        Image(systemName: "line.3.horizontal.decrease.circle")
                     }
+
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
@@ -113,6 +117,12 @@ struct ElectionView: View {
                         }
                         Button("選課紀錄") {
                             currentSubsheetView = .history
+                        }
+                        Button("離開") {
+                            // Dismiss current fullscreen cover
+                            dismiss()
+                            // Dismiss root navigation
+                            rootDismiss()
                         }
                     } label: {
                         Image(systemName: "ellipsis.circle")
@@ -145,6 +155,10 @@ struct ElectionView: View {
                 ElectionCourseListView()
                     .presentationDetents([.large])
             }
+        }
+        .sheet(isPresented: $isFilterSheetPresented) {
+            Text("Filters")
+                .presentationDetents([.medium])
         }
         .onAppear {
             applicationParameters.hideRootTabbar = true

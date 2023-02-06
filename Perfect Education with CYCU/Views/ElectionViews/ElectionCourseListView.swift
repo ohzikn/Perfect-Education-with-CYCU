@@ -45,10 +45,13 @@ struct ElectionCourseListView: View {
             .pickerStyle(.segmented)
             .padding([.horizontal])
             List {
-                if let presentedCourseList {
+                if let presentedCourseList, !presentedCourseList.isEmpty {
                     ForEach(presentedCourseList) { item in
                         Text(item.cname ?? "")
                     }
+                } else {
+                    Text("沒有項目")
+                        .foregroundColor(.secondary)
                 }
             }
             .listStyle(.plain)
