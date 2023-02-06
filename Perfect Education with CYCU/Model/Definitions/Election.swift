@@ -167,38 +167,27 @@ extension Definitions {
             
             struct StageEvent: Codable, Identifiable, Hashable {
                 let id = UUID()
-                
-                private let _enter3Bits, _enter2Bits, _enterBits, _actionBits, _snStageType, _sn, _begintime, _endtime: String?
-                
                 let remark: String?
                 
-                var enter3Bits: [Int]? { _enter3Bits?.toIntArray() }
-                var enter2Bits: [Int]? { _enter2Bits?.toIntArray() }
-                var enterBits: [Int]? { _enterBits?.toIntArray() }
-                var actionBits: [Int]? { _actionBits?.toIntArray() }
-                var snStageType: Int? { Int(_snStageType ?? "") ?? nil }
-                var sn: Int? { Int(_sn ?? "") ?? nil }
-                var beginTime: Date? {
-                    let formatter = DateFormatter()
-                    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                    return formatter.date(from: _begintime ?? "")
-                }
-                var endTime: Date? {
-                    let formatter = DateFormatter()
-                    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                    return formatter.date(from: _endtime ?? "")
-                }
+                @DecodeToIntArray var enter3Bits: [Int]?
+                @DecodeToIntArray var enter2Bits: [Int]?
+                @DecodeToIntArray var enterBits: [Int]?
+                @DecodeToIntArray var actionBits: [Int]?
+                @DecodeToInt var snStageType: Int?
+                @DecodeToInt var sn: Int?
+                @DecodeToDate var beginTime: Date?
+                @DecodeToDate var endTime: Date?
 
                 private enum CodingKeys: String, CodingKey {
-                    case _enter3Bits = "ENTER3_BITS"
-                    case _enterBits = "ENTER_BITS"
-                    case _snStageType = "SN_STAGE_TYPE"
-                    case _actionBits = "ACTION_BITS"
-                    case _sn = "SN"
-                    case _begintime = "BGTIME"
+                    case enter3Bits = "ENTER3_BITS"
+                    case enter2Bits = "ENTER2_BITS"
+                    case enterBits = "ENTER_BITS"
+                    case actionBits = "ACTION_BITS"
+                    case snStageType = "SN_STAGE_TYPE"
+                    case sn = "SN"
+                    case beginTime = "BGTIME"
+                    case endTime = "EDTIME"
                     case remark = "REMARK"
-                    case _enter2Bits = "ENTER2_BITS"
-                    case _endtime = "EDTIME"
                 }
             }
         }
@@ -211,23 +200,21 @@ extension Definitions {
             }
             
             struct StudentInformation: Codable {
-                private let _creditTotalNormal, _crossBits, _enterBit, _extraCreditsTotal, _maxExtra, _maxMark, _mdieCreditsTotal, _originalExtraCredits, _stmdNew, _surveyFinishRate, _topicCredit, _topicRCredit: String?
-                
                 let crossBitsNameC, crossBitsNameE, deptBlnAdmin, deptNameE, idcode, stmdCOMTel, stmdCellTel, stmdCurDpt, stmdDiv, stmdDptName, stmdName, stmdRegDpt, stmdSex, stmdTypeName: String?
                 let creditAssist, creditCross, creditDual, creditEduc, creditEmpl, creditMicro, creditPre, creditTotal, extraCredits, maxLimit, maxLimit0, topicCredits: Int?
                 
-                var creditTotalNormal: Int? { Int(_creditTotalNormal ?? "") ?? nil }
-                var crossBits: [Int]? { _crossBits?.toIntArray() }
-                var enterBit: Int? { Int(_enterBit ?? "") ?? nil }
-                var extraCreditsTotal: Int? { Int(_extraCreditsTotal ?? "") ?? nil }
-                var maxExtra: Int? { Int(_maxExtra ?? "") ?? nil }
-                var maxMark: Int? { Int(_maxMark ?? "") ?? nil }
-                var mdieCreditsTotal: Int? { Int(_mdieCreditsTotal ?? "") ?? nil }
-                var originalExtraCredits: Int? { Int(_originalExtraCredits ?? "") ?? nil }
-                var stmdNew: Int? { Int(_stmdNew ?? "") ?? nil }
-                var surveyFinishRate: Int? { Int(_surveyFinishRate ?? "") ?? nil }
-                var topicCredit: Int? { Int(_topicCredit ?? "") ?? nil }
-                var topicRCredit: Int? { Int(_topicRCredit ?? "") ?? nil }
+                @DecodeToInt var creditTotalNormal: Int?
+                @DecodeToIntArray var crossBits: [Int]?
+                @DecodeToInt var enterBit: Int?
+                @DecodeToInt var extraCreditsTotal: Int?
+                @DecodeToInt var maxExtra: Int?
+                @DecodeToInt var maxMark: Int?
+                @DecodeToInt var mdieCreditsTotal: Int?
+                @DecodeToInt var originalExtraCredits: Int?
+                @DecodeToInt var stmdNew: Int?
+                @DecodeToInt var surveyFinishRate: Int?
+                @DecodeToInt var topicCredit: Int?
+                @DecodeToInt var topicRCredit: Int?
                 
                 private enum CodingKeys: String, CodingKey {
                     // 【輔雙/學程】外加學分
@@ -240,36 +227,36 @@ extension Definitions {
                     case creditPre = "CREDIT_PRE" // 預研生(預備研究生)
                     
                     case creditTotal = "CREDIT_TOTAL"
-                    case _creditTotalNormal = "CREDIT_TOTAL_NORMAL"
-                    case _crossBits = "CROSS_BITS"
+                    case creditTotalNormal = "CREDIT_TOTAL_NORMAL"
+                    case crossBits = "CROSS_BITS"
                     case crossBitsNameC = "CROSS_BITS_NAME_C"
                     case crossBitsNameE = "CROSS_BITS_NAME_E"
                     case deptBlnAdmin = "DEPT_BLN_ADMIN"
                     case deptNameE = "DEPT_NAME_E"
-                    case _enterBit = "ENTER_BIT"
+                    case enterBit = "ENTER_BIT"
                     case extraCredits = "EXTRA_CREDITS"
-                    case _extraCreditsTotal = "EXTRA_CREDITS_TOTAL"
+                    case extraCreditsTotal = "EXTRA_CREDITS_TOTAL"
                     case idcode = "IDCODE"
-                    case _maxExtra = "MAX_EXTRA"
+                    case maxExtra = "MAX_EXTRA"
                     case maxLimit = "MAX_LIMIT"
                     case maxLimit0 = "MAX_LIMIT_0"
-                    case _maxMark = "MAX_MARK"
-                    case _mdieCreditsTotal = "MDIE_CREDITS_TOTOAL"
-                    case _originalExtraCredits = "ORIGINAL_EXTRA_CREDITS"
+                    case maxMark = "MAX_MARK"
+                    case mdieCreditsTotal = "MDIE_CREDITS_TOTOAL"
+                    case originalExtraCredits = "ORIGINAL_EXTRA_CREDITS"
                     case stmdCOMTel = "STMD_COM_TEL"
                     case stmdCellTel = "STMD_CELL_TEL"
                     case stmdCurDpt = "STMD_CUR_DPT"
                     case stmdDiv = "STMD_DIV"
                     case stmdDptName = "STMD_DPT_NAME"
                     case stmdName = "STMD_NAME"
-                    case _stmdNew = "STMD_NEW"
+                    case stmdNew = "STMD_NEW"
                     case stmdRegDpt = "STMD_REG_DPT"
                     case stmdSex = "STMD_SEX"
                     case stmdTypeName = "STMD_TYPE_NAME"
-                    case _surveyFinishRate = "SURVEY_FINISH_RATE"
-                    case _topicCredit = "TOPIC_CREDIT"
+                    case surveyFinishRate = "SURVEY_FINISH_RATE"
+                    case topicCredit = "TOPIC_CREDIT"
                     case topicCredits = "TOPIC_CREDITS"
-                    case _topicRCredit = "TOPIC_R_CREDIT"
+                    case topicRCredit = "TOPIC_R_CREDIT"
                 }
             }
         }
@@ -385,29 +372,19 @@ extension Definitions {
             struct Billboard: Codable, Identifiable, Hashable {
                 let id = UUID()
                 
-                private let _onWeb, _announcementType, _dateBegin, _dateEnd: String?
-                
                 let title, sn, content, typeName: String?
                 let idx: Int?
                 
-                var onWeb: Int? { Int(_onWeb ?? "") }
-                var announcementType: Int? { Int(_announcementType ?? "") }
-                var dateBegin: Date? {
-                    let formatter = DateFormatter()
-                    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                    return formatter.date(from: _dateBegin ?? "")
-                }
-                var endDate: Date? {
-                    let formatter = DateFormatter()
-                    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                    return formatter.date(from: _dateEnd ?? "")
-                }
+                @DecodeToInt var onWeb: Int?
+                @DecodeToInt var announcementType: Int?
+                @DecodeToDate var dateBegin: Date?
+                @DecodeToDate var dateEnd: Date?
 
                 private enum CodingKeys: String, CodingKey {
-                    case _onWeb = "ON_WEB"
-                    case _announcementType = "ANN_TYPE"
-                    case _dateBegin = "DATE_BEG"
-                    case _dateEnd = "DATE_END"
+                    case onWeb = "ON_WEB"
+                    case announcementType = "ANN_TYPE"
+                    case dateBegin = "DATE_BEG"
+                    case dateEnd = "DATE_END"
                     case title = "TITLE"
                     case sn = "SN"
                     case content = "CONTENT"
@@ -427,29 +404,18 @@ extension Definitions {
             struct HistoryItem: Codable, Identifiable, Hashable {
                 let id = UUID()
                 
-                private let _updateTime, _opTime123: String?
-                
                 let opCode, deptName, opType, statusName, opStdyDept, itemOperator, opQuality, cname, insUser, teacher: String?
                 let opCredit: Int?
                 
-                var updateTime: Date? {
-                    let formatter = DateFormatter()
-                    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                    return formatter.date(from: _updateTime ?? "")
-                }
-                
-                var opTime123: String? {
-                    var temp = _opTime123
-                    while temp?.last?.isWhitespace == true { temp?.removeLast() }
-                    return temp
-                }
+                @DecodeToDate var updateTime: Date?
+                @DecodeToStringAndRemoveTrailingSpaces var opTime123: String?
                 
                 private enum CodingKeys: String, CodingKey {
                     case opCode = "OP_CODE"
                     case deptName = "DEPT_NAME"
                     case opType = "OP_TYPE"
-                    case _updateTime = "UPDATE_TIME"
-                    case _opTime123 = "OP_TIME_123"
+                    case updateTime = "UPDATE_TIME"
+                    case opTime123 = "OP_TIME_123"
                     case statusName = "STATUS_NAME"
                     case opStdyDept = "OP_STDY_DEPT"
                     case opCredit = "OP_CREDIT"
@@ -468,25 +434,7 @@ extension Definitions {
             let typeBit, deptName, opTime123, opRmName1, cursCode, betBln, cname, actionBits, betDept, opCode, distance, deptCode, opStdy, opType, dataToken, opTime1, opCredit, autoset, opQuality, teacher, crossName, memo1, crossType, opRmName2, opTime2, nameStatus, mgDeptCode, opRmName123, updateTime, opStdyDept: String?
             let betBlnR, betBlnMdie, opManSum, openMan, betBlnMd, remain, lastRegMan, nonStop, betBlnB, man, opMan, ord, snStatus, ordAppend, dropAutoset: Int?
             
-            @StringToInt var _snCourseType: Int?
-            
-            @propertyWrapper
-            struct StringToInt: Codable {
-                var wrappedValue: Int?
-                
-                init(wrappedValue: Int? = nil) {
-                    self.wrappedValue = wrappedValue
-                }
-                
-                public init(from decoder: Decoder) throws {
-                    let container = try decoder.singleValueContainer()
-                    if let value = try? container.decode(Int.self) {
-                        wrappedValue = value
-                    } else if let value = try? container.decode(String.self) {
-                        wrappedValue = Int(value)
-                    }
-                }
-            }
+            @DecodeToInt var snCourseType: Int?
             
             private enum CodingKeys: String, CodingKey {
                 case actionBits = "ACTION_BITS"
@@ -530,7 +478,7 @@ extension Definitions {
                 case ord = "ORD"
                 case ordAppend = "ORD_APPEND"
                 case remain = "REMAIN"
-                case _snCourseType = "SN_COURSE_TYPE"
+                case snCourseType = "SN_COURSE_TYPE"
                 case snStatus = "SN_STATUS"
                 case teacher = "TEACHER"
                 case typeBit = "TYPE_BIT"

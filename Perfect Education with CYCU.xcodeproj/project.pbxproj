@@ -39,6 +39,7 @@
 		5EC73A462990725500E66CB6 /* ElectionCourseListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC73A452990725500E66CB6 /* ElectionCourseListView.swift */; };
 		5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF1128229763A0A008A4373 /* KeychainService.swift */; };
 		5EFB304A29858731006F8D9E /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB304929858731006F8D9E /* WebView.swift */; };
+		5EFB304D29918385006F8D9E /* PropertyWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB304C29918385006F8D9E /* PropertyWrappers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +95,7 @@
 		5EC73A452990725500E66CB6 /* ElectionCourseListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionCourseListView.swift; sourceTree = "<group>"; };
 		5EF1128229763A0A008A4373 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		5EFB304929858731006F8D9E /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		5EFB304C29918385006F8D9E /* PropertyWrappers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyWrappers.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,23 +123,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		5E025607296E2F5F004E0370 /* Helpers */ = {
+		5E025607296E2F5F004E0370 /* UIKitRepresentables */ = {
 			isa = PBXGroup;
 			children = (
 				5E4B43AE296F4287005A0215 /* SFSafariView.swift */,
 				5EFB304929858731006F8D9E /* WebView.swift */,
 			);
-			path = Helpers;
+			path = UIKitRepresentables;
 			sourceTree = "<group>";
 		};
 		5E025608296E2F75004E0370 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				5E68CFA02978FF0B008AF377 /* Protocols.swift */,
-				5E68CF972978FABD008AF377 /* Definitions */,
 				5E02560B296E35DD004E0370 /* CurrentSession.swift */,
-				5EF1128229763A0A008A4373 /* KeychainService.swift */,
-				5E68CF952976DC3E008AF377 /* Extensions.swift */,
+				5E68CF972978FABD008AF377 /* Definitions */,
+				5EFB304B2991831B006F8D9E /* Helpers */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -212,7 +213,7 @@
 				5EC73A3C2990718800E66CB6 /* ElectionViews */,
 				5E3C93FF29711C240036B342 /* CreditsView.swift */,
 				5E3C940129711C900036B342 /* HealthView.swift */,
-				5E025607296E2F5F004E0370 /* Helpers */,
+				5E025607296E2F5F004E0370 /* UIKitRepresentables */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -240,6 +241,16 @@
 				5EC73A452990725500E66CB6 /* ElectionCourseListView.swift */,
 			);
 			path = ElectionViews;
+			sourceTree = "<group>";
+		};
+		5EFB304B2991831B006F8D9E /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				5EF1128229763A0A008A4373 /* KeychainService.swift */,
+				5E68CF952976DC3E008AF377 /* Extensions.swift */,
+				5EFB304C29918385006F8D9E /* PropertyWrappers.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -386,6 +397,7 @@
 				5E68CFA12978FF0B008AF377 /* Protocols.swift in Sources */,
 				5EC73A3E299071BC00E66CB6 /* ElectionAnnouncementView.swift in Sources */,
 				5E3C940429711CD60036B342 /* AccountView.swift in Sources */,
+				5EFB304D29918385006F8D9E /* PropertyWrappers.swift in Sources */,
 				5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */,
 				5E4B43AF296F4287005A0215 /* SFSafariView.swift in Sources */,
 				5E3C93F829710C840036B342 /* PortalServicesView.swift in Sources */,

@@ -13,12 +13,6 @@ extension UserDefaults {
     }
 }
 
-extension String {
-    func toIntArray() -> [Int] {
-        self.trimmingCharacters(in: CharacterSet(charactersIn: "0123456789,").inverted).components(separatedBy: ",").map({ Int($0) ?? -1 })
-    }
-}
-
 extension Date {
     func getString(customFormat: String? = nil) -> String? {
         let formatter = DateFormatter()
