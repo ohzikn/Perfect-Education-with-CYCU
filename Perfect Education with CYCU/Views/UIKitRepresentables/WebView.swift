@@ -15,15 +15,14 @@ struct WebView: UIViewRepresentable {
     let webView = WKWebView()
     
     // Inject viewport markup before markdown to override HTML content scaling settings
-    let viewportString =
-"""
-<meta name="viewport" content="width=device-width, initial-scale=1">
-"""
+    let viewportString = """
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    """
     
     func makeUIView(context: Context) -> WKWebView {
-//        webView.pageZoom = 2.0
-        webView.allowsBackForwardNavigationGestures = false
         webView.navigationDelegate = context.coordinator
+        webView.allowsBackForwardNavigationGestures = false
+        webView.allowsLinkPreview = false
         webView.loadHTMLString(viewportString + markdown, baseURL: nil)
         return webView
     }
@@ -46,11 +45,5 @@ struct WebView: UIViewRepresentable {
             }
             return .allow
         }
-        
-//        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-//            if webView.isLoading == false {
-//                webView.frame.size.height = webView.scrollView.contentSize.height
-//            }
-//        }
     }
 }

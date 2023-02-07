@@ -47,7 +47,7 @@ struct ElectionEventView: View {
                     Button("完成") { dismiss() }
                 }
             }
-            .navigationDestination(for: Definitions.ElectionInformation.StageControl.StageEvent.self) { value in
+            .navigationDestination(for: Definitions.ElectionDataStructures.StageControl.StageEvent.self) { value in
                 ElectionEventDetailView(parentDismiss: dismiss, event: value)
             }
         }
@@ -56,7 +56,7 @@ struct ElectionEventView: View {
 
 struct ElectionEventDetailView: View {
     let parentDismiss: DismissAction
-    let event: Definitions.ElectionInformation.StageControl.StageEvent
+    let event: Definitions.ElectionDataStructures.StageControl.StageEvent
     
     private func getActionString(_ queue: [Int]?) -> String? {
         guard let queue else { return nil }

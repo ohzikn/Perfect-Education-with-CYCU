@@ -11,9 +11,10 @@ import Foundation
 struct DecodeToInt: Codable, Equatable, Hashable {
     var wrappedValue: Int?
     
-//    init(wrappedValue: Int? = nil) {
-//        self.wrappedValue = wrappedValue
-//    }
+    init() {
+        // Set wrappedValue to nil by default initializer
+        self.wrappedValue = nil
+    }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -37,6 +38,11 @@ struct DecodeToInt: Codable, Equatable, Hashable {
 struct DecodeToIntArray: Codable, Equatable, Hashable {
     var wrappedValue: [Int]?
     
+    init() {
+        // Set wrappedValue to nil by default initializer
+        self.wrappedValue = nil
+    }
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         if let value = try? container.decode(String.self) {
@@ -56,6 +62,11 @@ struct DecodeToIntArray: Codable, Equatable, Hashable {
 @propertyWrapper
 struct DecodeToDate: Codable, Equatable, Hashable {
     var wrappedValue: Date?
+    
+    init() {
+        // Set wrappedValue to nil by default initializer
+        self.wrappedValue = nil
+    }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -78,6 +89,11 @@ struct DecodeToDate: Codable, Equatable, Hashable {
 @propertyWrapper
 struct DecodeToStringAndRemoveTrailingSpaces: Codable, Equatable, Hashable {
     var wrappedValue: String?
+    
+    init() {
+        // Set wrappedValue to nil by default initializer
+        self.wrappedValue = nil
+    }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()

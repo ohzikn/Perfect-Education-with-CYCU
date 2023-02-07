@@ -81,56 +81,86 @@ struct ElectionView: View {
         case courseList
     }
     
-    @State private var searchEntry: String = ""
-    
     @State private var currentSubsheetView: SubsheetViews = .none
     @State private var isSubSheetPresented = false
-    @State private var isFilterSheetPresented = false
+    
+    @State private var searchEntry: String = ""
+    @State private var searchResult: [Definitions.ElectionDataStructures.CourseInformation]?
     
     var body: some View {
         NavigationStack {
+            SearchFieldView(for: .courseQuery)
             List {
-                
+                if let searchResult {
+                    ForEach(searchResult) { item in
+                        Text(item.cname ?? "-")
+                    }
+                }
             }
+            .listStyle(.plain)
             .navigationTitle("選課")
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $searchEntry)
+//            .searchable(text: $searchEntry)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        isFilterSheetPresented.toggle()
-                    } label: {
-                        Image(systemName: "line.3.horizontal.decrease.circle")
-                    }
-
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
-                        Button("選課公告") {
-                            currentSubsheetView = .announcements
+                        Section {
+                            Button {
+                                currentSubsheetView = .announcements
+                            } label: {
+                                Label("選課公告", systemImage: "megaphone")
+                            }
+                            Button {
+                                currentSubsheetView = .events
+                            } label: {
+                                Label("選課時間", systemImage: "calendar")
+                            }
                         }
-                        Button("選課時間") {
-                            currentSubsheetView = .events
+                        Section {
+                            Button {
+                                currentSubsheetView = .studentInfo
+                            } label: {
+                                Label("個人資訊", systemImage: "person.text.rectangle")
+                            }
+                            Button {
+                                currentSubsheetView = .history
+                            } label: {
+                                Label("選課紀錄", systemImage: "clock")
+                            }
+                            Button{
+                                currentSubsheetView = .courseList
+                            } label: {
+                                Label("課程清單", systemImage: "list.bullet.rectangle.portrait")
+                            }
                         }
-                        Button("個人資訊") {
-                            currentSubsheetView = .studentInfo
-                        }
-                        Button("選課紀錄") {
-                            currentSubsheetView = .history
-                        }
-                        Button("離開") {
-                            // Dismiss current fullscreen cover
-                            dismiss()
-                            // Dismiss root navigation
-                            rootDismiss()
+                        Section {
+                            Button("離開") {
+                                // Dismiss current fullscreen cover
+                                dismiss()
+                                // Dismiss root navigation
+                                rootDismiss()
+                            }
                         }
                     } label: {
                         Image(systemName: "ellipsis.circle")
                     }
                 }
-                ToolbarItem(placement: .bottomBar) {
-                    Button("課程清單") {
-                        currentSubsheetView = .courseList
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Section {
+                            Menu("顯示方式選項") {
+                                Section("分類方式：") {
+                                    Button("課程名稱") {
+                                        
+                                    }
+                                    Button("開課代碼") {
+                                        
+                                    }
+                                }
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "list.bullet")
                     }
                 }
             }
@@ -156,10 +186,6 @@ struct ElectionView: View {
                     .presentationDetents([.large])
             }
         }
-        .sheet(isPresented: $isFilterSheetPresented) {
-            Text("Filters")
-                .presentationDetents([.medium])
-        }
         .onAppear {
             applicationParameters.hideRootTabbar = true
             currentSession.requestElection(method: .ann_get)
@@ -178,6 +204,10 @@ struct ElectionView: View {
             isSubSheetPresented = (newValue != .none)
         }
         // Sync end
+        .onReceive(NotificationCenter.default.publisher(for: .searchResultDidUpdate)) { notification in
+            guard let response = notification.object as? Definitions.ElectionDataStructures.CourseSearchRequestResponse, let courseData = response.courseData else { return }
+            searchResult = courseData
+        }
     }
 }
 
@@ -201,6 +231,7 @@ struct ElectionView_Previews: PreviewProvider {
     @Environment(\.dismiss) static var dismiss
     static var previews: some View {
         ElectionView(rootDismiss: dismiss)
+            .environmentObject(ApplicationParameters())
             .environmentObject(CurrentSession())
             .previewDisplayName("Election View")
         ElectionViewDev()

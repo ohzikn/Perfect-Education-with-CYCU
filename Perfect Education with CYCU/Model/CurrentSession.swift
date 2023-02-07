@@ -64,11 +64,11 @@ class CurrentSession: ObservableObject {
     }
     @Published var workStudyInformation: Definitions.WorkStudyInformation?
     @Published var creditsInformation: Definitions.CreditsInformation?
-    @Published var electionInformation_stageControl: Definitions.ElectionInformation.StageControl?
-    @Published var electionInformation_studentBaseInformation: Definitions.ElectionInformation.StudentBaseInformation?
-    @Published var electionInformation_studentInformation: Definitions.ElectionInformation.StudentInformation?
-    @Published var electionInformation_announcement: Definitions.ElectionInformation.Announcement?
-    @Published var electionInformation_history: Definitions.ElectionInformation.History?
+    @Published var electionInformation_stageControl: Definitions.ElectionDataStructures.StageControl?
+    @Published var electionInformation_studentBaseInformation: Definitions.ElectionDataStructures.StudentBaseInformation?
+    @Published var electionInformation_studentInformation: Definitions.ElectionDataStructures.StudentInformation?
+    @Published var electionInformation_announcement: Definitions.ElectionDataStructures.Announcement?
+    @Published var electionInformation_history: Definitions.ElectionDataStructures.History?
     // MARK: User session related data end
     
     func requestLogin(username: String, password: String) {
@@ -116,8 +116,8 @@ class CurrentSession: ObservableObject {
         }
     }
     
-    func requestWorkStudy(skipIfDataExists: Bool = false) {
-        guard workStudyInformation == nil || !skipIfDataExists else { return }
+    func requestWorkStudy() {
+        guard workStudyInformation == nil else { return }
         Task {
             do {
                 let data = try await requestDataQuery(for: .workStudy)
@@ -128,8 +128,8 @@ class CurrentSession: ObservableObject {
         }
     }
     
-    func requestCredits(skipIfDataExists: Bool = false) {
-        guard workStudyInformation == nil || !skipIfDataExists else { return }
+    func requestCredits() {
+        guard workStudyInformation == nil else { return }
         Task {
             do {
                 let data = try await requestDataQuery(for: .credits)
@@ -140,8 +140,47 @@ class CurrentSession: ObservableObject {
         }
     }
     
-    func requestElection(skipIfDataExists: Bool = false, method: Definitions.ElectionCommands) {
-        guard workStudyInformation == nil || !skipIfDataExists else { return }
+    // Fixed election request: Definitions.ElectionCommands = .course_get
+    func requestElection(filterQuery: Definitions.ElectionDataStructures.CourseSearchRequestQuery) {
+        guard workStudyInformation == nil else { return }
+        
+        let method: Definitions.ElectionCommands = .course_get
+        print("executing command (\(method.rawValue)).")
+        
+        Task {
+            do {
+                // Initialize variables
+                var data: Data?
+                
+                // Send query request
+                struct CourseRequestQuery: RequestQueryBase, Codable {
+                    var APP_AUTH_token: String?
+                    var filters: Definitions.ElectionDataStructures.CourseSearchRequestQuery
+                    var filter_type: Int = 0
+                }
+                data = try await requestDataQuery(for: .election, using: method.rawValue, query: CourseRequestQuery(filters: filterQuery))
+                
+                // Escape if data do not exist
+                guard let data else { return }
+                
+                // Recieve and decode response
+                let responseString = String(data: data, encoding: .utf8)
+                
+                let response = try JSONDecoder().decode(Definitions.ElectionDataStructures.CourseSearchRequestResponse.self, from: data)
+                
+                // Broadcast result once recieved
+                NotificationCenter.default.post(name: .searchResultDidUpdate, object: response)
+                
+//                print(response)
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
+    // Other election requests
+    func requestElection(method: Definitions.ElectionCommands) {
+        guard workStudyInformation == nil else { return }
         
         // Return unimplemented commands
         switch method {
@@ -177,18 +216,20 @@ class CurrentSession: ObservableObject {
                 // Recieve and decode response referring by method type
                 switch method {
                 case .stage_control_get:
-                    electionInformation_stageControl = try JSONDecoder().decode(Definitions.ElectionInformation.StageControl.self, from: data)
+                    electionInformation_stageControl = try JSONDecoder().decode(Definitions.ElectionDataStructures.StageControl.self, from: data)
                 case .st_base_info:
-                    electionInformation_studentBaseInformation = try JSONDecoder().decode(Definitions.ElectionInformation.StudentBaseInformation.self, from: data)
+                    electionInformation_studentBaseInformation = try JSONDecoder().decode(Definitions.ElectionDataStructures.StudentBaseInformation.self, from: data)
                 case .st_info_get:
-                    electionInformation_studentInformation = try JSONDecoder().decode(Definitions.ElectionInformation.StudentInformation.self, from: data)
+                    electionInformation_studentInformation = try JSONDecoder().decode(Definitions.ElectionDataStructures.StudentInformation.self, from: data)
                 case .ann_get:
-                    electionInformation_announcement = try JSONDecoder().decode(Definitions.ElectionInformation.Announcement.self, from: data)
+                    electionInformation_announcement = try JSONDecoder().decode(Definitions.ElectionDataStructures.Announcement.self, from: data)
                 case .st_record:
-                    electionInformation_history = try JSONDecoder().decode(Definitions.ElectionInformation.History.self, from: data)
+                    electionInformation_history = try JSONDecoder().decode(Definitions.ElectionDataStructures.History.self, from: data)
                 case .track_get:
                     // Deprecated
 //                    electionInformation_trackingList = try JSONDecoder().decode(Definitions.ElectionInformation.TrackingList.self, from: data)
+                    break
+                case .course_get:
                     break
                 default:
                     break

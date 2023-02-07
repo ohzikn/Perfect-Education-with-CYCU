@@ -1,159 +1,16 @@
 //
-//  Election.swift
+//  ElectionDataStructures.swift
 //  Perfect Education with CYCU
 //
-//  Created by George on 2023/1/19.
+//  Created by 范喬智 on 2023/2/7.
 //
 
 import Foundation
 
 extension Definitions {
-    // MARK: Commands
-    enum ElectionCommands: String, CaseIterable {
-        case st_info_get
-        case stage_control_get
-        case st_base_info
-        case track_get
-        case st_record
-        case ann_get
-        case course_get
-        case track_insert
-        case track_del
-        case take_course_and_register_insert
-        case take_course_and_register_del
-        case login_sys_upd
-        case volunteer_set
-        case col_checkbox_upd
-    }
     
-    // MARK: Definitions
-    struct ElectionDefinitions {
-        enum PositionRoles: Int, CaseIterable {
-            case freshmen = 1
-            case currentStudents = 0
-            // Divider
-            case assistant = 41
-            case teachingAssistant = 42
-            case freshman = 11
-            case sophomore = 12
-            case junior = 13
-            case senior = 14
-            case firstYearGraduateStudent = 21
-            case secondYearGraduateStudentAndAbove = 22
-            case exchangeStudents = 31
-            
-            func getName(inChinese: Bool = false) -> String {
-                switch self {
-                case .freshmen:
-                    return inChinese ? "新生" : "Freshmen"
-                case .currentStudents:
-                    return inChinese ? "舊生" : "Current Students"
-                case .assistant:
-                    return inChinese ? "助理" : "Assistant"
-                case .teachingAssistant:
-                    return inChinese ? "助教" : "Teaching Assistant"
-                case .freshman:
-                    return inChinese ? "大學部一年級" : "Freshman"
-                case .sophomore:
-                    return inChinese ? "大學部二年級" : "Sophomore"
-                case .junior:
-                    return inChinese ? "大學部三年級" : "Junior"
-                case .senior:
-                    return inChinese ? "大學部四年級(含)以上" : "Senior"
-                case .firstYearGraduateStudent:
-                    return inChinese ? "研究所一年級" : "First-year graduate student"
-                case .secondYearGraduateStudentAndAbove:
-                    return inChinese ? "研究所二年級(含)以上" : "Second-year graduate student or above"
-                case .exchangeStudents:
-                    return inChinese ? "交換生" : "Exchange Students"
-                }
-            }
-        }
-        
-        enum CourseRoles: Int, CaseIterable {
-            case departmentalProfessional = 11
-            case pe_physicalEducation_militaryTraining = 21
-            case basicknowledgecourses = 31
-            
-            func getName(inChinese: Bool = false) -> String {
-                switch self {
-                case .departmentalProfessional:
-                    return inChinese ? "學系專業課程" : "Departmental Courses"
-                case .pe_physicalEducation_militaryTraining:
-                    return inChinese ? "通識體育軍訓課程" : "PE/Physical/Military Courses"
-                case .basicknowledgecourses:
-                    return inChinese ? "基本知能課程" : "Basic Knowledge Courses"
-                }
-            }
-        }
-        
-        enum Actions: Int, CaseIterable {
-            case election_add = 1
-            case election_drop = 2
-            case election_registration = 3
-            
-            func getName(inChinese: Bool = false) -> String {
-                switch(self) {
-                case .election_add:
-                    return inChinese ? "加選" : "Add"
-                case .election_drop:
-                    return inChinese ? "退選" : "Drop"
-                case .election_registration:
-                    return inChinese ? "登記" : "Register"
-                }
-            }
-        }
-        
-        enum Events: Int, CaseIterable {
-            case firstStageRegistration = 11
-            case secondStageRegistration = 12
-            case firstStageAddDrop = 21
-            case secondStageAddDrop = 22
-            case thirdStageAddDrop = 23
-            case screeningSettings = 31
-            
-            func getName(inChinese: Bool = false) -> String {
-                switch(self) {
-                case .firstStageRegistration:
-                    return inChinese ? "第一階段登記" : "First stage registration"
-                case .secondStageRegistration:
-                    return inChinese ? "第二階段登記" : "Second stage registration"
-                case .firstStageAddDrop:
-                    return inChinese ? "第一階段選課" : "First stage add/drop"
-                case .secondStageAddDrop:
-                    return inChinese ? "第二階段選課" : "Second stage add/drop"
-                case .thirdStageAddDrop:
-                    return inChinese ? "第三階段選課" : "Third stage add/drop"
-                case .screeningSettings:
-                    return inChinese ? "篩選設定" : "Screening settings"
-                }
-            }
-        }
-        
-        enum AnnouncementRoles: Int, CaseIterable {
-            case guide = 1
-            case onlineForm = 2
-            case auxiliaryAndDoubleMajor = 3
-            case courseAnnouncements = 4
-            
-            func getName(inChinese: Bool) -> String {
-                switch self {
-                case .guide:
-                    return inChinese ? "操作說明" : "Guide"
-                case .onlineForm:
-                    return inChinese ? "線上表單選課" : "Online form election"
-                case .auxiliaryAndDoubleMajor:
-                    return inChinese ? "輔系雙主修預研生" : "Auxiliary and Double majoring"
-                case .courseAnnouncements:
-                    return inChinese ? "課程公告" : "Course Announcement"
-                }
-            }
-        }
-        
-    }
-    
-    // MARK: Data structure
-    struct ElectionInformation {
+    // MARK: Data Structures
+    struct ElectionDataStructures {
         // MARK: Statics
         struct StageControl: Codable {
             let dataSource, cacheKeySource: String?
@@ -431,33 +288,79 @@ extension Definitions {
         // MARK: Shared
         struct CourseInformation: Codable, Identifiable {
             let id = UUID()
-            let typeBit, deptName, opTime123, opRmName1, cursCode, betBln, cname, actionBits, betDept, opCode, distance, deptCode, opStdy, opType, dataToken, opTime1, opCredit, autoset, opQuality, teacher, crossName, memo1, crossType, opRmName2, opTime2, nameStatus, mgDeptCode, opRmName123, updateTime, opStdyDept: String?
-            let betBlnR, betBlnMdie, opManSum, openMan, betBlnMd, remain, lastRegMan, nonStop, betBlnB, man, opMan, ord, snStatus, ordAppend, dropAutoset: Int?
+            let deptName, opRmName1, cursCode, cname, opCode, deptCode, opStdy, opType, dataToken, opTime1, opQuality, teacher, crossName, memo1, opRmName2, opTime2, nameStatus, mgDeptCode, opStdyDept, cursLang, divCode: String?
+            let beginTf: Bool?
             
+            // TODO: Possible decoder implement needed
+            let actionBits: String?
+            let crossType: String?
+            
+            @DecodeToDate var updateTime: Date?
+            
+            @DecodeToStringAndRemoveTrailingSpaces var opRmName123: String?
+            @DecodeToStringAndRemoveTrailingSpaces var opTime123: String?
+            
+            @DecodeToInt var allEnglish: Int?
+            @DecodeToInt var autoset: Int?
+            @DecodeToInt var betBln: Int?
+            @DecodeToInt var betBlnB: Int?
+            @DecodeToInt var betBlnMd: Int?
+            @DecodeToInt var betBlnMdie: Int?
+            @DecodeToInt var betBlnR: Int?
+            @DecodeToInt var betDept: Int?
+            @DecodeToInt var clsCap1: Int?
+            @DecodeToInt var clsCap2: Int?
+            @DecodeToInt var clsCap3: Int?
+            @DecodeToInt var distance: Int?
+            @DecodeToInt var dpDistance: Int?
+            @DecodeToInt var dropAutoset: Int?
+            @DecodeToInt var lastRegMan: Int?
+            @DecodeToInt var man: Int?
+            @DecodeToInt var moocs: Int?
+            @DecodeToInt var nonStop: Int?
+            @DecodeToInt var opCredit: Int?
+            @DecodeToInt var openMan: Int?
+            @DecodeToInt var opMan: Int?
+            @DecodeToInt var opManSum: Int?
+            @DecodeToInt var ord: Int?
+            @DecodeToInt var ordAppend: Int?
+            @DecodeToInt var remain: Int?
             @DecodeToInt var snCourseType: Int?
+            @DecodeToInt var snStatus: Int?
+            @DecodeToInt var typeBit: Int?
+            @DecodeToInt var upperMan: Int?
             
             private enum CodingKeys: String, CodingKey {
                 case actionBits = "ACTION_BITS"
+                case allEnglish = "ALL_ENGLISH"
                 case autoset = "AUTOSET"
+                case beginTf = "begin_TF"
                 case betBln = "BET_BLN"
                 case betBlnB = "BET_BLN_B"
                 case betBlnMd = "BET_BLN_MD"
                 case betBlnMdie = "BET_BLN_MDIE"
                 case betBlnR = "BET_BLN_R"
                 case betDept = "BET_DEPT"
+                case clsCap1 = "CLS_CAP_1"
+                case clsCap2 = "CLS_CAP_2"
+                case clsCap3 = "CLS_CAP_3"
                 case cname = "CNAME"
                 case crossName = "CROSS_NAME"
                 case crossType = "CROSS_TYPE"
                 case cursCode = "CURS_CODE"
+                case cursLang = "CURS_LANG"
                 case dataToken = "DATA_Token"
                 case deptCode = "DEPT_CODE"
                 case deptName = "DEPT_NAME"
                 case distance = "DISTANCE"
+                case divCode = "DIV_CODE"
+                case dpDistance = "DP_DISTANCE"
                 case dropAutoset = "DROP_AUTOSET"
                 case lastRegMan = "LAST_REG_MAN"
                 case man = "MAN"
                 case memo1 = "MEMO1"
                 case mgDeptCode = "MG_DEPT_CODE"
+                case moocs = "MOOCS"
                 case nameStatus = "NAME_STATUS"
                 case nonStop = "NON_STOP"
                 case opCode = "OP_CODE"
@@ -483,8 +386,93 @@ extension Definitions {
                 case teacher = "TEACHER"
                 case typeBit = "TYPE_BIT"
                 case updateTime = "UPDATE_TIME"
+                case upperMan = "UPPER_MAN"
             }
         }
 
+        // MARK: Course Search Request Query Structure (Defined with non-optional values)
+        struct CourseSearchRequestQuery: Codable {
+            let opCode, cname, crossCode, opStdy, teacher, nonStop, betDept, betBln, betBlnMdie, crossPbl, distance, deptDiv: WrappedString
+            let deptCode, general, opType, opTime123: WrappedStringArray
+            let opCredit, man, opManSum, remain, regMan: WrappedCompared
+            let emiCourse: WrappedBool
+            
+            private enum CodingKeys: String, CodingKey {
+                case deptCode = "DEPT_CODE" // 開課學系
+                case opCode = "OP_CODE" // 課程代碼
+                case cname = "CNAME" // 課程名稱
+                case general = "GENERAL" // 課程類別
+                case opType = "OP_TYPE" // 通識類別
+                case crossCode = "CROSS_CODE" // 跨就微學程
+                case opStdy = "OP_STDY" // 必/選修
+                case opCredit = "OP_CREDIT" // 學分數
+                case teacher = "TEACHER" // 授課教師
+                case opTime123 = "OP_TIME_123" // 上課時間
+                case man = "MAN" // 已選人數(含自動加選)
+                case opManSum = "OpManSum" // 選課名額
+                case remain = "REMAIN" // 篩選餘額
+                case regMan = "REG_MAN" // 現階段登記人數
+                case emiCourse = "EMI_COURSE" // 全英語課程
+                case nonStop = "NON_STOP" // 停修
+                case betDept = "BET_DEPT" // 跨系
+                case betBln = "BET_BLN" // 跨部
+                case betBlnMdie = "BET_BLN_MDIE" // 輔雙跨就
+                case crossPbl = "CROSS_PBL" // PBL課程
+                case distance = "DISTANCE" // 遠距教學課程
+                case deptDiv = "DEPT_DIV" // 部別
+            }
+            
+            struct WrappedBool: Codable {
+                var value: Bool = false
+            }
+            
+            struct WrappedString: Codable {
+                var value: String = ""
+            }
+            
+            struct WrappedStringArray: Codable {
+                var value: [String] = []
+            }
+            
+            struct WrappedCompared: Codable {
+                var value: Int? = nil
+                var value2: Int? = nil // Used when between is selected
+                var compare: CompareSymbols = .equal
+                
+                // Custom encoder to convert integer to string
+                func encode(to encoder: Encoder) throws {
+                    var container = encoder.container(keyedBy: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.self)
+                    try container.encode(self.value != nil ? String(self.value.unsafelyUnwrapped) : "", forKey: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.value)
+                    try container.encode(self.value2 != nil ? String(self.value2.unsafelyUnwrapped) : "", forKey: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.value2)
+                    try container.encode(self.compare.rawValue, forKey: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.compare)
+                }
+            }
+            
+            enum CompareSymbols: Int, Codable {
+                case none = 0
+                case smallerThan = 1
+                case equal = 2
+                case biggerThan = 3
+                case smallerOrEqualThan = 4
+                case biggerOrEqualThan = 5
+                case between = 6
+            }
+        }
+        
+        // Response structure
+        struct CourseSearchRequestResponse: Codable {
+            let logData: Logdata?
+            let courseData: [CourseInformation]?
+            
+            private enum CodingKeys: String, CodingKey {
+                case logData = "CacheLogData"
+                case courseData = "course_get"
+            }
+            
+            struct Logdata: Codable {
+                let applicationCount: Int?
+                let dbCount: Int?
+            }
+        }
     }
 }

@@ -17,7 +17,7 @@ struct ElectionCourseListView: View {
         case registrationList = "登記清單"
         case watingList = "遞補清單"
         
-        func getCourseList(_ studentInformation: Definitions.ElectionInformation.StudentInformation) -> [Definitions.ElectionInformation.CourseInformation]? {
+        func getCourseList(_ studentInformation: Definitions.ElectionDataStructures.StudentInformation) -> [Definitions.ElectionDataStructures.CourseInformation]? {
             switch self {
             case .takingList:
                 return studentInformation.takeCourseList
@@ -32,7 +32,7 @@ struct ElectionCourseListView: View {
     }
     
     @State private var selectedCourseListType: CourseListType = .takingList
-    @State var presentedCourseList: [Definitions.ElectionInformation.CourseInformation]?
+    @State var presentedCourseList: [Definitions.ElectionDataStructures.CourseInformation]?
     
     var body: some View {
         NavigationStack {

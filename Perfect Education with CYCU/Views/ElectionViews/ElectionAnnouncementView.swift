@@ -43,7 +43,7 @@ struct ElectionAnnouncementView: View {
                     Button("完成") { dismiss() }
                 }
             }
-            .navigationDestination(for: Definitions.ElectionInformation.Announcement.Billboard.self) { value in
+            .navigationDestination(for: Definitions.ElectionDataStructures.Announcement.Billboard.self) { value in
                 ElectionAnnouncementDetailView(parentDismiss: dismiss, billboard: value)
             }
         }
@@ -52,7 +52,7 @@ struct ElectionAnnouncementView: View {
 
 struct ElectionAnnouncementDetailView: View {
     let parentDismiss: DismissAction
-    let billboard: Definitions.ElectionInformation.Announcement.Billboard
+    let billboard: Definitions.ElectionDataStructures.Announcement.Billboard
     
     var body: some View {
         VStack {

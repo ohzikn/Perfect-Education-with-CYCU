@@ -36,7 +36,7 @@ struct ElectionHistoryView: View {
             }
             .navigationTitle("選課紀錄")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: Definitions.ElectionInformation.History.HistoryItem.self) { value in
+            .navigationDestination(for: Definitions.ElectionDataStructures.History.HistoryItem.self) { value in
                 List {
                     Group {
                         LabeledContent("課程名稱", value: value.cname ?? "-")
