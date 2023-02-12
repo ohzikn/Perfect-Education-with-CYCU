@@ -10,6 +10,7 @@
 		5E025606296E1834004E0370 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E025605296E1834004E0370 /* LoginView.swift */; };
 		5E02560A296E2F92004E0370 /* General.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E025609296E2F92004E0370 /* General.swift */; };
 		5E02560C296E35DD004E0370 /* CurrentSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E02560B296E35DD004E0370 /* CurrentSession.swift */; };
+		5E2321F92999991300565D59 /* TempView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2321F82999991300565D59 /* TempView.swift */; };
 		5E2AC57A296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC579296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift */; };
 		5E2AC57C296E16AE00722D02 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC57B296E16AE00722D02 /* ContentView.swift */; };
 		5E2AC57E296E16AF00722D02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E2AC57D296E16AF00722D02 /* Assets.xcassets */; };
@@ -67,6 +68,7 @@
 		5E025605296E1834004E0370 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		5E025609296E2F92004E0370 /* General.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = General.swift; sourceTree = "<group>"; };
 		5E02560B296E35DD004E0370 /* CurrentSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSession.swift; sourceTree = "<group>"; };
+		5E2321F82999991300565D59 /* TempView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempView.swift; sourceTree = "<group>"; };
 		5E2AC576296E16AE00722D02 /* Perfect Education with CYCU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Perfect Education with CYCU.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E2AC579296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Perfect_Education_with_CYCUApp.swift; sourceTree = "<group>"; };
 		5E2AC57B296E16AE00722D02 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 				5E025608296E2F75004E0370 /* Model */,
 				5E2AC57D296E16AF00722D02 /* Assets.xcassets */,
 				5E2AC57F296E16AF00722D02 /* Preview Content */,
+				5E2321F82999991300565D59 /* TempView.swift */,
 			);
 			path = "Perfect Education with CYCU";
 			sourceTree = "<group>";
@@ -412,6 +415,7 @@
 				5E3C93FE29711C190036B342 /* ElectionRootView.swift in Sources */,
 				5EFB305029986CBB006F8D9E /* AdvancedSearchView.swift in Sources */,
 				5E02560C296E35DD004E0370 /* CurrentSession.swift in Sources */,
+				5E2321F92999991300565D59 /* TempView.swift in Sources */,
 				5EC73A422990722200E66CB6 /* ElectionStudentBaseInformationView.swift in Sources */,
 				5E68CF9D2978FB83008AF377 /* ElectionDefinitions.swift in Sources */,
 				5E025606296E1834004E0370 /* LoginView.swift in Sources */,

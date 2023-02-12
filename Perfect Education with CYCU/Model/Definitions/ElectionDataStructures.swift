@@ -169,7 +169,8 @@ extension Definitions {
                     case crossIdentifiers = "cross_id_get"
                 }
                 
-                struct CrossIdentifier: Codable {
+                struct CrossIdentifier: Codable, Identifiable {
+                    let id = UUID()
                     let crossName: String?
                     let crossCode: String?
                     
@@ -453,15 +454,15 @@ extension Definitions {
             }
             
             struct WrappedCompared: Codable {
-                var value: Int? = nil
-                var value2: Int? = nil // Used when between is selected
+                var value: Int = 0
+                var value2: Int = 0 // Used when between is selected
                 var compare: CompareSymbols = .equal
                 
                 // Custom encoder to convert integer to string
                 func encode(to encoder: Encoder) throws {
                     var container = encoder.container(keyedBy: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.self)
-                    try container.encode(self.value != nil ? String(self.value.unsafelyUnwrapped) : "", forKey: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.value)
-                    try container.encode(self.value2 != nil ? String(self.value2.unsafelyUnwrapped) : "", forKey: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.value2)
+                    try container.encode(compare != .none ? String(self.value) : "", forKey: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.value)
+                    try container.encode(compare == .between ? String(self.value2) : "", forKey: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.value2)
                     try container.encode(self.compare.rawValue, forKey: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.compare)
                 }
             }

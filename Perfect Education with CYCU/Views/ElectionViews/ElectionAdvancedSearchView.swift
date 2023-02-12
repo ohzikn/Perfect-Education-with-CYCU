@@ -11,10 +11,14 @@ struct ElectionAdvancedSearchView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var currentSession: CurrentSession
     // MARK: Text fields
-    @State var selectedDepartmentIds: [String] = []
-    @State var selectedDepartmentGroupId: String?
-    @State var selectedCrossId: String?
-    @State var selectedStudyTypeId: String?
+    @State var selectedDepartmentIds = Set<String>()
+    @State var selectedOpIds = Set<String>()
+    @State var selectedGeneralOpIds = Set<String>()
+    
+    
+    @State var selectedDepartmentGroupId: String = ""
+    @State var selectedCrossId: UUID?
+    @State var selectedStudyTypeId: String = ""
     @State var emiCourseToggle: Bool = false
     
     @State var opCode_Entry = ""
@@ -22,24 +26,24 @@ struct ElectionAdvancedSearchView: View {
     @State var teacher_Entry = ""
     
     @State var selectedCreditsOperator: Definitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
-    @State var selectedCreditsValue1: Int = -1
-    @State var selectedCreditsValue2: Int = -1
+    @State var selectedCreditsValue1: Int = 0
+    @State var selectedCreditsValue2: Int = 0
     
     @State var selectedManCurrentOperator: Definitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
-    @State var selectedManCurrentValue1: Int = -1
-    @State var selectedManCurrentValue2: Int = -1
+    @State var selectedManCurrentValue1: Int = 0
+    @State var selectedManCurrentValue2: Int = 0
     
     @State var selectedManSumOperator: Definitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
-    @State var selectedManSumValue1: Int = -1
-    @State var selectedManSumValue2: Int = -1
+    @State var selectedManSumValue1: Int = 0
+    @State var selectedManSumValue2: Int = 0
     
     @State var selectedManRemainOperator: Definitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
-    @State var selectedManRemainValue1: Int = -1
-    @State var selectedManRemainValue2: Int = -1
+    @State var selectedManRemainValue1: Int = 0
+    @State var selectedManRemainValue2: Int = 0
     
     @State var selectedManRegisterOperator: Definitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
-    @State var selectedManRegisterValue1: Int = -1
-    @State var selectedManRegisterValue2: Int = -1
+    @State var selectedManRegisterValue1: Int = 0
+    @State var selectedManRegisterValue2: Int = 0
     
     @State var selectedNonStopValue: Int = 0
     @State var selectedBetDeptValue: Int = 0
@@ -48,13 +52,26 @@ struct ElectionAdvancedSearchView: View {
     @State var selectedCrossPblValue: Int = 0
     @State var selectedDistanceCourseValue: Int = 0
     
+    private func getCrossInfo(_ id: UUID?) -> Definitions.ElectionDataStructures.StudentInformation.CrossType.CrossIdentifier? {
+        var result: Definitions.ElectionDataStructures.StudentInformation.CrossType.CrossIdentifier?
+        
+        if let id, let definitions = currentSession.electionInformation_studentInformation?.crossTypeDefinitions {
+            definitions.forEach { crossType in
+                if let target = crossType.crossIdentifiers?.first(where: { $0.id == id }) {
+                    result = target
+                }
+            }
+        }
+        return result
+    }
+    
     var body: some View {
         NavigationStack {
             List {
                 if let studentInfo = currentSession.electionInformation_studentInformation {
                     Group {
                         NavigationLink {
-                            List {
+                            List(selection: $selectedDepartmentIds) {
                                 if let definitions = studentInfo.departmentDefinitions {
                                     let groupedDefinitions = Dictionary(grouping: definitions) { $0.codName }
                                     let sortedDefinitions = groupedDefinitions.keys.sorted(by: { $0?.localizedStandardCompare($1 ?? "") == .orderedAscending })
@@ -62,27 +79,30 @@ struct ElectionAdvancedSearchView: View {
                                         Section(groupItem ?? "-") {
                                             ForEach(groupedDefinitions[groupItem] ?? []) { item in
                                                 Text(item.adminDeptName ?? "-")
-                                                    .tag(item.adminCode)
+                                                    .tag(item.adminCode ?? "")
                                             }
                                         }
                                     }
                                 }
                             }
+                            .navigationTitle("開課學系")
+                            .navigationBarTitleDisplayMode(.inline)
+                            .environment(\.editMode, .constant(.active))
                         } label: {
                             HStack {
                                 Text("開課學系")
                                 Spacer()
-                                Text("Overview")
+                                Text(selectedDepartmentIds.count != 0 ? "\(selectedDepartmentIds.count)個項目" : "不指定")
                                     .foregroundColor(.secondary)
                             }
                         }
                         Picker("部別", selection: $selectedDepartmentGroupId) {
                             if let definitions = studentInfo.departmentGroupDefinitions {
                                 Text("不指定")
-                                    .tag("" as String?)
+                                    .tag("")
                                 ForEach(definitions) { item in
                                     Text(item.name ?? "-")
-                                        .tag(item.deptDiv)
+                                        .tag(item.deptDiv ?? "")
                                 }
                             }
                         }
@@ -95,52 +115,85 @@ struct ElectionAdvancedSearchView: View {
                                 .multilineTextAlignment(.trailing)
                         }
                         NavigationLink {
-                            if let definitions = studentInfo.opDefinitions {
-                                List(definitions) { item in
-                                    Text(item.name ?? "-")
-                                        .tag(item.name)
+                            List(selection: $selectedOpIds) {
+                                if let definitions = studentInfo.opDefinitions {
+                                    ForEach(definitions) { item in
+                                        Text(item.name ?? "-")
+                                            .tag(item.name ?? "")
+                                    }
                                 }
                             }
+                            .navigationTitle("通識類別")
+                            .navigationBarTitleDisplayMode(.inline)
+                            .environment(\.editMode, .constant(.active))
                         } label: {
                             HStack {
                                 Text("通識類別")
                                 Spacer()
-                                Text("Overview")
+                                Text(selectedOpIds.count != 0 ? "\(selectedOpIds.count)個項目" : "不指定")
                                     .foregroundColor(.secondary)
                             }
                         }
                         NavigationLink {
-                            if let definitions = studentInfo.generalOpDefinitions {
-                                List(definitions) { item in
-                                    Text(item.name ?? "-")
-                                        .tag(item.name)
+                            List(selection: $selectedGeneralOpIds) {
+                                if let definitions = studentInfo.generalOpDefinitions {
+                                    ForEach(definitions) { item in
+                                        Text(item.name ?? "-")
+                                            .tag(item.name ?? "")
+                                    }
                                 }
                             }
+                            .navigationTitle("課程類別")
+                            .navigationBarTitleDisplayMode(.inline)
+                            .environment(\.editMode, .constant(.active))
                         } label: {
                             HStack {
                                 Text("課程類別")
                                 Spacer()
-                                Text("Overview")
+                                Text(selectedGeneralOpIds.count != 0 ? "\(selectedGeneralOpIds.count)個項目" : "不指定")
                                     .foregroundColor(.secondary)
                             }
                         }
-                        Picker("跨就微學程", selection: $selectedCrossId) {
-                            if let definitions = studentInfo.crossTypeDefinitions {
-                                Text("不指定")
-                                    .tag("" as String?)
-                                ForEach(definitions) { item in
-                                    Text(item.name ?? "-")
-                                        .tag(item.name)
+                        NavigationLink {
+                            VStack {
+                                if let definitions = studentInfo.crossTypeDefinitions {
+                                    List(selection: $selectedCrossId) {
+                                        Section {
+                                            Text("不指定")
+                                                .tag(nil as UUID?)
+                                        }
+                                        ForEach(definitions) { groupItem in
+                                            Section(groupItem.name ?? "-") {
+                                                if let items = groupItem.crossIdentifiers {
+                                                    ForEach(items) { item in
+                                                        Text(item.crossName ?? "-")
+                                                            .tag(item.id as UUID?)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
+                            }
+                            .navigationTitle("跨就微學程")
+                            .navigationBarTitleDisplayMode(.inline)
+                            .environment(\.editMode, .constant(.active))
+                        } label: {
+                            HStack {
+                                Text("跨就微學程")
+                                Spacer()
+                                Text(getCrossInfo(selectedCrossId)?.crossName ?? "不指定")
+                                    .lineLimit(1)
+                                    .foregroundColor(.secondary)
                             }
                         }
                         Picker("必/選修", selection: $selectedStudyTypeId) {
                             if let definitions = studentInfo.opStudyTypeDefinitions {
                                 Text("不指定")
-                                    .tag("" as String?)
+                                    .tag("")
                                 ForEach(definitions) { item in
                                     Text(item.name ?? "-")
-                                        .tag(item.name)
+                                        .tag(item.name ?? "")
                                 }
                             }
                         }
@@ -227,6 +280,29 @@ struct ElectionAdvancedSearchView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("搜尋") {
+                        currentSession.requestElection(
+                            filterQuery: .init(opCode: .init(value: opCode_Entry),
+                                               cname: .init(value: cName_Entry),
+                                               crossCode: .init(value: getCrossInfo(selectedCrossId)?.crossCode ?? ""),
+                                               opStdy: .init(value: selectedStudyTypeId),
+                                               teacher: .init(value: teacher_Entry),
+                                               nonStop: .init(value: selectedNonStopValue == 0 ? "" : String(selectedNonStopValue)),
+                                               betDept: .init(value: selectedBetDeptValue == 0 ? "" : String(selectedBetDeptValue)),
+                                               betBln: .init(value: selectedBetBlnValue == 0 ? "" : String(selectedBetBlnValue)),
+                                               betBlnMdie: .init(value: selectedBetBlnMdieValue == 0 ? "" : String(selectedBetBlnMdieValue)),
+                                               crossPbl: .init(value: selectedCrossPblValue == 0 ? "" : String(selectedCrossPblValue)),
+                                               distance: .init(value: selectedDistanceCourseValue == 0 ? "" : String(selectedDistanceCourseValue)),
+                                               deptDiv: .init(value: selectedDepartmentGroupId),
+                                               deptCode: .init(value: Array(selectedDepartmentIds)),
+                                               general: .init(value: Array(selectedGeneralOpIds)),
+                                               opType: .init(value: Array(selectedOpIds)),
+                                               opTime123: .init(), // NOT IMPLEMENTED
+                                               opCredit: .init(value: selectedCreditsValue1, value2: selectedCreditsValue2, compare: selectedCreditsOperator),
+                                               man: .init(value: selectedManCurrentValue1, value2: selectedManCurrentValue2, compare: selectedManCurrentOperator),
+                                               opManSum: .init(value: selectedManSumValue1, value2: selectedManSumValue2, compare: selectedManSumOperator),
+                                               remain: .init(value: selectedManRemainValue1, value2: selectedManRemainValue2, compare: selectedManRemainOperator),
+                                               regMan: .init(value: selectedManRegisterValue1, value2: selectedManRegisterValue2, compare: selectedManRegisterOperator),
+                                               emiCourse: .init(value: emiCourseToggle)))
                         dismiss()
                     }
                 }
@@ -252,12 +328,14 @@ struct AdvancedSearchRangePickerView: View {
             }
             .pickerStyle(.segmented)
             HStack {
-                Stepper(value: $value1, in: -1...10) {
-                    Text("\(value1)")
+                if selectedOperator != .none {
+                    Stepper(value: $value1, in: 0...10) {
+                        Text("\(value1)")
+                    }
                 }
                 if selectedOperator == .between {
                     Divider()
-                    Stepper(value: $value2, in: -1...10) {
+                    Stepper(value: $value2, in: 0...10) {
                         Text("\(value2)")
                     }
                 }
