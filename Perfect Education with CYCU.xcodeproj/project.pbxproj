@@ -42,6 +42,8 @@
 		5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF1128229763A0A008A4373 /* KeychainService.swift */; };
 		5EFB304A29858731006F8D9E /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB304929858731006F8D9E /* WebView.swift */; };
 		5EFB304D29918385006F8D9E /* PropertyWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB304C29918385006F8D9E /* PropertyWrappers.swift */; };
+		5EFB305029986CBB006F8D9E /* AdvancedSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB304F29986CBB006F8D9E /* AdvancedSearchView.swift */; };
+		5EFB305229986E51006F8D9E /* CourseSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB305129986E51006F8D9E /* CourseSearchView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,6 +102,8 @@
 		5EF1128229763A0A008A4373 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		5EFB304929858731006F8D9E /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		5EFB304C29918385006F8D9E /* PropertyWrappers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyWrappers.swift; sourceTree = "<group>"; };
+		5EFB304F29986CBB006F8D9E /* AdvancedSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedSearchView.swift; sourceTree = "<group>"; };
+		5EFB305129986E51006F8D9E /* CourseSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseSearchView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +137,7 @@
 				5E4B43AE296F4287005A0215 /* SFSafariView.swift */,
 				5EFB304929858731006F8D9E /* WebView.swift */,
 				5EC73A492991C83700E66CB6 /* SearchFieldView.swift */,
+				5EFB305129986E51006F8D9E /* CourseSearchView.swift */,
 			);
 			path = UIKitRepresentables;
 			sourceTree = "<group>";
@@ -218,6 +223,7 @@
 				5EC73A3C2990718800E66CB6 /* ElectionViews */,
 				5E3C93FF29711C240036B342 /* CreditsView.swift */,
 				5E3C940129711C900036B342 /* HealthView.swift */,
+				5EFB304E29986CA4006F8D9E /* Helpers */,
 				5E025607296E2F5F004E0370 /* UIKitRepresentables */,
 			);
 			path = Views;
@@ -255,6 +261,14 @@
 				5EF1128229763A0A008A4373 /* KeychainService.swift */,
 				5E68CF952976DC3E008AF377 /* Extensions.swift */,
 				5EFB304C29918385006F8D9E /* PropertyWrappers.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		5EFB304E29986CA4006F8D9E /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				5EFB304F29986CBB006F8D9E /* AdvancedSearchView.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -396,6 +410,7 @@
 				5E02560A296E2F92004E0370 /* General.swift in Sources */,
 				5E3C940029711C240036B342 /* CreditsView.swift in Sources */,
 				5E3C93FE29711C190036B342 /* ElectionRootView.swift in Sources */,
+				5EFB305029986CBB006F8D9E /* AdvancedSearchView.swift in Sources */,
 				5E02560C296E35DD004E0370 /* CurrentSession.swift in Sources */,
 				5EC73A422990722200E66CB6 /* ElectionStudentBaseInformationView.swift in Sources */,
 				5E68CF9D2978FB83008AF377 /* ElectionDefinitions.swift in Sources */,
@@ -407,6 +422,7 @@
 				5EFB304D29918385006F8D9E /* PropertyWrappers.swift in Sources */,
 				5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */,
 				5E4B43AF296F4287005A0215 /* SFSafariView.swift in Sources */,
+				5EFB305229986E51006F8D9E /* CourseSearchView.swift in Sources */,
 				5E3C93F829710C840036B342 /* PortalServicesView.swift in Sources */,
 				5E68CF992978FAF3008AF377 /* WorkStudy.swift in Sources */,
 				5EC73A462990725500E66CB6 /* ElectionCourseListView.swift in Sources */,

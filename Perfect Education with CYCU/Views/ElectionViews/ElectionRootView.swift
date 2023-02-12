@@ -24,13 +24,13 @@ struct ElectionPlaceholderView: View {
         .sheet(isPresented: $isWelcomeSheetPresented) {
             NavigationStack {
                 VStack {
-                    Form {
+                    List {
                         Text("此選課功能為研究用途所開發，與中原大學沒有任何關係，中原大學不為此應用程式提供任何協助及技術支援。")
                         Text("此應用程式仍在開發階段，我們無法保證此應用程式的穩定性。")
                         Text("我們無法為此應用程式造成的任何損失負責，請留意。")
-                        
                         Text("按下同意表示你已暸解上述內容並且希望繼續前往選課功能。")
                     }
+                    .listStyle(.plain)
                 }
                 .navigationTitle("條款與約定")
                 .navigationBarTitleDisplayMode(.inline)
@@ -89,7 +89,7 @@ struct ElectionView: View {
     
     var body: some View {
         NavigationStack {
-            SearchFieldView(for: .courseQuery)
+            CourseSearchView()
             List {
                 if let searchResult {
                     ForEach(searchResult) { item in

@@ -29,6 +29,55 @@ struct ElectionCourseListView: View {
                 return studentInformation.makeUpList
             }
         }
+        
+        func getListItemView(_ courses: [Definitions.ElectionDataStructures.CourseInformation]) -> some View {
+            switch self {
+            case .takingList:
+                return {
+                    ForEach(courses) { item in
+                        Text(item.cname ?? "")
+                            .swipeActions(edge: .trailing) {
+                                Button("退選", role: .destructive) {
+                                    
+                                }
+                            }
+                    }
+                }()
+            case .trackingList:
+                return {
+                    ForEach(courses) { item in
+                        Text(item.cname ?? "")
+                            .swipeActions(edge: .trailing) {
+                                Button("刪除", role: .destructive) {
+                                    
+                                }
+                            }
+                    }
+                }()
+            case .registrationList:
+                return {
+                    ForEach(courses) { item in
+                        Text(item.cname ?? "")
+                            .swipeActions(edge: .trailing) {
+                                Button("刪除", role: .destructive) {
+                                    
+                                }
+                            }
+                    }
+                }()
+            case .watingList:
+                return {
+                    ForEach(courses) { item in
+                        Text(item.cname ?? "")
+                            .swipeActions(edge: .trailing) {
+                                Button("刪除", role: .destructive) {
+                                    
+                                }
+                            }
+                    }
+                }()
+            }
+        }
     }
     
     @State private var selectedCourseListType: CourseListType = .takingList
@@ -46,9 +95,7 @@ struct ElectionCourseListView: View {
             .padding([.horizontal])
             List {
                 if let presentedCourseList, !presentedCourseList.isEmpty {
-                    ForEach(presentedCourseList) { item in
-                        Text(item.cname ?? "")
-                    }
+                    selectedCourseListType.getListItemView(presentedCourseList)
                 } else {
                     Text("沒有項目")
                         .foregroundColor(.secondary)
