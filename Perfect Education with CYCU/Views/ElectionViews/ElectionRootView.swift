@@ -79,17 +79,20 @@ struct ElectionView: View {
         case studentInfo
         case history
         case courseList
+        
+        case searchFilter
     }
     
     @State private var currentSubsheetView: SubsheetViews = .none
     @State private var isSubSheetPresented = false
     
+    @State private var isFilterActivated: Bool = false
     @State private var searchEntry: String = ""
     @State private var searchResult: [Definitions.ElectionDataStructures.CourseInformation]?
     
     var body: some View {
         NavigationStack {
-            CourseSearchView()
+            CourseSearchFieldView(isFilterActivated: $isFilterActivated)
             List {
                 if let searchResult {
                     ForEach(searchResult) { item in
@@ -184,6 +187,10 @@ struct ElectionView: View {
             case .courseList:
                 ElectionCourseListView()
                     .presentationDetents([.large])
+            case .searchFilter:
+                ElectionAdvancedSearchView()
+                    .presentationDetents([.large])
+                    .interactiveDismissDisabled()
             }
         }
         .onAppear {
@@ -203,6 +210,9 @@ struct ElectionView: View {
         .onChange(of: currentSubsheetView) { newValue in
             isSubSheetPresented = (newValue != .none)
         }
+        .onChange(of: isFilterActivated) { newValue in
+            if newValue { currentSubsheetView = .searchFilter }
+        }
         // Sync end
         .onReceive(NotificationCenter.default.publisher(for: .searchResultDidUpdate)) { notification in
             guard let response = notification.object as? Definitions.ElectionDataStructures.CourseSearchRequestResponse, let courseData = response.courseData else { return }
@@ -210,6 +220,7 @@ struct ElectionView: View {
         }
     }
 }
+
 
 struct ElectionViewDev: View {
     @EnvironmentObject var currentSession: CurrentSession
@@ -229,6 +240,12 @@ struct ElectionViewDev: View {
 
 struct ElectionView_Previews: PreviewProvider {
     @Environment(\.dismiss) static var dismiss
+    static var currentSession: CurrentSession {
+        let session = CurrentSession()
+        session.electionInformation_studentInformation = .init(alertText: nil, distinctIPIDCODEAlert: nil, language: nil, courseCacheKey: nil, announcementText: nil, dataSource: nil, isAuthorized: nil, crossTypeDefinitions: nil, departmentGroupDefinitions: nil, depqrtmentBuildingDefinitions: nil, departmentDefinitions: nil, generalOpDefinitions: nil, opDefinitions: nil, opStudyTypeDefinitions: nil, takeCourseList: nil, trackList: nil, registerList: nil, makeUpList: nil)
+        return session
+    }
+    
     static var previews: some View {
         ElectionView(rootDismiss: dismiss)
             .environmentObject(ApplicationParameters())

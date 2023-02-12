@@ -127,7 +127,9 @@ extension Definitions {
             let departmentGroupDefinitions: [DepartmentGroup]?
             let depqrtmentBuildingDefinitions: [DepartmentBuilding]?
             let departmentDefinitions: [DepartmentType]?
-            let generalOpDefinitions: [GeneralOpType]?
+            let generalOpDefinitions: [OpType]?
+            let opDefinitions: [OpType]?
+            let opStudyTypeDefinitions: [StudyType]?
             
             // Course Lists
             let takeCourseList: [CourseInformation]? // 修課清單
@@ -149,12 +151,15 @@ extension Definitions {
                 case isAuthorized = "is_auth_ok"
                 case language
                 case makeUpList = "make_up_get"
+                case opDefinitions = "op_type_get"
+                case opStudyTypeDefinitions = "op_stdy_type_get"
                 case registerList = "register_get"
                 case takeCourseList = "take_course_get"
                 case trackList = "track_get"
             }
             
-            struct CrossType: Codable {
+            struct CrossType: Codable, Identifiable {
+                let id = UUID()
                 let crossType, name: String?
                 let crossIdentifiers: [CrossIdentifier]?
                 
@@ -175,7 +180,8 @@ extension Definitions {
                 }
             }
             
-            struct DepartmentGroup: Codable {
+            struct DepartmentGroup: Codable, Identifiable {
+                let id = UUID()
                 let deptDiv, sn, name: String?
 
                 private enum CodingKeys: String, CodingKey {
@@ -194,7 +200,8 @@ extension Definitions {
                 }
             }
             
-            struct DepartmentType: Codable {
+            struct DepartmentType: Codable, Identifiable {
+                let id = UUID()
                 let codName, adminDeptName, adminCode, deptBlnCod: String?
                 
                 private enum CodingKeys: String, CodingKey {
@@ -205,12 +212,23 @@ extension Definitions {
                 }
             }
             
-            struct GeneralOpType: Codable {
+            struct OpType: Codable, Identifiable {
+                let id = UUID()
                 let opType, sn, name: String?
 
                 private enum CodingKeys: String, CodingKey {
                     case opType = "OP_TYPE"
                     case sn = "SN"
+                    case name = "NAME"
+                }
+            }
+            
+            struct StudyType: Codable, Identifiable {
+                let id = UUID()
+                let stdyType, name: String?
+                
+                private enum CodingKeys: String, CodingKey {
+                    case stdyType = "STDY_TYPE"
                     case name = "NAME"
                 }
             }
@@ -448,7 +466,7 @@ extension Definitions {
                 }
             }
             
-            enum CompareSymbols: Int, Codable {
+            enum CompareSymbols: Int, Codable, CaseIterable {
                 case none = 0
                 case smallerThan = 1
                 case equal = 2
@@ -456,6 +474,25 @@ extension Definitions {
                 case smallerOrEqualThan = 4
                 case biggerOrEqualThan = 5
                 case between = 6
+                
+                func getSymbols() -> String {
+                    switch self {
+                    case .none:
+                        return ""
+                    case .smallerThan:
+                        return "<"
+                    case .equal:
+                        return "="
+                    case .biggerThan:
+                        return ">"
+                    case .smallerOrEqualThan:
+                        return "≤"
+                    case .biggerOrEqualThan:
+                        return "≥"
+                    case .between:
+                        return "~"
+                    }
+                }
             }
         }
         

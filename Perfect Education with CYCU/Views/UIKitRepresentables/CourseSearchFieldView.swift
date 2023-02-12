@@ -1,52 +1,47 @@
 //
-//  CourseSearchView.swift
+//  CourseSearchFieldView.swift
 //  Perfect Education with CYCU
 //
-//  Created by George on 2023/2/12.
+//  Created by 范喬智 on 2023/2/7.
 //
 
 import Foundation
 import SwiftUI
 
-struct CourseSearchView: UIViewControllerRepresentable {
+struct CourseSearchFieldView: UIViewRepresentable {
     @EnvironmentObject var currentSession: CurrentSession
     
-    let rootViewController = UIViewController()
     let uiSearchBar = UISearchBar()
+    var isFilterActivated: Binding<Bool>
     
-    func makeUIViewController(context: Context) -> some UIViewController {
-        
-        uiSearchBar.translatesAutoresizingMaskIntoConstraints = false
-//        uiSearchBar.frame = CGRect(x: 0, y: 0, width: 300, height: 100)
+    init(isFilterActivated: Binding<Bool>) {
+        self.isFilterActivated = isFilterActivated
+    }
+    
+    func makeUIView(context: Context) -> UISearchBar {
         uiSearchBar.delegate = context.coordinator
         uiSearchBar.placeholder = "課程名稱"
         uiSearchBar.searchBarStyle = .minimal
         uiSearchBar.showsBookmarkButton = true
         uiSearchBar.setImage(.init(systemName: "slider.horizontal.3"), for: .bookmark, state: .normal)
-        
-        rootViewController.view.addSubview(uiSearchBar)
-        
-        NSLayoutConstraint.activate([
-            uiSearchBar.centerXAnchor.constraint(equalTo: rootViewController.view.centerXAnchor),
-            uiSearchBar.widthAnchor.constraint(equalTo: rootViewController.view.widthAnchor)
-        ])
-        
-        return rootViewController
+        return uiSearchBar
     }
     
-    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+    func updateUIView(_ uiView: UISearchBar, context: Context) {
         
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(currentSession: currentSession)
+        Coordinator(currentSession: currentSession, isFilterActivated: self.isFilterActivated)
     }
     
     class Coordinator: NSObject, UISearchBarDelegate {
         let currentSession: CurrentSession
+        var isFilterActivated: Binding<Bool>
         
-        init(currentSession: CurrentSession) {
+        init(currentSession: CurrentSession, isFilterActivated: Binding<Bool>) {
             self.currentSession = currentSession
+            self.isFilterActivated = isFilterActivated
         }
         
         func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
@@ -63,7 +58,7 @@ struct CourseSearchView: UIViewControllerRepresentable {
         }
         
         func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
-            let sheetViewController = UISheetPresentationController(presentedViewController: UIHostingController(rootView: AdvancedSearchView()), presenting: nil)
+            isFilterActivated.wrappedValue.toggle()
         }
         
         func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
