@@ -65,6 +65,10 @@ struct ElectionAdvancedSearchView: View {
         return result
     }
     
+    init(inheritenced: State<String>) {
+        _cName_Entry = inheritenced
+    }
+    
     var body: some View {
         NavigationStack {
             List {
@@ -345,6 +349,7 @@ struct AdvancedSearchRangePickerView: View {
 }
 
 struct ElectionAdvancedSearchView_Previews: PreviewProvider {
+    @State static var dummyString = ""
     static var currentSession: CurrentSession {
         let session = CurrentSession()
         session.electionInformation_studentInformation = .init(alertText: nil, distinctIPIDCODEAlert: nil, language: nil, courseCacheKey: nil, announcementText: nil, dataSource: nil, isAuthorized: nil, crossTypeDefinitions: nil, departmentGroupDefinitions: nil, depqrtmentBuildingDefinitions: nil, departmentDefinitions: nil, generalOpDefinitions: nil, opDefinitions: nil, opStudyTypeDefinitions: nil, takeCourseList: nil, trackList: nil, registerList: nil, makeUpList: nil)
@@ -352,7 +357,7 @@ struct ElectionAdvancedSearchView_Previews: PreviewProvider {
     }
     
     static var previews: some View {
-        ElectionAdvancedSearchView()
+        ElectionAdvancedSearchView(inheritenced: _dummyString)
             .environmentObject(currentSession)
     }
 }

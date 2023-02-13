@@ -159,7 +159,7 @@ class CurrentSession: ObservableObject {
                     var filter_type: Int = 0
                 }
                 data = try await requestDataQuery(for: .election, using: method.rawValue, query: CourseRequestQuery(filters: filterQuery))
-                
+
                 // Escape if data do not exist
                 guard let data else { return }
                 

@@ -90,13 +90,20 @@ struct ElectionView: View {
     @State private var searchEntry: String = ""
     @State private var searchResult: [Definitions.ElectionDataStructures.CourseInformation]?
     
+    private var courseSearchFieldView: CourseSearchFieldView {
+        CourseSearchFieldView(isFilterActivated: $isFilterActivated, searchText: $searchEntry)
+    }
+    
     var body: some View {
         NavigationStack {
-            CourseSearchFieldView(isFilterActivated: $isFilterActivated)
+            courseSearchFieldView
+//            Text(searchEntry)
             List {
                 if let searchResult {
                     ForEach(searchResult) { item in
-                        CourseListRowView(for: item)
+                        NavigationLink(value: item) {
+                            CourseListRowView(for: item)
+                        }
 //                        Text(item.cname ?? "-")
                     }
                 }
@@ -104,6 +111,9 @@ struct ElectionView: View {
             .listStyle(.plain)
             .navigationTitle("選課")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: Definitions.ElectionDataStructures.CourseInformation.self) { value in
+                CourseDetailView(for: value)
+            }
 //            .searchable(text: $searchEntry)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -189,9 +199,12 @@ struct ElectionView: View {
                 ElectionCourseListView()
                     .presentationDetents([.large])
             case .searchFilter:
-                ElectionAdvancedSearchView()
+                ElectionAdvancedSearchView(inheritenced: _searchEntry)
                     .presentationDetents([.large])
                     .interactiveDismissDisabled()
+                    .onDisappear {
+//                        searchEntry = ""
+                    }
             }
         }
         .onAppear {
@@ -232,10 +245,33 @@ struct CourseListRowView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(info.cname ?? "-")
-            Text(info.teacher ?? "")
-                .font(.caption)
-                .foregroundColor(.secondary)
+            HStack {
+                Text(info.opCode ?? "-")
+                    .monospaced()
+                Text(info.deptName ?? "")
+                Text(info.teacher ?? "")
+            }
+            .font(.caption)
+            .foregroundColor(.secondary)
         }
+    }
+}
+
+struct CourseDetailView: View {
+    var info: Definitions.ElectionDataStructures.CourseInformation
+    
+    init(for info: Definitions.ElectionDataStructures.CourseInformation) {
+        self.info = info
+    }
+    
+    var body: some View {
+        VStack {
+            Text(info.opCode ?? "")
+                .font(.title)
+                .monospaced()
+        }
+        .navigationTitle(info.cname ?? "")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

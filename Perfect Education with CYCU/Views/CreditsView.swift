@@ -34,7 +34,7 @@ struct CreditsView: View {
         .navigationTitle("修課查詢")
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(for: Definitions.CreditsInformation.StdCourse.self) { value in
-            CourseDetailView(courseItem: value)
+            CreditsCourseDetailView(courseItem: value)
         }
         .onAppear {
             currentSession.requestCredits()
@@ -42,7 +42,7 @@ struct CreditsView: View {
     }
 }
 
-struct CourseDetailView: View {
+struct CreditsCourseDetailView: View {
     let courseItem: Definitions.CreditsInformation.StdCourse
     
     var body: some View {

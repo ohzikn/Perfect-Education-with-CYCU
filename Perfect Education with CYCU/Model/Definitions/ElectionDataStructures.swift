@@ -305,7 +305,7 @@ extension Definitions {
         }
         
         // MARK: Shared
-        struct CourseInformation: Codable, Identifiable {
+        struct CourseInformation: Codable, Identifiable, Hashable {
             let id = UUID()
             let deptName, opRmName1, cursCode, cname, opCode, deptCode, opStdy, opType, dataToken, opTime1, opQuality, teacher, crossName, memo1, opRmName2, opTime2, nameStatus, mgDeptCode, opStdyDept, cursLang, divCode: String?
             let beginTf: Bool?
@@ -456,7 +456,7 @@ extension Definitions {
             struct WrappedCompared: Codable {
                 var value: Int = 0
                 var value2: Int = 0 // Used when between is selected
-                var compare: CompareSymbols = .equal
+                var compare: CompareSymbols = .none
                 
                 // Custom encoder to convert integer to string
                 func encode(to encoder: Encoder) throws {

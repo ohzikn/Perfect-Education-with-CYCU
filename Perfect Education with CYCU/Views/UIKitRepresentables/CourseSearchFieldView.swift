@@ -10,12 +10,14 @@ import SwiftUI
 
 struct CourseSearchFieldView: UIViewRepresentable {
     @EnvironmentObject var currentSession: CurrentSession
+    @Binding var searchText: String
     
     let uiSearchBar = UISearchBar()
     var isFilterActivated: Binding<Bool>
     
-    init(isFilterActivated: Binding<Bool>) {
+    init(isFilterActivated: Binding<Bool>, searchText: Binding<String>) {
         self.isFilterActivated = isFilterActivated
+        self._searchText = searchText
     }
     
     func makeUIView(context: Context) -> UISearchBar {
@@ -27,21 +29,23 @@ struct CourseSearchFieldView: UIViewRepresentable {
         return uiSearchBar
     }
     
-    func updateUIView(_ uiView: UISearchBar, context: Context) {
-        
+    func updateUIView(_ uiSearchBar: UISearchBar, context: Context) {
+        uiSearchBar.text = searchText
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(currentSession: currentSession, isFilterActivated: self.isFilterActivated)
+        Coordinator(currentSession: currentSession, isFilterActivated: self.isFilterActivated, searchText: $searchText)
     }
     
     class Coordinator: NSObject, UISearchBarDelegate {
         let currentSession: CurrentSession
         var isFilterActivated: Binding<Bool>
+        @Binding var searchText: String
         
-        init(currentSession: CurrentSession, isFilterActivated: Binding<Bool>) {
+        init(currentSession: CurrentSession, isFilterActivated: Binding<Bool>, searchText: Binding<String>) {
             self.currentSession = currentSession
             self.isFilterActivated = isFilterActivated
+            self._searchText = searchText
         }
         
         func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
@@ -54,6 +58,7 @@ struct CourseSearchFieldView: UIViewRepresentable {
         
         func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
             // Drop first responder to dismiss keyboard
+//            searchBar.text = ""
             searchBar.resignFirstResponder()
         }
         
@@ -62,6 +67,7 @@ struct CourseSearchFieldView: UIViewRepresentable {
         }
         
         func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+            self.searchText = searchText
 //            print(searchText)
         }
         

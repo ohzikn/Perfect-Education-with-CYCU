@@ -44,7 +44,6 @@
 		5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF1128229763A0A008A4373 /* KeychainService.swift */; };
 		5EFB304A29858731006F8D9E /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB304929858731006F8D9E /* WebView.swift */; };
 		5EFB304D29918385006F8D9E /* PropertyWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB304C29918385006F8D9E /* PropertyWrappers.swift */; };
-		5EFB305029986CBB006F8D9E /* AdvancedSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB304F29986CBB006F8D9E /* AdvancedSearchView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,7 +104,6 @@
 		5EF1128229763A0A008A4373 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		5EFB304929858731006F8D9E /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		5EFB304C29918385006F8D9E /* PropertyWrappers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyWrappers.swift; sourceTree = "<group>"; };
-		5EFB304F29986CBB006F8D9E /* AdvancedSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedSearchView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -271,7 +269,6 @@
 		5EFB304E29986CA4006F8D9E /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				5EFB304F29986CBB006F8D9E /* AdvancedSearchView.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -413,7 +410,6 @@
 				5E02560A296E2F92004E0370 /* General.swift in Sources */,
 				5E3C940029711C240036B342 /* CreditsView.swift in Sources */,
 				5E3C93FE29711C190036B342 /* ElectionRootView.swift in Sources */,
-				5EFB305029986CBB006F8D9E /* AdvancedSearchView.swift in Sources */,
 				5E02560C296E35DD004E0370 /* CurrentSession.swift in Sources */,
 				5E2321F92999991300565D59 /* TempView.swift in Sources */,
 				5EC73A422990722200E66CB6 /* ElectionStudentBaseInformationView.swift in Sources */,
