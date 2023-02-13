@@ -29,55 +29,6 @@ struct ElectionCourseListView: View {
                 return studentInformation.makeUpList
             }
         }
-        
-        func getListItemView(_ courses: [Definitions.ElectionDataStructures.CourseInformation]) -> some View {
-            switch self {
-            case .takingList:
-                return {
-                    ForEach(courses) { item in
-                        Text(item.cname ?? "")
-                            .swipeActions(edge: .trailing) {
-                                Button("退選", role: .destructive) {
-                                    
-                                }
-                            }
-                    }
-                }()
-            case .trackingList:
-                return {
-                    ForEach(courses) { item in
-                        Text(item.cname ?? "")
-                            .swipeActions(edge: .trailing) {
-                                Button("刪除", role: .destructive) {
-                                    
-                                }
-                            }
-                    }
-                }()
-            case .registrationList:
-                return {
-                    ForEach(courses) { item in
-                        Text(item.cname ?? "")
-                            .swipeActions(edge: .trailing) {
-                                Button("刪除", role: .destructive) {
-                                    
-                                }
-                            }
-                    }
-                }()
-            case .watingList:
-                return {
-                    ForEach(courses) { item in
-                        Text(item.cname ?? "")
-                            .swipeActions(edge: .trailing) {
-                                Button("刪除", role: .destructive) {
-                                    
-                                }
-                            }
-                    }
-                }()
-            }
-        }
     }
     
     @State private var selectedCourseListType: CourseListType = .takingList
@@ -95,7 +46,53 @@ struct ElectionCourseListView: View {
             .padding([.horizontal])
             List {
                 if let presentedCourseList, !presentedCourseList.isEmpty {
-                    selectedCourseListType.getListItemView(presentedCourseList)
+//                    selectedCourseListType.getListItemView(presentedCourseList)
+                    switch selectedCourseListType {
+                    case .takingList:
+                        ForEach(presentedCourseList) { item in
+                            NavigationLink(value: item) {
+                                ElectionCourseListItemView(for: item)
+                                    .swipeActions(edge: .trailing) {
+                                        Button("退選", role: .destructive) {
+                                            
+                                        }
+                                    }
+                            }
+                        }
+                    case .trackingList:
+                        ForEach(presentedCourseList) { item in
+                            NavigationLink(value: item) {
+                                ElectionCourseListItemView(for: item)
+                                    .swipeActions(edge: .trailing) {
+                                        Button("刪除", role: .destructive) {
+                                            
+                                        }
+                                    }
+                            }
+                        }
+                    case .registrationList:
+                        ForEach(presentedCourseList) { item in
+                            NavigationLink(value: item) {
+                                ElectionCourseListItemView(for: item)
+                                    .swipeActions(edge: .trailing) {
+                                        Button("刪除", role: .destructive) {
+                                            
+                                        }
+                                    }
+                            }
+                        }
+                    case .watingList:
+                        ForEach(presentedCourseList) { item in
+                            NavigationLink(value: item) {
+                                ElectionCourseListItemView(for: item)
+                                    .swipeActions(edge: .trailing) {
+                                        Button("刪除", role: .destructive) {
+                                            
+                                        }
+                                    }
+                            }
+                        }
+                    }
                 } else {
                     Text("沒有項目")
                         .foregroundColor(.secondary)
@@ -104,6 +101,9 @@ struct ElectionCourseListView: View {
             .listStyle(.plain)
             .navigationTitle(selectedCourseListType.rawValue)
             .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: Definitions.ElectionDataStructures.CourseInformation.self) { value in
+                ElectionCourseDetailView(for: value)
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("完成") { dismiss() }

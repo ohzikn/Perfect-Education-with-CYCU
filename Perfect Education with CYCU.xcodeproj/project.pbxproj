@@ -44,6 +44,7 @@
 		5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF1128229763A0A008A4373 /* KeychainService.swift */; };
 		5EFB304A29858731006F8D9E /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB304929858731006F8D9E /* WebView.swift */; };
 		5EFB304D29918385006F8D9E /* PropertyWrappers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB304C29918385006F8D9E /* PropertyWrappers.swift */; };
+		5EFB30542999DDDE006F8D9E /* ElectionCourseItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB30532999DDDE006F8D9E /* ElectionCourseItemView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +105,7 @@
 		5EF1128229763A0A008A4373 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		5EFB304929858731006F8D9E /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		5EFB304C29918385006F8D9E /* PropertyWrappers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyWrappers.swift; sourceTree = "<group>"; };
+		5EFB30532999DDDE006F8D9E /* ElectionCourseItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionCourseItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -269,6 +271,7 @@
 		5EFB304E29986CA4006F8D9E /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				5EFB30532999DDDE006F8D9E /* ElectionCourseItemView.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -428,6 +431,7 @@
 				5EC73A462990725500E66CB6 /* ElectionCourseListView.swift in Sources */,
 				5E68CF962976DC3E008AF377 /* Extensions.swift in Sources */,
 				5E3C93FA29710F8B0036B342 /* WorkStudyView.swift in Sources */,
+				5EFB30542999DDDE006F8D9E /* ElectionCourseItemView.swift in Sources */,
 				5EC73A40299071F800E66CB6 /* ElectionEventView.swift in Sources */,
 				5E3C93FC297114600036B342 /* MentorView.swift in Sources */,
 				5E2AC57C296E16AE00722D02 /* ContentView.swift in Sources */,

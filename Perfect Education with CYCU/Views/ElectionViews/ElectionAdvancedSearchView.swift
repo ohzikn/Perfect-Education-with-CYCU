@@ -67,6 +67,7 @@ struct ElectionAdvancedSearchView: View {
     
     init(inheritenced: State<String>) {
         _cName_Entry = inheritenced
+        UITextField.appearance().clearButtonMode = .whileEditing
     }
     
     var body: some View {

@@ -102,7 +102,7 @@ struct ElectionView: View {
                 if let searchResult {
                     ForEach(searchResult) { item in
                         NavigationLink(value: item) {
-                            CourseListRowView(for: item)
+                            ElectionCourseListItemView(for: item)
                         }
 //                        Text(item.cname ?? "-")
                     }
@@ -112,7 +112,7 @@ struct ElectionView: View {
             .navigationTitle("選課")
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: Definitions.ElectionDataStructures.CourseInformation.self) { value in
-                CourseDetailView(for: value)
+                ElectionCourseDetailView(for: value)
             }
 //            .searchable(text: $searchEntry)
             .toolbar {
@@ -235,45 +235,7 @@ struct ElectionView: View {
     }
 }
 
-struct CourseListRowView: View {
-    var info: Definitions.ElectionDataStructures.CourseInformation
-    
-    init(for info: Definitions.ElectionDataStructures.CourseInformation) {
-        self.info = info
-    }
-    
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text(info.cname ?? "-")
-            HStack {
-                Text(info.opCode ?? "-")
-                    .monospaced()
-                Text(info.deptName ?? "")
-                Text(info.teacher ?? "")
-            }
-            .font(.caption)
-            .foregroundColor(.secondary)
-        }
-    }
-}
 
-struct CourseDetailView: View {
-    var info: Definitions.ElectionDataStructures.CourseInformation
-    
-    init(for info: Definitions.ElectionDataStructures.CourseInformation) {
-        self.info = info
-    }
-    
-    var body: some View {
-        VStack {
-            Text(info.opCode ?? "")
-                .font(.title)
-                .monospaced()
-        }
-        .navigationTitle(info.cname ?? "")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-}
 
 struct ElectionViewDev: View {
     @EnvironmentObject var currentSession: CurrentSession
@@ -304,9 +266,6 @@ struct ElectionView_Previews: PreviewProvider {
             .environmentObject(ApplicationParameters())
             .environmentObject(CurrentSession())
             .previewDisplayName("Election View")
-        CourseListRowView(for: .init(deptName: "", opRmName1: "", cursCode: "", cname: "", opCode: "", deptCode: "", opStdy: "", opType: "", dataToken: "", opTime1: "", opQuality: "", teacher: "", crossName: "", memo1: "", opRmName2: "", opTime2: "", nameStatus: "", mgDeptCode: "", opStdyDept: "", cursLang: "", divCode: "", beginTf: true, actionBits: "", crossType: ""))
-            .previewDisplayName("Course List Row")
-            .previewLayout(.fixed(width: 300, height: 100))
         ElectionViewDev()
             .environmentObject(CurrentSession())
             .previewDisplayName("Election View Dev")
