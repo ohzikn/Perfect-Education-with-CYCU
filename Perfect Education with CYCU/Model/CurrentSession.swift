@@ -141,7 +141,7 @@ class CurrentSession: ObservableObject {
     }
     
     // Fixed election request: Definitions.ElectionCommands = .course_get
-    func requestElection(filterQuery: Definitions.ElectionDataStructures.CourseSearchRequestQuery) {
+    func requestElection(filterQuery: Definitions.ElectionDataStructures.CourseSearchRequestQuery?, filterType: Int = 0) {
         guard workStudyInformation == nil else { return }
         
         let method: Definitions.ElectionCommands = .course_get
@@ -156,9 +156,9 @@ class CurrentSession: ObservableObject {
                 struct CourseRequestQuery: RequestQueryBase, Codable {
                     var APP_AUTH_token: String?
                     var filters: Definitions.ElectionDataStructures.CourseSearchRequestQuery
-                    var filter_type: Int = 0
+                    var filter_type: Int
                 }
-                data = try await requestDataQuery(for: .election, using: method.rawValue, query: CourseRequestQuery(filters: filterQuery))
+                data = try await requestDataQuery(for: .election, using: method.rawValue, query: CourseRequestQuery(filters: filterQuery ?? .init(opCode: .init(), cname: .init(), crossCode: .init(), opStdy: .init(), teacher: .init(), nonStop: .init(), betDept: .init(), betBln: .init(), betBlnMdie: .init(), crossPbl: .init(), distance: .init(), deptDiv: .init(), deptCode: .init(), general: .init(), opType: .init(), opTime123: .init(), opCredit: .init(), man: .init(), opManSum: .init(), remain: .init(), regMan: .init(), emiCourse: .init()), filter_type: filterType))
 
                 // Escape if data do not exist
                 guard let data else { return }

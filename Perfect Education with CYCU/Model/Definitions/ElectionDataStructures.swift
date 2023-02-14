@@ -130,6 +130,7 @@ extension Definitions {
             let generalOpDefinitions: [OpType]?
             let opDefinitions: [OpType]?
             let opStudyTypeDefinitions: [StudyType]?
+            let systemControl: SystemControl?
             
             // Course Lists
             let takeCourseList: [CourseInformation]? // 修課清單
@@ -154,6 +155,7 @@ extension Definitions {
                 case opDefinitions = "op_type_get"
                 case opStudyTypeDefinitions = "op_stdy_type_get"
                 case registerList = "register_get"
+                case systemControl = "sys_control_get"
                 case takeCourseList = "take_course_get"
                 case trackList = "track_get"
             }
@@ -232,6 +234,25 @@ extension Definitions {
                     case stdyType = "STDY_TYPE"
                     case name = "NAME"
                 }
+            }
+            
+            struct SystemControl: Codable {
+                let nofLaw, nofHistory, nofSport, nofEngtalk, nofReligion, nofGodman: Int?
+                let bgtime2, bgtime, yearTerm, edtime, edtime2: String?
+                
+                    enum CodingKeys: String, CodingKey {
+                        case nofLaw = "NOF_LAW"
+                        case nofHistory = "NOF_HISTORY"
+                        case nofSport = "NOF_SPORT"
+                        case bgtime2 = "BGTIME2"
+                        case nofEngtalk = "NOF_ENGTALK"
+                        case nofReligion = "NOF_RELIGION"
+                        case nofGodman = "NOF_GODMAN"
+                        case bgtime = "BGTIME"
+                        case yearTerm = "YEAR_TERM"
+                        case edtime = "EDTIME"
+                        case edtime2 = "EDTIME2"
+                    }
             }
         }
         
@@ -407,6 +428,12 @@ extension Definitions {
                 case updateTime = "UPDATE_TIME"
                 case upperMan = "UPPER_MAN"
             }
+        }
+        
+        // Used when requesting syllabus information
+        struct SyllabusInfo {
+            let yearTerm: String
+            let opCode: String
         }
 
         // MARK: Course Search Request Query Structure (Defined with non-optional values)

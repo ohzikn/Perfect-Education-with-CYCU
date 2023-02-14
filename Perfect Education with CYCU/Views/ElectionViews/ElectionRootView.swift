@@ -97,18 +97,29 @@ struct ElectionView: View {
     var body: some View {
         NavigationStack {
             courseSearchFieldView
-//            Text(searchEntry)
-            List {
-                if let searchResult {
-                    ForEach(searchResult) { item in
-                        NavigationLink(value: item) {
-                            ElectionCourseListItemView(for: item)
+            VStack {
+                if let searchResult, !searchResult.isEmpty {
+                    List {
+                        ForEach(searchResult) { item in
+                            NavigationLink(value: item) {
+                                ElectionCourseListItemView(for: item)
+                            }
                         }
-//                        Text(item.cname ?? "-")
                     }
+                    .listStyle(.plain)
+                } else {
+                    VStack(spacing: 4) {
+                        Text("沒有項目")
+                            .fontWeight(.semibold)
+                            .foregroundColor(.secondary)
+                        Text("輸入文字或使用搜尋選項來查詢課程")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding([.bottom])
                 }
             }
-            .listStyle(.plain)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .navigationTitle("選課")
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: Definitions.ElectionDataStructures.CourseInformation.self) { value in
@@ -202,6 +213,9 @@ struct ElectionView: View {
                 ElectionAdvancedSearchView(inheritenced: _searchEntry)
                     .presentationDetents([.large])
                     .interactiveDismissDisabled()
+                    .onAppear {
+                        searchEntry = String()
+                    }
                     .onDisappear {
 //                        searchEntry = ""
                     }
@@ -213,6 +227,7 @@ struct ElectionView: View {
             currentSession.requestElection(method: .stage_control_get)
             currentSession.requestElection(method: .st_base_info)
             currentSession.requestElection(method: .st_info_get)
+            currentSession.requestElection(method: .st_record)
         }
         .onDisappear {
             applicationParameters.hideRootTabbar = false
@@ -257,7 +272,7 @@ struct ElectionView_Previews: PreviewProvider {
     @Environment(\.dismiss) static var dismiss
     static var currentSession: CurrentSession {
         let session = CurrentSession()
-        session.electionInformation_studentInformation = .init(alertText: nil, distinctIPIDCODEAlert: nil, language: nil, courseCacheKey: nil, announcementText: nil, dataSource: nil, isAuthorized: nil, crossTypeDefinitions: nil, departmentGroupDefinitions: nil, depqrtmentBuildingDefinitions: nil, departmentDefinitions: nil, generalOpDefinitions: nil, opDefinitions: nil, opStudyTypeDefinitions: nil, takeCourseList: nil, trackList: nil, registerList: nil, makeUpList: nil)
+        session.electionInformation_studentInformation = .init(alertText: nil, distinctIPIDCODEAlert: nil, language: nil, courseCacheKey: nil, announcementText: nil, dataSource: nil, isAuthorized: nil, crossTypeDefinitions: nil, departmentGroupDefinitions: nil, depqrtmentBuildingDefinitions: nil, departmentDefinitions: nil, generalOpDefinitions: nil, opDefinitions: nil, opStudyTypeDefinitions: nil, systemControl: nil, takeCourseList: nil, trackList: nil, registerList: nil, makeUpList: nil)
         return session
     }
     

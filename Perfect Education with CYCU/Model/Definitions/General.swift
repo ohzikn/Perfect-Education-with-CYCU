@@ -11,6 +11,7 @@ struct Definitions {
     
     struct ExternalLocations {
         static let passwordReset: URL! = URL(string: "https://itouch.cycu.edu.tw/active_system/login/login_board.jsp")
+        static let syllabus: URL! = URL(string: "https://cmap.cycu.edu.tw:8443/Syllabus/CoursePreview.html")
     }
     
     struct PortalLocations {

@@ -44,61 +44,65 @@ struct ElectionCourseListView: View {
             }
             .pickerStyle(.segmented)
             .padding([.horizontal])
-            List {
+            VStack {
                 if let presentedCourseList, !presentedCourseList.isEmpty {
-//                    selectedCourseListType.getListItemView(presentedCourseList)
-                    switch selectedCourseListType {
-                    case .takingList:
-                        ForEach(presentedCourseList) { item in
-                            NavigationLink(value: item) {
-                                ElectionCourseListItemView(for: item)
-                                    .swipeActions(edge: .trailing) {
-                                        Button("退選", role: .destructive) {
-                                            
+                    List {
+                        switch selectedCourseListType {
+                        case .takingList:
+                            ForEach(presentedCourseList) { item in
+                                NavigationLink(value: item) {
+                                    ElectionCourseListItemView(for: item)
+                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                            Button("退選", role: .destructive) {
+                                                
+                                            }
                                         }
-                                    }
+                                }
                             }
-                        }
-                    case .trackingList:
-                        ForEach(presentedCourseList) { item in
-                            NavigationLink(value: item) {
-                                ElectionCourseListItemView(for: item)
-                                    .swipeActions(edge: .trailing) {
-                                        Button("刪除", role: .destructive) {
-                                            
+                        case .trackingList:
+                            ForEach(presentedCourseList) { item in
+                                NavigationLink(value: item) {
+                                    ElectionCourseListItemView(for: item)
+                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                            Button("刪除", role: .destructive) {
+                                                
+                                            }
                                         }
-                                    }
+                                }
                             }
-                        }
-                    case .registrationList:
-                        ForEach(presentedCourseList) { item in
-                            NavigationLink(value: item) {
-                                ElectionCourseListItemView(for: item)
-                                    .swipeActions(edge: .trailing) {
-                                        Button("刪除", role: .destructive) {
-                                            
+                        case .registrationList:
+                            ForEach(presentedCourseList) { item in
+                                NavigationLink(value: item) {
+                                    ElectionCourseListItemView(for: item)
+                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                            Button("刪除", role: .destructive) {
+                                                
+                                            }
                                         }
-                                    }
+                                }
                             }
-                        }
-                    case .watingList:
-                        ForEach(presentedCourseList) { item in
-                            NavigationLink(value: item) {
-                                ElectionCourseListItemView(for: item)
-                                    .swipeActions(edge: .trailing) {
-                                        Button("刪除", role: .destructive) {
-                                            
+                        case .watingList:
+                            ForEach(presentedCourseList) { item in
+                                NavigationLink(value: item) {
+                                    ElectionCourseListItemView(for: item)
+                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                            Button("刪除", role: .destructive) {
+                                                
+                                            }
                                         }
-                                    }
+                                }
                             }
                         }
                     }
+                    .listStyle(.plain)
                 } else {
                     Text("沒有項目")
+                        .fontWeight(.semibold)
                         .foregroundColor(.secondary)
+                        .padding([.bottom])
                 }
             }
-            .listStyle(.plain)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .navigationTitle(selectedCourseListType.rawValue)
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: Definitions.ElectionDataStructures.CourseInformation.self) { value in
