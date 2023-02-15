@@ -57,8 +57,10 @@ struct ElectionCourseDetailView: View {
                 if let opTime1 = info.opTime1 {
                     Divider()
                     LabeledContent("上課資訊", value: "\(opTime1)" + (info.opRmName1 != nil ? " 在 \(info.opRmName1.unsafelyUnwrapped)" : ""))
+                        .monospacedDigit()
                     if let opTime2 = info.opTime2 {
                         LabeledContent("", value: "\(opTime2)" + (info.opRmName2 != nil ? " 在 \(info.opRmName2.unsafelyUnwrapped)" : ""))
+                            .monospacedDigit()
                     }
                 }
                 if let opType = info.opType {
