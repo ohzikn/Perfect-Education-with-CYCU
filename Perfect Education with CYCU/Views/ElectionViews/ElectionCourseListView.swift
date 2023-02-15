@@ -52,6 +52,20 @@ struct ElectionCourseListView: View {
                             ForEach(presentedCourseList) { item in
                                 NavigationLink(value: item) {
                                     ElectionCourseListItemView(for: item)
+                                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                            Button(role: .none) {
+                                                
+                                            } label: {
+                                                Label("新增", systemImage: "text.badge.plus")
+                                            }
+                                            .tint(.orange)
+                                            Button(role: .destructive) {
+                                                
+                                            } label: {
+                                                Label("移除", systemImage: "text.badge.minus")
+                                            }
+                                            .tint(.orange)
+                                        }
                                         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                             Button("退選", role: .destructive) {
                                                 
@@ -63,10 +77,13 @@ struct ElectionCourseListView: View {
                             ForEach(presentedCourseList) { item in
                                 NavigationLink(value: item) {
                                     ElectionCourseListItemView(for: item)
-                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                            Button("刪除", role: .destructive) {
+                                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                            Button(role: .destructive) {
                                                 
+                                            } label: {
+                                                Label("移除", systemImage: "text.badge.minus")
                                             }
+                                            .tint(.orange)
                                         }
                                 }
                             }
@@ -74,10 +91,13 @@ struct ElectionCourseListView: View {
                             ForEach(presentedCourseList) { item in
                                 NavigationLink(value: item) {
                                     ElectionCourseListItemView(for: item)
-                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                            Button("刪除", role: .destructive) {
+                                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                            Button(role: .destructive) {
                                                 
+                                            } label: {
+                                                Label("移除", systemImage: "text.badge.minus")
                                             }
+                                            .tint(.orange)
                                         }
                                 }
                             }
@@ -85,10 +105,13 @@ struct ElectionCourseListView: View {
                             ForEach(presentedCourseList) { item in
                                 NavigationLink(value: item) {
                                     ElectionCourseListItemView(for: item)
-                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                            Button("刪除", role: .destructive) {
+                                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                            Button(role: .destructive) {
                                                 
+                                            } label: {
+                                                Label("移除", systemImage: "text.badge.minus")
                                             }
+                                            .tint(.orange)
                                         }
                                 }
                             }

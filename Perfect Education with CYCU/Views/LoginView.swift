@@ -41,7 +41,7 @@ struct LoginView: View {
         // FaceId toggle guard
         guard applicationParameters.usesFaceId else { return }
         let context = LAContext()
-        context.localizedCancelTitle = "輸入密碼"
+//        context.localizedCancelTitle = "輸入密碼"
         var error: NSError?
         guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
             print(error?.localizedDescription ?? "Can't evaluate policy")

@@ -73,7 +73,7 @@ struct ElectionAdvancedSearchView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("快速搜尋") {
+                Section("快速查詢") {
                     Button("本班所有課程") {
                         currentSession.requestElection(filterQuery: nil, filterType: 1)
                         dismiss()
@@ -91,7 +91,7 @@ struct ElectionAdvancedSearchView: View {
                     if let studentInfo = currentSession.electionInformation_studentInformation {
                         Group {
                             NavigationLink {
-                                ElectionSearchDepartmentIdView(selectedDepartmentIds: selectedDepartmentIds)
+                                ElectionSearchDepartmentIdView(selectedDepartmentIds: _selectedDepartmentIds)
                             } label: {
                                 HStack {
                                     Text("開課學系")
@@ -121,7 +121,7 @@ struct ElectionAdvancedSearchView: View {
                         }
                         Group {
                             NavigationLink {
-                                ElectionSearchOpIdView(selectedOpIds: selectedOpIds)
+                                ElectionSearchOpIdView(selectedOpIds: _selectedOpIds)
                             } label: {
                                 HStack {
                                     Text("通識類別")
@@ -131,7 +131,7 @@ struct ElectionAdvancedSearchView: View {
                                 }
                             }
                             NavigationLink {
-                                ElectionSearchGeneralOpIdView(selectedGeneralOpIds: selectedGeneralOpIds)
+                                ElectionSearchGeneralOpIdView(selectedGeneralOpIds: _selectedGeneralOpIds)
                             } label: {
                                 HStack {
                                     Text("課程類別")
@@ -141,7 +141,7 @@ struct ElectionAdvancedSearchView: View {
                                 }
                             }
                             NavigationLink {
-                                ElectionSearchCrossIdView(selectedCrossId: selectedCrossId)
+                                ElectionSearchCrossIdView(selectedCrossId: _selectedCrossId)
                             } label: {
                                 HStack {
                                     Text("跨就微學程")
@@ -237,7 +237,7 @@ struct ElectionAdvancedSearchView: View {
                     }
                 }
             }
-            .navigationTitle("進階搜尋")
+            .navigationTitle("搜尋選項")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -246,30 +246,30 @@ struct ElectionAdvancedSearchView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    let query: Definitions.ElectionDataStructures.CourseSearchRequestQuery =
-                        .init(opCode: .init(value: opCode_Entry),
-                              cname: .init(value: cName_Entry),
-                              crossCode: .init(value: getCrossInfo(selectedCrossId)?.crossCode ?? ""),
-                              opStdy: .init(value: selectedStudyTypeId),
-                              teacher: .init(value: teacher_Entry),
-                              nonStop: .init(value: selectedNonStopValue == 0 ? "" : String(selectedNonStopValue)),
-                              betDept: .init(value: selectedBetDeptValue == 0 ? "" : String(selectedBetDeptValue)),
-                              betBln: .init(value: selectedBetBlnValue == 0 ? "" : String(selectedBetBlnValue)),
-                              betBlnMdie: .init(value: selectedBetBlnMdieValue == 0 ? "" : String(selectedBetBlnMdieValue)),
-                              crossPbl: .init(value: selectedCrossPblValue == 0 ? "" : String(selectedCrossPblValue)),
-                              distance: .init(value: selectedDistanceCourseValue == 0 ? "" : String(selectedDistanceCourseValue)),
-                              deptDiv: .init(value: selectedDepartmentGroupId),
-                              deptCode: .init(value: Array(selectedDepartmentIds)),
-                              general: .init(value: Array(selectedGeneralOpIds)),
-                              opType: .init(value: Array(selectedOpIds)),
-                              opTime123: .init(), // NOT IMPLEMENTED
-                              opCredit: .init(value: selectedCreditsValue1, value2: selectedCreditsValue2, compare: selectedCreditsOperator),
-                              man: .init(value: selectedManCurrentValue1, value2: selectedManCurrentValue2, compare: selectedManCurrentOperator),
-                              opManSum: .init(value: selectedManSumValue1, value2: selectedManSumValue2, compare: selectedManSumOperator),
-                              remain: .init(value: selectedManRemainValue1, value2: selectedManRemainValue2, compare: selectedManRemainOperator),
-                              regMan: .init(value: selectedManRegisterValue1, value2: selectedManRegisterValue2, compare: selectedManRegisterOperator),
-                              emiCourse: .init(value: emiCourseToggle))
                     Button("搜尋") {
+                        let query: Definitions.ElectionDataStructures.CourseSearchRequestQuery =
+                            .init(opCode: .init(value: opCode_Entry),
+                                  cname: .init(value: cName_Entry),
+                                  crossCode: .init(value: getCrossInfo(selectedCrossId)?.crossCode ?? ""),
+                                  opStdy: .init(value: selectedStudyTypeId),
+                                  teacher: .init(value: teacher_Entry),
+                                  nonStop: .init(value: selectedNonStopValue == 0 ? "" : String(selectedNonStopValue)),
+                                  betDept: .init(value: selectedBetDeptValue == 0 ? "" : String(selectedBetDeptValue)),
+                                  betBln: .init(value: selectedBetBlnValue == 0 ? "" : String(selectedBetBlnValue)),
+                                  betBlnMdie: .init(value: selectedBetBlnMdieValue == 0 ? "" : String(selectedBetBlnMdieValue)),
+                                  crossPbl: .init(value: selectedCrossPblValue == 0 ? "" : String(selectedCrossPblValue)),
+                                  distance: .init(value: selectedDistanceCourseValue == 0 ? "" : String(selectedDistanceCourseValue)),
+                                  deptDiv: .init(value: selectedDepartmentGroupId),
+                                  deptCode: .init(value: Array(selectedDepartmentIds)),
+                                  general: .init(value: Array(selectedGeneralOpIds)),
+                                  opType: .init(value: Array(selectedOpIds)),
+                                  opTime123: .init(), // NOT IMPLEMENTED
+                                  opCredit: .init(value: selectedCreditsValue1, value2: selectedCreditsValue2, compare: selectedCreditsOperator),
+                                  man: .init(value: selectedManCurrentValue1, value2: selectedManCurrentValue2, compare: selectedManCurrentOperator),
+                                  opManSum: .init(value: selectedManSumValue1, value2: selectedManSumValue2, compare: selectedManSumOperator),
+                                  remain: .init(value: selectedManRemainValue1, value2: selectedManRemainValue2, compare: selectedManRemainOperator),
+                                  regMan: .init(value: selectedManRegisterValue1, value2: selectedManRegisterValue2, compare: selectedManRegisterOperator),
+                                  emiCourse: .init(value: emiCourseToggle))
                         currentSession.requestElection(filterQuery: query)
                         dismiss()
                     }
@@ -316,6 +316,10 @@ struct ElectionSearchDepartmentIdView: View {
     @EnvironmentObject var currentSession: CurrentSession
     @State var selectedDepartmentIds: Set<String>
     
+    init(selectedDepartmentIds: State<Set<String>>) {
+        self._selectedDepartmentIds = selectedDepartmentIds
+    }
+    
     var body: some View {
         List(selection: $selectedDepartmentIds) {
             if let definitions = currentSession.electionInformation_studentInformation?.departmentDefinitions {
@@ -341,6 +345,10 @@ struct ElectionSearchOpIdView: View {
     @EnvironmentObject var currentSession: CurrentSession
     @State var selectedOpIds: Set<String>
     
+    init(selectedOpIds: State<Set<String>>) {
+        self._selectedOpIds = selectedOpIds
+    }
+    
     var body: some View {
         List(selection: $selectedOpIds) {
             if let definitions = currentSession.electionInformation_studentInformation?.opDefinitions {
@@ -356,9 +364,36 @@ struct ElectionSearchOpIdView: View {
     }
 }
 
+struct ElectionSearchGeneralOpIdView: View {
+    @EnvironmentObject var currentSession: CurrentSession
+    @State var selectedGeneralOpIds: Set<String>
+    
+    init(selectedGeneralOpIds: State<Set<String>>) {
+        self._selectedGeneralOpIds = selectedGeneralOpIds
+    }
+    
+    var body: some View {
+        List(selection: $selectedGeneralOpIds) {
+            if let definitions = currentSession.electionInformation_studentInformation?.generalOpDefinitions {
+                ForEach(definitions) { item in
+                    Text(item.name ?? "-")
+                        .tag(item.name ?? "")
+                }
+            }
+        }
+        .navigationTitle("課程類別")
+        .navigationBarTitleDisplayMode(.inline)
+        .environment(\.editMode, .constant(.active))
+    }
+}
+
 struct ElectionSearchCrossIdView: View {
     @EnvironmentObject var currentSession: CurrentSession
     @State var selectedCrossId: UUID?
+    
+    init(selectedCrossId: State<UUID?>) {
+        self._selectedCrossId = selectedCrossId
+    }
     
     var body: some View {
         List(selection: $selectedCrossId) {
@@ -380,25 +415,6 @@ struct ElectionSearchCrossIdView: View {
             }
         }
         .navigationTitle("跨就微學程")
-        .navigationBarTitleDisplayMode(.inline)
-        .environment(\.editMode, .constant(.active))
-    }
-}
-
-struct ElectionSearchGeneralOpIdView: View {
-    @EnvironmentObject var currentSession: CurrentSession
-    @State var selectedGeneralOpIds: Set<String>
-    
-    var body: some View {
-        List(selection: $selectedGeneralOpIds) {
-            if let definitions = currentSession.electionInformation_studentInformation?.generalOpDefinitions {
-                ForEach(definitions) { item in
-                    Text(item.name ?? "-")
-                        .tag(item.name ?? "")
-                }
-            }
-        }
-        .navigationTitle("課程類別")
         .navigationBarTitleDisplayMode(.inline)
         .environment(\.editMode, .constant(.active))
     }

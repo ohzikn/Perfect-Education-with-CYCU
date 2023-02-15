@@ -18,6 +18,12 @@ class CurrentSession: ObservableObject {
         case loggedIn
     }
     
+    enum AuthorizationState {
+        case succeed
+        case failed
+        case reAuthorized
+    }
+    
     enum RequestError: Error {
         case authenticateTokenRequestFailed
         case queryRequestFailed
@@ -31,7 +37,7 @@ class CurrentSession: ObservableObject {
     
     @Published var greetingString:String = "請先登入"
     
-    // MARK: User session related data start
+    // User session related data start
     @Published var loginState: LoginState = .notLoggedIn {
         willSet {
             switch newValue {
@@ -69,8 +75,9 @@ class CurrentSession: ObservableObject {
     @Published var electionInformation_studentInformation: Definitions.ElectionDataStructures.StudentInformation?
     @Published var electionInformation_announcement: Definitions.ElectionDataStructures.Announcement?
     @Published var electionInformation_history: Definitions.ElectionDataStructures.History?
-    // MARK: User session related data end
+    // User session related data end
     
+    // MARK: Login
     func requestLogin(username: String, password: String) {
         Task {
             // Update login state
@@ -85,11 +92,11 @@ class CurrentSession: ObservableObject {
             // Send login request to server
             do {
                 let (data, _) = try await URLSession.shared.data(for: request)
-//                print(data)
+                //                print(data)
                 userInformation = try JSONDecoder().decode(Definitions.UserInformation.self, from: data)
                 guard userInformation?.didLogIn == "Y" else {
                     loginState = .failed
-//                    isLoginFailureAlertPresented = true
+                    //                    isLoginFailureAlertPresented = true
                     userInformation = nil
                     return
                 }
@@ -116,8 +123,8 @@ class CurrentSession: ObservableObject {
         }
     }
     
+    // MARK: WorkStudy
     func requestWorkStudy() {
-        guard workStudyInformation == nil else { return }
         Task {
             do {
                 let data = try await requestDataQuery(for: .workStudy)
@@ -128,8 +135,9 @@ class CurrentSession: ObservableObject {
         }
     }
     
+    
+    // MARK: Credits
     func requestCredits() {
-        guard workStudyInformation == nil else { return }
         Task {
             do {
                 let data = try await requestDataQuery(for: .credits)
@@ -140,110 +148,154 @@ class CurrentSession: ObservableObject {
         }
     }
     
-    // Fixed election request: Definitions.ElectionCommands = .course_get
+    // MARK: Election
+    func requestElection(method: Definitions.ElectionCommands) {
+        // Return unsupported commands
+        switch method {
+        case .course_get, .track_insert, .track_del, .take_course_and_register_insert, .take_course_and_register_del, .volunteer_set, .col_checkbox_upd:
+            print("current command (\(method.rawValue)) is not eligible from this method.")
+            return
+        case .st_info_get:
+            // Get student info
+            struct CustomQuery: RequestQueryBase, Codable {
+                var APP_AUTH_token: String?
+                var mobile: String = "N"
+            }
+            requestElection(method: method, query: CustomQuery())
+        default:
+            // Default behaviour
+            requestElection(method: method, query: nil)
+        }
+    }
+    
+    // Query with CourseInformation array
+    func requestElection(method: Definitions.ElectionCommands, courseInformation: [Definitions.ElectionDataStructures.CourseInformation]) {
+        switch method {
+        case .track_insert:
+            struct CustomQuery: RequestQueryBase, Codable {
+                var APP_AUTH_token: String?
+                var data: [Definitions.ElectionDataStructures.CourseInformation]
+            }
+            requestElection(method: method, query: CustomQuery(data: courseInformation))
+        default:
+            print("current command (\(method.rawValue)) is not eligible from this method.")
+            return
+        }
+    }
+    
+    // .course_get
     func requestElection(filterQuery: Definitions.ElectionDataStructures.CourseSearchRequestQuery?, filterType: Int = 0) {
-        guard workStudyInformation == nil else { return }
         
-        let method: Definitions.ElectionCommands = .course_get
+        struct CustomQuery: RequestQueryBase, Codable {
+            var APP_AUTH_token: String?
+            var filters: Definitions.ElectionDataStructures.CourseSearchRequestQuery
+            var filter_type: Int
+        }
+        
+        requestElection(method: .course_get, query: CustomQuery(filters: filterQuery ?? .init(opCode: .init(), cname: .init(), crossCode: .init(), opStdy: .init(), teacher: .init(), nonStop: .init(), betDept: .init(), betBln: .init(), betBlnMdie: .init(), crossPbl: .init(), distance: .init(), deptDiv: .init(), deptCode: .init(), general: .init(), opType: .init(), opTime123: .init(), opCredit: .init(), man: .init(), opManSum: .init(), remain: .init(), regMan: .init(), emiCourse: .init()), filter_type: filterType))
+    }
+    
+    // private final method
+    private func requestElection(method: Definitions.ElectionCommands, query: RequestQueryBase?) {
         print("executing command (\(method.rawValue)).")
-        
         Task {
             do {
-                // Initialize variables
-                var data: Data?
-                
-                // Send query request
-                struct CourseRequestQuery: RequestQueryBase, Codable {
-                    var APP_AUTH_token: String?
-                    var filters: Definitions.ElectionDataStructures.CourseSearchRequestQuery
-                    var filter_type: Int
-                }
-                data = try await requestDataQuery(for: .election, using: method.rawValue, query: CourseRequestQuery(filters: filterQuery ?? .init(opCode: .init(), cname: .init(), crossCode: .init(), opStdy: .init(), teacher: .init(), nonStop: .init(), betDept: .init(), betBln: .init(), betBlnMdie: .init(), crossPbl: .init(), distance: .init(), deptDiv: .init(), deptCode: .init(), general: .init(), opType: .init(), opTime123: .init(), opCredit: .init(), man: .init(), opManSum: .init(), remain: .init(), regMan: .init(), emiCourse: .init()), filter_type: filterType))
-
-                // Escape if data do not exist
-                guard let data else { return }
+                // Send query and wait for response
+                var data: Data = try await requestDataQuery(for: .election, using: method.rawValue, query: query)
                 
                 // Recieve and decode response
                 let responseString = String(data: data, encoding: .utf8)
+                print(responseString)
                 
-                let response = try JSONDecoder().decode(Definitions.ElectionDataStructures.CourseSearchRequestResponse.self, from: data)
+                // Check if distinct_IP_IDCODE_alert warning activated
+                switch await electionDidDeadCheck(data: data) {
+                case .succeed:
+                    // Continue execution
+                    break
+                case .failed:
+                    // Return
+                    return
+                case .reAuthorized:
+                    // Resend last query
+                    requestElection(method: method, query: query)
+                }
                 
-                // Broadcast result once recieved
-                NotificationCenter.default.post(name: .searchResultDidUpdate, object: response)
-                
-//                print(response)
+                decodeElectionResponse(method: method, data: data)
             } catch {
                 print(error)
             }
         }
     }
     
-    // Other election requests
-    func requestElection(method: Definitions.ElectionCommands) {
-        guard workStudyInformation == nil else { return }
-        
-        // Return unimplemented commands
-        switch method {
-        case .course_get, .track_insert, .track_del, .take_course_and_register_insert, .take_course_and_register_del, .volunteer_set, .col_checkbox_upd:
-            print("current command (\(method.rawValue)) not implemented.")
-            return
-        default:
-            print("executing command (\(method.rawValue)).")
-            break
+    private func electionDidDeadCheck(data: Data) async -> AuthorizationState {
+        struct DistinctIpIdCodeAlert: Codable {
+            var distinctIpCodeAlert: String?
+            private enum CodingKeys: String, CodingKey {
+                case distinctIpCodeAlert = "distinct_IP_IDCODE_alert"
+            }
         }
         
-        Task {
-            do {
-                // Initialize variables
-                var data: Data?
-                
-                // Send request reffering by method type
-                switch method {
-                case .st_info_get:
-                    struct SpecifiedQuery: RequestQueryBase, Codable {
-                        var APP_AUTH_token: String?
-                        var mobile: String = "N"
-                    }
-                    data = try await requestDataQuery(for: .election, using: method.rawValue, query: SpecifiedQuery())
-                default:
-                    // Default behaviour
-                    data = try await requestDataQuery(for: .election, using: method.rawValue)
-                }
-                
-                // Escape if data do not exist
-                guard let data else { return }
-                
-                // Recieve and decode response referring by method type
-                switch method {
-                case .stage_control_get:
-                    electionInformation_stageControl = try JSONDecoder().decode(Definitions.ElectionDataStructures.StageControl.self, from: data)
-                case .st_base_info:
-                    electionInformation_studentBaseInformation = try JSONDecoder().decode(Definitions.ElectionDataStructures.StudentBaseInformation.self, from: data)
-                case .st_info_get:
-                    electionInformation_studentInformation = try JSONDecoder().decode(Definitions.ElectionDataStructures.StudentInformation.self, from: data)
-                case .ann_get:
-                    electionInformation_announcement = try JSONDecoder().decode(Definitions.ElectionDataStructures.Announcement.self, from: data)
-                case .st_record:
-                    electionInformation_history = try JSONDecoder().decode(Definitions.ElectionDataStructures.History.self, from: data)
-                case .track_get:
-                    // Deprecated
-//                    electionInformation_trackingList = try JSONDecoder().decode(Definitions.ElectionInformation.TrackingList.self, from: data)
-                    break
-                case .course_get:
-                    break
-                default:
-                    break
-                }
-                
-                let responseString = String(data: data, encoding: .utf8)
-//                print(responseString)
-            } catch {
-                print(error)
+        let isElectionDead = try? JSONDecoder().decode(DistinctIpIdCodeAlert.self, from: data)
+        
+        // If distinctIpCodeAlert is not empty
+        if !(isElectionDead?.distinctIpCodeAlert?.isEmpty ?? true) {
+            struct DistinctIpIdCodeResponse: Codable {
+                var insSuccess: Bool?
             }
+            
+            // Ask server to pass election authorization
+            guard let responseData = try? await requestDataQuery(for: .election, using: Definitions.ElectionCommands.login_sys_upd.rawValue), let response = try? JSONDecoder().decode(DistinctIpIdCodeResponse.self, from: responseData), response.insSuccess ?? false else {
+                // Failed to inheirit election authorization
+                return .failed
+            }
+            // Succeed to inheirit election authorization
+            return .reAuthorized
+        }
+        // Authorization status is good
+        return .succeed
+    }
+    
+    private func decodeElectionResponse(method: Definitions.ElectionCommands, data: Data) {
+        do {
+            switch method {
+            case .st_info_get:
+                electionInformation_studentInformation = try JSONDecoder().decode(Definitions.ElectionDataStructures.StudentInformation.self, from: data)
+            case .stage_control_get:
+                electionInformation_stageControl = try JSONDecoder().decode(Definitions.ElectionDataStructures.StageControl.self, from: data)
+            case .st_base_info:
+                electionInformation_studentBaseInformation = try JSONDecoder().decode(Definitions.ElectionDataStructures.StudentBaseInformation.self, from: data)
+            case .track_get:
+                //                Deprecated
+                //                electionInformation_trackingList = try JSONDecoder().decode(Definitions.ElectionInformation.TrackingList.self, from: data)
+                break
+            case .st_record:
+                electionInformation_history = try JSONDecoder().decode(Definitions.ElectionDataStructures.History.self, from: data)
+            case .ann_get:
+                electionInformation_announcement = try JSONDecoder().decode(Definitions.ElectionDataStructures.Announcement.self, from: data)
+            case .course_get:
+                let response = try JSONDecoder().decode(Definitions.ElectionDataStructures.CourseSearchRequestResponse.self, from: data)
+                // Broadcast result to observers
+                NotificationCenter.default.post(name: .searchResultDidUpdate, object: response)
+            case .track_insert:
+                break
+            case .track_del:
+                break
+            case .take_course_and_register_insert:
+                break
+            case .take_course_and_register_del:
+                break
+            case .login_sys_upd:
+                break
+            case .volunteer_set:
+                break
+            case .col_checkbox_upd:
+                break
+            }
+        } catch {
+            print(error)
         }
     }
 }
-
 extension CurrentSession {
     // Returns URLRequest Object
     private func getURLRequest(urlQuery: URL, requestData: Data) -> URLRequest {

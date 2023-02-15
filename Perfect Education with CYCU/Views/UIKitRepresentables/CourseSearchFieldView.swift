@@ -63,6 +63,7 @@ struct CourseSearchFieldView: UIViewRepresentable {
         }
         
         func searchBarBookmarkButtonClicked(_ searchBar: UISearchBar) {
+            searchBar.resignFirstResponder()
             isFilterActivated.wrappedValue.toggle()
         }
         

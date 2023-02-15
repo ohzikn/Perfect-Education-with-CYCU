@@ -103,6 +103,20 @@ struct ElectionView: View {
                         ForEach(searchResult) { item in
                             NavigationLink(value: item) {
                                 ElectionCourseListItemView(for: item)
+                                    .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                        Button(role: .none) {
+                                            currentSession.requestElection(method: .track_insert, courseInformation: [item])
+                                        } label: {
+                                            Label("新增", systemImage: "text.badge.plus")
+                                        }
+                                        .tint(.orange)
+                                        Button(role: .destructive) {
+                                            
+                                        } label: {
+                                            Label("移除", systemImage: "text.badge.minus")
+                                        }
+                                        .tint(.orange)
+                                    }
                             }
                         }
                     }
