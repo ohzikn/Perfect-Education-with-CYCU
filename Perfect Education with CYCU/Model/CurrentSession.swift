@@ -35,6 +35,13 @@ class CurrentSession: ObservableObject {
         let authenticateInformation: Definitions.AuthenticateInformation
     }
     
+    enum CourseListType: CaseIterable {
+        case take
+        case track
+        case register
+        case wait
+    }
+    
     @Published var greetingString:String = "請先登入"
     
     // User session related data start
@@ -177,6 +184,12 @@ class CurrentSession: ObservableObject {
                 var data: [Definitions.ElectionDataStructures.CourseInformation]
             }
             requestElection(method: method, query: CustomQuery(data: courseInformation))
+        case .track_del:
+            struct CustomQuery: RequestQueryBase, Codable {
+                var APP_AUTH_token: String?
+                var track_data: [Definitions.ElectionDataStructures.CourseInformation]
+            }
+            requestElection(method: method, query: CustomQuery(track_data: courseInformation))
         default:
             print("current command (\(method.rawValue)) is not eligible from this method.")
             return
@@ -201,7 +214,7 @@ class CurrentSession: ObservableObject {
         Task {
             do {
                 // Send query and wait for response
-                var data: Data = try await requestDataQuery(for: .election, using: method.rawValue, query: query)
+                let data: Data = try await requestDataQuery(for: .election, using: method.rawValue, query: query)
                 
                 // Recieve and decode response
                 let responseString = String(data: data, encoding: .utf8)
@@ -260,14 +273,18 @@ class CurrentSession: ObservableObject {
             switch method {
             case .st_info_get:
                 electionInformation_studentInformation = try JSONDecoder().decode(Definitions.ElectionDataStructures.StudentInformation.self, from: data)
+                CourseListType.allCases.forEach { value in
+                    NotificationCenter.default.post(name: .courseListDidUpdate, object: value)
+                }
             case .stage_control_get:
                 electionInformation_stageControl = try JSONDecoder().decode(Definitions.ElectionDataStructures.StageControl.self, from: data)
             case .st_base_info:
                 electionInformation_studentBaseInformation = try JSONDecoder().decode(Definitions.ElectionDataStructures.StudentBaseInformation.self, from: data)
-            case .track_get:
-                //                Deprecated
-                //                electionInformation_trackingList = try JSONDecoder().decode(Definitions.ElectionInformation.TrackingList.self, from: data)
-                break
+            case .track_get, .track_insert, .track_del: // These methods returns the same data structure
+                let response = try JSONDecoder().decode(Definitions.ElectionDataStructures.TrackingListResponse.self, from: data)
+                updateStudentInformation(for: .track, courses: response.trackingList)
+                // Broadcast updated list type to observers
+                NotificationCenter.default.post(name: .courseListDidUpdate, object: CourseListType.track)
             case .st_record:
                 electionInformation_history = try JSONDecoder().decode(Definitions.ElectionDataStructures.History.self, from: data)
             case .ann_get:
@@ -276,10 +293,6 @@ class CurrentSession: ObservableObject {
                 let response = try JSONDecoder().decode(Definitions.ElectionDataStructures.CourseSearchRequestResponse.self, from: data)
                 // Broadcast result to observers
                 NotificationCenter.default.post(name: .searchResultDidUpdate, object: response)
-            case .track_insert:
-                break
-            case .track_del:
-                break
             case .take_course_and_register_insert:
                 break
             case .take_course_and_register_del:
@@ -295,7 +308,23 @@ class CurrentSession: ObservableObject {
             print(error)
         }
     }
+    
+    // Execute this method to publish changes to observers
+    private func updateStudentInformation(for listType: CourseListType, courses: [Definitions.ElectionDataStructures.CourseInformation]?) {
+        guard let courses else { return }
+        switch listType {
+        case .take:
+            electionInformation_studentInformation?.takeCourseList = courses
+        case .track:
+            electionInformation_studentInformation?.trackList = courses
+        case .register:
+            electionInformation_studentInformation?.registerList = courses
+        case .wait:
+            electionInformation_studentInformation?.makeUpList = courses
+        }
+    }
 }
+
 extension CurrentSession {
     // Returns URLRequest Object
     private func getURLRequest(urlQuery: URL, requestData: Data) -> URLRequest {

@@ -133,10 +133,10 @@ extension Definitions {
             let systemControl: SystemControl?
             
             // Course Lists
-            let takeCourseList: [CourseInformation]? // 修課清單
-            let trackList: [CourseInformation]? // 追蹤清單
-            let registerList: [CourseInformation]? // 登記清單
-            let makeUpList: [CourseInformation]? // 遞補清單
+            var takeCourseList: [CourseInformation]? // 修課清單
+            var trackList: [CourseInformation]? // 追蹤清單
+            var registerList: [CourseInformation]? // 登記清單
+            var makeUpList: [CourseInformation]? // 遞補清單
             
             private enum CodingKeys: String, CodingKey {
                 case alertText = "alert_text"
@@ -521,6 +521,15 @@ extension Definitions {
                         return "~"
                     }
                 }
+            }
+        }
+        
+        // Tracking response
+        struct TrackingListResponse: Codable {
+            let trackingList: [CourseInformation]?
+            
+            private enum CodingKeys: String, CodingKey {
+                case trackingList = "track_get"
             }
         }
         

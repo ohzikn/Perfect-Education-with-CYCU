@@ -388,6 +388,8 @@ struct ElectionSearchGeneralOpIdView: View {
 }
 
 struct ElectionSearchCrossIdView: View {
+    @Environment(\.dismiss) private var dismiss
+    
     @EnvironmentObject var currentSession: CurrentSession
     @State var selectedCrossId: UUID?
     
@@ -399,24 +401,44 @@ struct ElectionSearchCrossIdView: View {
         List(selection: $selectedCrossId) {
             if let definitions = currentSession.electionInformation_studentInformation?.crossTypeDefinitions {
                 Section {
-                    Text("不指定")
-                        .tag(nil as UUID?)
+                    HStack {
+                        Text("不指定")
+                            .tag(nil as UUID?)
+                        Spacer()
+                        if selectedCrossId == nil {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.blue)
+                        }
+                    }
                 }
                 ForEach(definitions) { groupItem in
                     Section(groupItem.name ?? "-") {
                         if let items = groupItem.crossIdentifiers {
                             ForEach(items) { item in
-                                Text(item.crossName ?? "-")
-                                    .tag(item.id as UUID?)
+                                HStack {
+                                    Text(item.crossName ?? "-")
+                                    Spacer()
+                                    if selectedCrossId == item.id {
+                                        Image(systemName: "checkmark")
+                                            .foregroundColor(.blue)
+                                    }
+                                }
+                                .tag(item.id as UUID?)
+                                .onAppear {
+                                    UITableViewCell.appearance().selectionStyle = .none
+                                }
                             }
                         }
                     }
                 }
             }
         }
+        .environment(\.editMode, .constant(.active))
         .navigationTitle("跨就微學程")
         .navigationBarTitleDisplayMode(.inline)
-        .environment(\.editMode, .constant(.active))
+        .onChange(of: selectedCrossId) { _ in
+            dismiss()
+        }
     }
 }
 

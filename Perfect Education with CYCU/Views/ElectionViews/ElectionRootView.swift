@@ -70,6 +70,11 @@ struct ElectionRootView: View {
     @EnvironmentObject var applicationParameters: ApplicationParameters
     @EnvironmentObject var currentSession: CurrentSession
     
+    @State var takingList: [Definitions.ElectionDataStructures.CourseInformation] = []
+    @State var trackingList: [Definitions.ElectionDataStructures.CourseInformation] = []
+    @State var registrationList: [Definitions.ElectionDataStructures.CourseInformation] = []
+    @State var waitingList: [Definitions.ElectionDataStructures.CourseInformation] = []
+    
     var rootDismiss: DismissAction
     
     private enum SubsheetViews {
@@ -98,171 +103,191 @@ struct ElectionRootView: View {
     @State private var showSearchBar = true
     @State private var isFilterActivated: Bool = false
     @State private var searchEntry: String = ""
-    @State private var searchResult: [Definitions.ElectionDataStructures.CourseInformation]?
+    @State private var searchResult: [Definitions.ElectionDataStructures.CourseInformation] = []
     
     private var courseSearchFieldView: CourseSearchFieldView {
         CourseSearchFieldView(isFilterActivated: $isFilterActivated, searchText: $searchEntry)
     }
     
+    private func requestAddToTracklist(for courses: [Definitions.ElectionDataStructures.CourseInformation]) {
+        currentSession.requestElection(method: .track_insert, courseInformation: courses)
+    }
+    
+    private func requestRemoveFromTracklist(for courses: [Definitions.ElectionDataStructures.CourseInformation]) {
+        currentSession.requestElection(method: .track_del, courseInformation: courses)
+    }
+    
     var body: some View {
         NavigationStack {
-            if showSearchBar { courseSearchFieldView }
-            Picker("Course List Type", selection: $selectedCourseListType) {
-                ForEach(CourseListType.allCases, id: \.hashValue) { item in
-                    Text(item.rawValue)
-                        .tag(item)
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding([.horizontal])
-            VStack {
-                switch selectedCourseListType {
-                case .search:
-                    if let courses = searchResult, !courses.isEmpty {
-                        List {
-                            ForEach(courses) { item in
-                                NavigationLink(value: item) {
-                                    ElectionCourseListItemView(for: item)
-                                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                            Button(role: .none) {
-                                                currentSession.requestElection(method: .track_insert, courseInformation: [item])
-                                            } label: {
-                                                Label("新增", systemImage: "text.badge.plus")
+            VStack(spacing: 0) {
+                if showSearchBar { courseSearchFieldView }
+                VStack {
+                    switch selectedCourseListType {
+                    case .search:
+                        if !searchResult.isEmpty {
+                            List {
+                                ForEach(searchResult) { item in
+                                    NavigationLink(value: item) {
+                                        ElectionCourseListItemView(for: item)
+                                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                                Button(role: .none) {
+                                                    requestAddToTracklist(for: [item])
+                                                } label: {
+                                                    Label("新增", systemImage: "text.badge.plus")
+                                                }
+                                                .tint(.blue)
+                                                Button(role: .destructive) {
+                                                    requestRemoveFromTracklist(for: [item])
+                                                } label: {
+                                                    Label("移除", systemImage: "text.badge.minus")
+                                                }
+                                                .tint(.orange)
                                             }
-                                            .tint(.orange)
-                                            Button(role: .destructive) {
-                                                
-                                            } label: {
-                                                Label("移除", systemImage: "text.badge.minus")
-                                            }
-                                            .tint(.orange)
-                                        }
+                                    }
                                 }
                             }
+                            .listStyle(.plain)
+                        } else {
+                            VStack(spacing: 4) {
+                                Text("沒有項目")
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.secondary)
+                                Text("輸入文字或使用搜尋選項來查詢課程")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding([.bottom])
                         }
-                        .listStyle(.plain)
-                    } else {
-                        VStack(spacing: 4) {
+                    case .takingList:
+                        if !takingList.isEmpty {
+                            List {
+                                ForEach(takingList) { item in
+                                    NavigationLink(value: item) {
+                                        ElectionCourseListItemView(for: item)
+                                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                                Button(role: .none) {
+                                                    requestAddToTracklist(for: [item])
+                                                } label: {
+                                                    Label("新增", systemImage: "text.badge.plus")
+                                                }
+                                                .tint(.blue)
+                                                Button(role: .destructive) {
+                                                    requestRemoveFromTracklist(for: [item])
+                                                } label: {
+                                                    Label("移除", systemImage: "text.badge.minus")
+                                                }
+                                                .tint(.orange)
+                                            }
+                                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                                                Button("退選", role: .destructive) {
+                                                    
+                                                }
+                                            }
+                                    }
+                                }
+                            }
+                            .listStyle(.plain)
+                        } else {
                             Text("沒有項目")
                                 .fontWeight(.semibold)
                                 .foregroundColor(.secondary)
-                            Text("輸入文字或使用搜尋選項來查詢課程")
-                                .font(.caption)
+                                .padding([.bottom])
+                        }
+                    case .trackingList:
+                        if !trackingList.isEmpty {
+                            List {
+                                ForEach(trackingList) { item in
+                                    NavigationLink(value: item) {
+                                        ElectionCourseListItemView(for: item)
+                                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                                Button(role: .none) {
+                                                    requestAddToTracklist(for: [item])
+                                                } label: {
+                                                    Label("新增", systemImage: "text.badge.plus")
+                                                }
+                                                .tint(.blue)
+                                                Button(role: .destructive) {
+                                                    requestRemoveFromTracklist(for: [item])
+                                                } label: {
+                                                    Label("移除", systemImage: "text.badge.minus")
+                                                }
+                                                .tint(.orange)
+                                            }
+                                    }
+                                }
+                            }
+                            .listStyle(.plain)
+                        } else {
+                            Text("沒有項目")
+                                .fontWeight(.semibold)
                                 .foregroundColor(.secondary)
+                                .padding([.bottom])
                         }
-                        .padding([.bottom])
-                    }
-                case .takingList:
-                    if let courses = currentSession.electionInformation_studentInformation?.takeCourseList, !courses.isEmpty {
-                        List {
-                            ForEach(courses) { item in
-                                NavigationLink(value: item) {
-                                    ElectionCourseListItemView(for: item)
-                                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                            Button(role: .none) {
-                                                
-                                            } label: {
-                                                Label("新增", systemImage: "text.badge.plus")
+                    case .registrationList:
+                        if !registrationList.isEmpty {
+                            List {
+                                ForEach(registrationList) { item in
+                                    NavigationLink(value: item) {
+                                        ElectionCourseListItemView(for: item)
+                                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                                Button(role: .none) {
+                                                    requestAddToTracklist(for: [item])
+                                                } label: {
+                                                    Label("新增", systemImage: "text.badge.plus")
+                                                }
+                                                .tint(.blue)
+                                                Button(role: .destructive) {
+                                                    requestRemoveFromTracklist(for: [item])
+                                                } label: {
+                                                    Label("移除", systemImage: "text.badge.minus")
+                                                }
+                                                .tint(.orange)
                                             }
-                                            .tint(.orange)
-                                            Button(role: .destructive) {
-                                                
-                                            } label: {
-                                                Label("移除", systemImage: "text.badge.minus")
-                                            }
-                                            .tint(.orange)
-                                        }
-                                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                            Button("退選", role: .destructive) {
-                                                
-                                            }
-                                        }
+                                    }
                                 }
                             }
+                            .listStyle(.plain)
+                        } else {
+                            Text("沒有項目")
+                                .fontWeight(.semibold)
+                                .foregroundColor(.secondary)
+                                .padding([.bottom])
                         }
-                        .listStyle(.plain)
-                    } else {
-                        Text("沒有項目")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.secondary)
-                            .padding([.bottom])
-                    }
-                case .trackingList:
-                    if let courses = currentSession.electionInformation_studentInformation?.trackList, !courses.isEmpty {
-                        List {
-                            ForEach(courses) { item in
-                                NavigationLink(value: item) {
-                                    ElectionCourseListItemView(for: item)
-                                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                            Button(role: .destructive) {
-                                                
-                                            } label: {
-                                                Label("移除", systemImage: "text.badge.minus")
+                    case .watingList:
+                        if !waitingList.isEmpty {
+                            List {
+                                ForEach(waitingList) { item in
+                                    NavigationLink(value: item) {
+                                        ElectionCourseListItemView(for: item)
+                                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                                Button(role: .none) {
+                                                    requestAddToTracklist(for: [item])
+                                                } label: {
+                                                    Label("新增", systemImage: "text.badge.plus")
+                                                }
+                                                .tint(.blue)
+                                                Button(role: .destructive) {
+                                                    requestRemoveFromTracklist(for: [item])
+                                                } label: {
+                                                    Label("移除", systemImage: "text.badge.minus")
+                                                }
+                                                .tint(.orange)
                                             }
-                                            .tint(.orange)
-                                        }
+                                    }
                                 }
                             }
+                            .listStyle(.plain)
+                        } else {
+                            Text("沒有項目")
+                                .fontWeight(.semibold)
+                                .foregroundColor(.secondary)
+                                .padding([.bottom])
                         }
-                        .listStyle(.plain)
-                    } else {
-                        Text("沒有項目")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.secondary)
-                            .padding([.bottom])
-                    }
-                case .registrationList:
-                    if let courses = currentSession.electionInformation_studentInformation?.registerList, !courses.isEmpty {
-                        List {
-                            ForEach(courses) { item in
-                                NavigationLink(value: item) {
-                                    ElectionCourseListItemView(for: item)
-                                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                            Button(role: .destructive) {
-                                                
-                                            } label: {
-                                                Label("移除", systemImage: "text.badge.minus")
-                                            }
-                                            .tint(.orange)
-                                        }
-                                }
-                            }
-                        }
-                        .listStyle(.plain)
-                    } else {
-                        Text("沒有項目")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.secondary)
-                            .padding([.bottom])
-                    }
-                case .watingList:
-                    if let courses = currentSession.electionInformation_studentInformation?.makeUpList, !courses.isEmpty {
-                        List {
-                            ForEach(courses) { item in
-                                NavigationLink(value: item) {
-                                    ElectionCourseListItemView(for: item)
-                                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                            Button(role: .destructive) {
-                                                
-                                            } label: {
-                                                Label("移除", systemImage: "text.badge.minus")
-                                            }
-                                            .tint(.orange)
-                                        }
-                                }
-                            }
-                        }
-                        .listStyle(.plain)
-                    } else {
-                        Text("沒有項目")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.secondary)
-                            .padding([.bottom])
                     }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .navigationTitle("選課")
+            .navigationTitle(selectedCourseListType.rawValue)
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: Definitions.ElectionDataStructures.CourseInformation.self) { value in
                 ElectionCourseDetailView(for: value)
@@ -325,6 +350,15 @@ struct ElectionRootView: View {
                         Image(systemName: "list.bullet")
                     }
                 }
+                ToolbarItem(placement: .bottomBar) {
+                    Picker("Course List Type", selection: $selectedCourseListType) {
+                        ForEach(CourseListType.allCases, id: \.hashValue) { item in
+                            Text(item.rawValue)
+                                .tag(item)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
             }
         }
         .sheet(isPresented: $isSubSheetPresented) {
@@ -386,25 +420,21 @@ struct ElectionRootView: View {
             guard let response = notification.object as? Definitions.ElectionDataStructures.CourseSearchRequestResponse, let courseData = response.courseData else { return }
             searchResult = courseData
         }
-    }
-}
-
-struct ElectionCourseListView: View {
-    var courseList: [Definitions.ElectionDataStructures.CourseInformation]?
-    
-    var body: some View {
-        VStack {
-            if let courseList, !courseList.isEmpty {
-                ForEach(courseList) { item in
-                    
-                }
-            } else {
-                
+        .onReceive(NotificationCenter.default.publisher(for: .courseListDidUpdate)) { notification in
+            guard let response = notification.object as? CurrentSession.CourseListType else { return }
+            switch response {
+            case .take:
+                takingList = currentSession.electionInformation_studentInformation?.takeCourseList ?? []
+            case .track:
+                trackingList = currentSession.electionInformation_studentInformation?.trackList ?? []
+            case .register:
+                registrationList = currentSession.electionInformation_studentInformation?.registerList ?? []
+            case .wait:
+                waitingList = currentSession.electionInformation_studentInformation?.makeUpList ?? []
             }
         }
     }
 }
-
 
 struct ElectionViewDev: View {
     @EnvironmentObject var currentSession: CurrentSession

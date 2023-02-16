@@ -16,14 +16,6 @@ struct ElectionAnnouncementView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                Picker("Announcement Type", selection: $selectedAnnouncement) {
-                    ForEach(Definitions.ElectionDefinitions.AnnouncementRoles.allCases, id: \.hashValue) { item in
-                        Text(item.getName(inChinese: true))
-                            .tag(item)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding(.horizontal)
                 List {
                     if let billBoard = currentSession.electionInformation_announcement?.billboard, let filteredBillboard = billBoard.filter({ $0.announcementType == selectedAnnouncement.rawValue }), !filteredBillboard.isEmpty {
                         ForEach(filteredBillboard) { item in
@@ -41,6 +33,15 @@ struct ElectionAnnouncementView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("完成") { dismiss() }
+                }
+                ToolbarItem(placement: .bottomBar) {
+                    Picker("Announcement Type", selection: $selectedAnnouncement) {
+                        ForEach(Definitions.ElectionDefinitions.AnnouncementRoles.allCases, id: \.hashValue) { item in
+                            Text(item.getName(inChinese: true))
+                                .tag(item)
+                        }
+                    }
+                    .pickerStyle(.segmented)
                 }
             }
             .navigationDestination(for: Definitions.ElectionDataStructures.Announcement.Billboard.self) { value in
