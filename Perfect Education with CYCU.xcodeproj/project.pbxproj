@@ -68,6 +68,7 @@
 		5E025609296E2F92004E0370 /* General.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = General.swift; sourceTree = "<group>"; };
 		5E02560B296E35DD004E0370 /* CurrentSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSession.swift; sourceTree = "<group>"; };
 		5E2321F82999991300565D59 /* TempView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempView.swift; sourceTree = "<group>"; };
+		5E2863C7299DD97F0039C797 /* Perfect-Education-with-CYCU-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Perfect-Education-with-CYCU-Info.plist"; sourceTree = SOURCE_ROOT; };
 		5E2AC576296E16AE00722D02 /* Perfect Education with CYCU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Perfect Education with CYCU.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E2AC579296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Perfect_Education_with_CYCUApp.swift; sourceTree = "<group>"; };
 		5E2AC57B296E16AE00722D02 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -175,6 +176,7 @@
 		5E2AC578296E16AE00722D02 /* Perfect Education with CYCU */ = {
 			isa = PBXGroup;
 			children = (
+				5E2863C7299DD97F0039C797 /* Perfect-Education-with-CYCU-Info.plist */,
 				5E2AC579296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift */,
 				5E2AC5A3296E16EE00722D02 /* Views */,
 				5E025608296E2F75004E0370 /* Model */,
@@ -596,7 +598,7 @@
 				DEVELOPMENT_TEAM = KM5MKB3J43;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = CYCU;
+				INFOPLIST_FILE = "Perfect-Education-with-CYCU-Info.plist";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "We will use Face ID for you to log into the application.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -632,7 +634,7 @@
 				DEVELOPMENT_TEAM = KM5MKB3J43;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = CYCU;
+				INFOPLIST_FILE = "Perfect-Education-with-CYCU-Info.plist";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "We will use Face ID for you to log into the application.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
