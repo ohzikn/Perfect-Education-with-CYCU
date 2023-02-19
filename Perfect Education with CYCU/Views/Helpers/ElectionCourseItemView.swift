@@ -160,6 +160,7 @@ struct ElectionCourseItemsView: View {
                         }
                     }
                 }
+                .padding([.vertical])
             }
         }
     }
