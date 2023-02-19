@@ -94,8 +94,28 @@ struct ElectionRootView: View {
         case registrationList = "登記清單"
         case watingList = "遞補清單"
     }
-    
     @State private var selectedCourseListType: CourseListType = .search
+    
+    enum GroupType: String, CaseIterable {
+        case none = "無"
+        case byOpType = "課程類別"
+        case byTeacher = "授課老師"
+        case byDept = "開課班級"
+        
+        func getGroupedResult(for courseList: [Definitions.ElectionDataStructures.CourseInformation]) -> Dictionary<String?, [Array<Definitions.ElectionDataStructures.CourseInformation>.Element]>? {
+            switch self {
+            case .none:
+                return nil
+            case .byOpType:
+                return Dictionary(grouping: courseList, by: \.opType)
+            case .byTeacher:
+                return Dictionary(grouping: courseList, by: \.teacher)
+            case .byDept:
+                return Dictionary(grouping: courseList, by: \.deptName)
+            }
+        }
+    }
+    @State private var selectedGroupType: GroupType = .none
     
     @State private var currentSubsheetView: SubsheetViews = .none
     @State private var isSubSheetPresented = false
@@ -140,28 +160,7 @@ struct ElectionRootView: View {
                     switch selectedCourseListType {
                     case .search:
                         if !searchResult.isEmpty {
-                            List {
-                                ForEach(searchResult) { item in
-                                    NavigationLink(value: item) {
-                                        ElectionCourseListItemView(for: item)
-                                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                                Button(role: .none) {
-                                                    requestAddToTracklist(for: [item])
-                                                } label: {
-                                                    Label("新增", systemImage: "text.badge.plus")
-                                                }
-                                                .tint(.blue)
-                                                Button(role: .destructive) {
-                                                    requestRemoveFromTracklist(for: [item])
-                                                } label: {
-                                                    Label("移除", systemImage: "text.badge.minus")
-                                                }
-                                                .tint(.orange)
-                                            }
-                                    }
-                                }
-                            }
-                            .listStyle(.plain)
+                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: searchResult, groupBy: selectedGroupType)
                         } else {
                             VStack(spacing: 4) {
                                 Text("沒有項目")
@@ -175,28 +174,7 @@ struct ElectionRootView: View {
                         }
                     case .takingList:
                         if !takingList.isEmpty {
-                            List {
-                                ForEach(takingList) { item in
-                                    NavigationLink(value: item) {
-                                        ElectionCourseListItemView(for: item)
-                                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                                Button(role: .none) {
-                                                    requestAddToTracklist(for: [item])
-                                                } label: {
-                                                    Label("新增", systemImage: "text.badge.plus")
-                                                }
-                                                .tint(.blue)
-                                                Button(role: .destructive) {
-                                                    requestRemoveFromTracklist(for: [item])
-                                                } label: {
-                                                    Label("移除", systemImage: "text.badge.minus")
-                                                }
-                                                .tint(.orange)
-                                            }
-                                    }
-                                }
-                            }
-                            .listStyle(.plain)
+                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: takingList, groupBy: selectedGroupType)
                         } else {
                             Text("沒有項目")
                                 .fontWeight(.semibold)
@@ -205,28 +183,7 @@ struct ElectionRootView: View {
                         }
                     case .trackingList:
                         if !trackingList.isEmpty {
-                            List {
-                                ForEach(trackingList) { item in
-                                    NavigationLink(value: item) {
-                                        ElectionCourseListItemView(for: item)
-                                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                                Button(role: .none) {
-                                                    requestAddToTracklist(for: [item])
-                                                } label: {
-                                                    Label("新增", systemImage: "text.badge.plus")
-                                                }
-                                                .tint(.blue)
-                                                Button(role: .destructive) {
-                                                    requestRemoveFromTracklist(for: [item])
-                                                } label: {
-                                                    Label("移除", systemImage: "text.badge.minus")
-                                                }
-                                                .tint(.orange)
-                                            }
-                                    }
-                                }
-                            }
-                            .listStyle(.plain)
+                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: trackingList, groupBy: selectedGroupType)
                         } else {
                             Text("沒有項目")
                                 .fontWeight(.semibold)
@@ -235,28 +192,7 @@ struct ElectionRootView: View {
                         }
                     case .registrationList:
                         if !registrationList.isEmpty {
-                            List {
-                                ForEach(registrationList) { item in
-                                    NavigationLink(value: item) {
-                                        ElectionCourseListItemView(for: item)
-                                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                                Button(role: .none) {
-                                                    requestAddToTracklist(for: [item])
-                                                } label: {
-                                                    Label("新增", systemImage: "text.badge.plus")
-                                                }
-                                                .tint(.blue)
-                                                Button(role: .destructive) {
-                                                    requestRemoveFromTracklist(for: [item])
-                                                } label: {
-                                                    Label("移除", systemImage: "text.badge.minus")
-                                                }
-                                                .tint(.orange)
-                                            }
-                                    }
-                                }
-                            }
-                            .listStyle(.plain)
+                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: registrationList, groupBy: selectedGroupType)
                         } else {
                             Text("沒有項目")
                                 .fontWeight(.semibold)
@@ -265,28 +201,7 @@ struct ElectionRootView: View {
                         }
                     case .watingList:
                         if !waitingList.isEmpty {
-                            List {
-                                ForEach(waitingList) { item in
-                                    NavigationLink(value: item) {
-                                        ElectionCourseListItemView(for: item)
-                                            .swipeActions(edge: .leading, allowsFullSwipe: false) {
-                                                Button(role: .none) {
-                                                    requestAddToTracklist(for: [item])
-                                                } label: {
-                                                    Label("新增", systemImage: "text.badge.plus")
-                                                }
-                                                .tint(.blue)
-                                                Button(role: .destructive) {
-                                                    requestRemoveFromTracklist(for: [item])
-                                                } label: {
-                                                    Label("移除", systemImage: "text.badge.minus")
-                                                }
-                                                .tint(.orange)
-                                            }
-                                    }
-                                }
-                            }
-                            .listStyle(.plain)
+                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: waitingList, groupBy: selectedGroupType)
                         } else {
                             Text("沒有項目")
                                 .fontWeight(.semibold)
@@ -299,6 +214,9 @@ struct ElectionRootView: View {
             }
             .navigationTitle(selectedCourseListType.rawValue)
             .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: [Definitions.ElectionDataStructures.CourseInformation].self) { value in
+                ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: value, groupBy: .none)
+            }
             .navigationDestination(for: Definitions.ElectionDataStructures.CourseInformation.self) { value in
                 ElectionCourseDetailView(for: value)
             }
@@ -345,16 +263,13 @@ struct ElectionRootView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
                         Section {
-                            Menu("顯示方式選項") {
-                                Section("分類方式：") {
-                                    Button("課程名稱") {
-                                        
-                                    }
-                                    Button("開課代碼") {
-                                        
-                                    }
+                            Picker("分類方式", selection: $selectedGroupType) {
+                                ForEach(GroupType.allCases, id: \.hashValue) { item in
+                                    Text(item.rawValue)
+                                        .tag(item)
                                 }
                             }
+                            .pickerStyle(.menu)
                         }
                     } label: {
                         Image(systemName: "list.bullet")

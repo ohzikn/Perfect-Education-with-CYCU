@@ -323,8 +323,8 @@ struct ElectionSearchDepartmentIdView: View {
     var body: some View {
         List(selection: $selectedDepartmentIds) {
             if let definitions = currentSession.electionInformation_studentInformation?.departmentDefinitions {
-                let groupedDefinitions = Dictionary(grouping: definitions) { $0.codName }
-                let sortedDefinitions = groupedDefinitions.keys.sorted(by: { $0?.localizedStandardCompare($1 ?? "") == .orderedAscending })
+                let groupedDefinitions = Dictionary(grouping: definitions, by: \.codName)
+                let sortedDefinitions = groupedDefinitions.keys.sorted(by: { ($0 ?? "").localizedStandardCompare($1 ?? "") == .orderedAscending })
                 ForEach(sortedDefinitions, id: \.?.hashValue) { groupItem in
                     Section(groupItem ?? "-") {
                         ForEach(groupedDefinitions[groupItem] ?? []) { item in

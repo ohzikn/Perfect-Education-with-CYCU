@@ -7,6 +7,164 @@
 
 import SwiftUI
 
+struct ElectionCourseItemsView: View {
+    @EnvironmentObject var currentSession: CurrentSession // Used only to execute election functions
+    
+    let courseListType: ElectionRootView.CourseListType
+    let courseList: [Definitions.ElectionDataStructures.CourseInformation]
+    let groupBy: ElectionRootView.GroupType
+    
+    let columnDefinitions: [GridItem] = [.init(.flexible()), .init(.flexible()), .init(.flexible())]
+    
+    private func requestAddToTracklist(for courses: [Definitions.ElectionDataStructures.CourseInformation]) {
+        currentSession.requestElection(method: .track_insert, courseInformation: courses)
+    }
+    
+    private func requestRemoveFromTracklist(for courses: [Definitions.ElectionDataStructures.CourseInformation]) {
+        currentSession.requestElection(method: .track_del, courseInformation: courses)
+    }
+    
+    var body: some View {
+        switch groupBy {
+        case .none: // Show results by list
+            List {
+                switch courseListType {
+                case .search:
+                    ForEach(courseList) { item in
+                        NavigationLink(value: item) {
+                            ElectionCourseListItemView(for: item)
+                                .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                    Button(role: .none) {
+                                        requestAddToTracklist(for: [item])
+                                    } label: {
+                                        Label("新增", systemImage: "text.badge.plus")
+                                    }
+                                    .tint(.blue)
+                                    Button(role: .destructive) {
+                                        requestRemoveFromTracklist(for: [item])
+                                    } label: {
+                                        Label("移除", systemImage: "text.badge.minus")
+                                    }
+                                    .tint(.orange)
+                                }
+                        }
+                    }
+                case .takingList:
+                    ForEach(courseList) { item in
+                        NavigationLink(value: item) {
+                            ElectionCourseListItemView(for: item)
+                                .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                    Button(role: .none) {
+                                        requestAddToTracklist(for: [item])
+                                    } label: {
+                                        Label("新增", systemImage: "text.badge.plus")
+                                    }
+                                    .tint(.blue)
+                                    Button(role: .destructive) {
+                                        requestRemoveFromTracklist(for: [item])
+                                    } label: {
+                                        Label("移除", systemImage: "text.badge.minus")
+                                    }
+                                    .tint(.orange)
+                                }
+                        }
+                    }
+                case .trackingList:
+                    ForEach(courseList) { item in
+                        NavigationLink(value: item) {
+                            ElectionCourseListItemView(for: item)
+                                .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                    Button(role: .none) {
+                                        requestAddToTracklist(for: [item])
+                                    } label: {
+                                        Label("新增", systemImage: "text.badge.plus")
+                                    }
+                                    .tint(.blue)
+                                    Button(role: .destructive) {
+                                        requestRemoveFromTracklist(for: [item])
+                                    } label: {
+                                        Label("移除", systemImage: "text.badge.minus")
+                                    }
+                                    .tint(.orange)
+                                }
+                        }
+                    }
+                case .registrationList:
+                    ForEach(courseList) { item in
+                        NavigationLink(value: item) {
+                            ElectionCourseListItemView(for: item)
+                                .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                    Button(role: .none) {
+                                        requestAddToTracklist(for: [item])
+                                    } label: {
+                                        Label("新增", systemImage: "text.badge.plus")
+                                    }
+                                    .tint(.blue)
+                                    Button(role: .destructive) {
+                                        requestRemoveFromTracklist(for: [item])
+                                    } label: {
+                                        Label("移除", systemImage: "text.badge.minus")
+                                    }
+                                    .tint(.orange)
+                                }
+                        }
+                    }
+                case .watingList:
+                    ForEach(courseList) { item in
+                        NavigationLink(value: item) {
+                            ElectionCourseListItemView(for: item)
+                                .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                                    Button(role: .none) {
+                                        requestAddToTracklist(for: [item])
+                                    } label: {
+                                        Label("新增", systemImage: "text.badge.plus")
+                                    }
+                                    .tint(.blue)
+                                    Button(role: .destructive) {
+                                        requestRemoveFromTracklist(for: [item])
+                                    } label: {
+                                        Label("移除", systemImage: "text.badge.minus")
+                                    }
+                                    .tint(.orange)
+                                }
+                        }
+                    }
+                }
+            }
+            .listStyle(.plain)
+        default: // Show results by LazyVGrid
+            ScrollView {
+                LazyVGrid(columns: columnDefinitions, spacing: 20) {
+                    if let grouped = groupBy.getGroupedResult(for: courseList) {
+                        let sorted = grouped.keys.sorted(by: { ($0 ?? "").localizedStandardCompare($1 ?? "") == .orderedAscending })
+                        ForEach(sorted, id: \.?.hashValue) { groupItem in
+                            if let list: [Definitions.ElectionDataStructures.CourseInformation] = grouped[groupItem] {
+                                NavigationLink(value: list) {
+                                    VStack {
+                                        ZStack {
+                                            Ellipse()
+                                                .aspectRatio(contentMode: .fill)
+                                                .foregroundColor(.gray)
+                                            Text(groupItem?.prefix(1) ?? "其")
+                                                .font(.largeTitle)
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(.white)
+                                        }
+                                        .frame(width: 80, height: 80)
+                                        Text(groupItem ?? "其他")
+                                            .lineLimit(1)
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 struct ElectionCourseListItemView: View {
     var info: Definitions.ElectionDataStructures.CourseInformation
     
@@ -125,6 +283,7 @@ struct ElectionCourseItemView_Previews: PreviewProvider {
     static var courseInformation: Definitions.ElectionDataStructures.CourseInformation = .init(deptName: "", opRmName1: "教學113", cursCode: "", cname: "熱力學", opCode: "ABCD12", deptCode: "", opStdy: "", opType: "", dataToken: "", opTime1: "1-34", opQuality: "", teacher: "", crossName: "", memo1: "Memo", opRmName2: "", opTime2: "", nameStatus: "", mgDeptCode: "", opStdyDept: "", cursLang: "", divCode: "", beginTf: true, actionBits: "", crossType: "")
     
     static var previews: some View {
+        
         NavigationStack {
             ElectionCourseDetailView(for: courseInformation)
         }

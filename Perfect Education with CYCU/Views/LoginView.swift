@@ -66,7 +66,7 @@ struct LoginView: View {
         guard (currentSession.loginState == .notLoggedIn || currentSession.loginState == .failed), let password = credentials.password else {
             return
         }
-        passwordField = "        " // Placeholder update
+        passwordField = "            " // Placeholder update
         currentSession.requestLogin(username: credentials.username, password: password)
     }
     
@@ -179,6 +179,7 @@ struct LoginView: View {
                         Text("你的 CYCU ID 是用來取用所有中原大學校內服務的帳號。")
                             .multilineTextAlignment(.center)
                         Image("CYCU-logo")
+                            .antialiased(true)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 40)
