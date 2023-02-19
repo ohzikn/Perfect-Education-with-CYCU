@@ -13,23 +13,18 @@ struct PortalServicesView: View {
     var body: some View {
         NavigationView {
             List {
-//                Section("Developer") {
-//                    Button("Get work study data") {
-//                        currentSession.requestWorkStudy()
-//                    }
-//                }
-                Section("生活") {
-                    NavigationLink("校內工讀", destination: WorkStudyView())
-                    NavigationLink("自選學術導師申請", destination: MentorView())
-                }
                 Section("課業") {
                     NavigationLink("選課", destination: ElectionPlaceholderView())
-                    NavigationLink("選課（開發）", destination: ElectionViewDev())
                     NavigationLink("修課查詢", destination: CreditsView())
                 }
-                Section("健康") {
+                #if DEBUG
+                Section("Developer") {
+                    NavigationLink("校內工讀", destination: WorkStudyView())
+                    NavigationLink("自選學術導師申請", destination: MentorView())
                     NavigationLink("健康回報", destination: HealthView())
+                    NavigationLink("選課（開發）", destination: ElectionViewDev())
                 }
+                #endif
             }
             .listStyle(.insetGrouped)
             .navigationTitle("線上服務")

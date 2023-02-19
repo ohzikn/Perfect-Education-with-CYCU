@@ -117,6 +117,21 @@ struct ElectionRootView: View {
         currentSession.requestElection(method: .track_del, courseInformation: courses)
     }
     
+    init(rootDismiss: DismissAction) {
+        self.rootDismiss = rootDismiss
+        
+//        let navItem = UINavigationItem(title: "Title")
+//        navItem.prompt = "Prompt"
+        
+//        let appearance = UINavigationBarAppearance()
+//        appearance.shadowColor = .clear
+//        appearance.backgroundEffect = .none
+//        appearance.backgroundColor = UIColor.clear
+//        UINavigationBar.appearance().standardAppearance = appearance
+//        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+//        UINavigationBar.appearance().items?.append(navItem)
+    }
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -177,11 +192,6 @@ struct ElectionRootView: View {
                                                     Label("移除", systemImage: "text.badge.minus")
                                                 }
                                                 .tint(.orange)
-                                            }
-                                            .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                                                Button("退選", role: .destructive) {
-                                                    
-                                                }
                                             }
                                     }
                                 }
