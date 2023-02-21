@@ -51,6 +51,18 @@ struct ElectionCourseItemsView: View {
                                     }
                                     .tint(.orange)
                                 }
+                                .contextMenu {
+                                    Button(role: .none) {
+                                        requestAddToTracklist(for: [item])
+                                    } label: {
+                                        Label("新增至追蹤清單", systemImage: "text.badge.plus")
+                                    }
+                                    Button(role: .destructive) {
+                                        requestRemoveFromTracklist(for: [item])
+                                    } label: {
+                                        Label("從追蹤清單移除", systemImage: "text.badge.minus")
+                                    }
+                                }
                         }
                     }
                 case .takingList:
@@ -70,6 +82,18 @@ struct ElectionCourseItemsView: View {
                                         Label("移除", systemImage: "text.badge.minus")
                                     }
                                     .tint(.orange)
+                                }
+                                .contextMenu {
+                                    Button(role: .none) {
+                                        requestAddToTracklist(for: [item])
+                                    } label: {
+                                        Label("新增至追蹤清單", systemImage: "text.badge.plus")
+                                    }
+                                    Button(role: .destructive) {
+                                        requestRemoveFromTracklist(for: [item])
+                                    } label: {
+                                        Label("從追蹤清單移除", systemImage: "text.badge.minus")
+                                    }
                                 }
                         }
                     }
@@ -91,6 +115,18 @@ struct ElectionCourseItemsView: View {
                                     }
                                     .tint(.orange)
                                 }
+                                .contextMenu {
+                                    Button(role: .none) {
+                                        requestAddToTracklist(for: [item])
+                                    } label: {
+                                        Label("新增至追蹤清單", systemImage: "text.badge.plus")
+                                    }
+                                    Button(role: .destructive) {
+                                        requestRemoveFromTracklist(for: [item])
+                                    } label: {
+                                        Label("從追蹤清單移除", systemImage: "text.badge.minus")
+                                    }
+                                }
                         }
                     }
                 case .registrationList:
@@ -111,6 +147,18 @@ struct ElectionCourseItemsView: View {
                                     }
                                     .tint(.orange)
                                 }
+                                .contextMenu {
+                                    Button(role: .none) {
+                                        requestAddToTracklist(for: [item])
+                                    } label: {
+                                        Label("新增至追蹤清單", systemImage: "text.badge.plus")
+                                    }
+                                    Button(role: .destructive) {
+                                        requestRemoveFromTracklist(for: [item])
+                                    } label: {
+                                        Label("從追蹤清單移除", systemImage: "text.badge.minus")
+                                    }
+                                }
                         }
                     }
                 case .watingList:
@@ -130,6 +178,18 @@ struct ElectionCourseItemsView: View {
                                         Label("移除", systemImage: "text.badge.minus")
                                     }
                                     .tint(.orange)
+                                }
+                                .contextMenu {
+                                    Button(role: .none) {
+                                        requestAddToTracklist(for: [item])
+                                    } label: {
+                                        Label("新增至追蹤清單", systemImage: "text.badge.plus")
+                                    }
+                                    Button(role: .destructive) {
+                                        requestRemoveFromTracklist(for: [item])
+                                    } label: {
+                                        Label("從追蹤清單移除", systemImage: "text.badge.minus")
+                                    }
                                 }
                         }
                     }
@@ -194,6 +254,7 @@ struct ElectionCourseListItemView: View {
 }
 
 struct ElectionCourseDetailView: View {
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var currentSession: CurrentSession
     var info: Definitions.ElectionDataStructures.CourseInformation
     
@@ -271,10 +332,27 @@ struct ElectionCourseDetailView: View {
                             Label("瀏覽課綱", systemImage: "doc.plaintext")
                         }
                     }
+                    Section {
+                        Button(role: .none) {
+                            Task {
+                                await currentSession.requestElection(method: .track_insert, courseInformation: [info])
+//                                dismiss()
+                            }
+                        } label: {
+                            Label("新增至追蹤清單", systemImage: "text.badge.plus")
+                        }
+                        Button(role: .destructive) {
+                            Task {
+                                await currentSession.requestElection(method: .track_del, courseInformation: [info])
+//                                dismiss()
+                            }
+                        } label: {
+                            Label("從追蹤清單移除", systemImage: "text.badge.minus")
+                        }
+                    }
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
-
             }
         }
         .fullScreenCover(isPresented: $isSyllabusSheetPresented) {

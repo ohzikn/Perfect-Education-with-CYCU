@@ -77,20 +77,20 @@ struct ElectionAdvancedSearchView: View {
                     Button("本班所有課程") {
                         Task {
                             await currentSession.requestElection(filterQuery: nil, filterType: 1)
-                            dismiss()
                         }
+                        dismiss()
                     }
                     Button("本系本年級所有課程") {
                         Task {
                             await currentSession.requestElection(filterQuery: nil, filterType: 2)
-                            dismiss()
                         }
+                        dismiss()
                     }
                     Button("本系所有課程") {
                         Task {
                             await currentSession.requestElection(filterQuery: nil, filterType: 3)
-                            dismiss()
                         }
+                        dismiss()
                     }
                 }
                 Section("進階搜尋") {
