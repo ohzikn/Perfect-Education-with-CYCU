@@ -9,6 +9,8 @@ import SwiftUI
 import LocalAuthentication
 
 struct AccountView: View {
+    @Environment(\.dismiss) private var dismiss
+    
     @EnvironmentObject var applicationParameters: ApplicationParameters
     @EnvironmentObject var currentSession: CurrentSession
     
@@ -52,6 +54,12 @@ struct AccountView: View {
                 }
             }
             .navigationTitle("帳戶")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("完成") { dismiss() }
+                }
+            }
         }
     }
 }

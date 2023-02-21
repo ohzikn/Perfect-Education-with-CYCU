@@ -23,22 +23,26 @@ struct CreditsView: View {
                 Section("修課資訊") {
                     ForEach(courseList) { item in
                         if let courseName = item.courseName {
-                            NavigationLink(value: item) {
+                            NavigationLink {
+                                CreditsCourseDetailView(courseItem: item)
+                            } label: {
                                 Text(courseName)
                             }
+
                         }
                     }
                 }
             }
         }
         .navigationTitle("修課查詢")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.large)
         .navigationDestination(for: Definitions.CreditsInformation.StdCourse.self) { value in
             CreditsCourseDetailView(courseItem: value)
         }
         .onAppear {
             Task {
-                await currentSession.requestCredits()
+                // Moved to root
+//                await currentSession.requestCredits()
             }
         }
     }

@@ -12,22 +12,7 @@ struct ContentView: View {
     @EnvironmentObject var currentSession: CurrentSession
     
     var body: some View {
-        TabView {
-            PortalServicesView()
-                .tabItem {
-                    Label("線上服務", systemImage: "cloud")
-                }
-                .toolbar(applicationParameters.hideRootTabbar ? .hidden : .automatic, for: .tabBar)
-            AccountView()
-                .tabItem {
-                    Label("帳戶", systemImage: "person.circle")
-                }
-        }
-        .onAppear {
-            withAnimation(.easeInOut(duration: 0.5)) {
-                
-            }
-        }
+        PortalServicesView()
     }
 }
 

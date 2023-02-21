@@ -20,6 +20,8 @@ struct ElectionPlaceholderView: View {
                 ElectionRootView(rootDismiss: dismiss)
             }
         }
+        .navigationTitle("選課")
+        .navigationBarTitleDisplayMode(.large)
         .navigationBarBackButtonHidden()
         .sheet(isPresented: $isWelcomeSheetPresented) {
             NavigationStack {
@@ -143,177 +145,143 @@ struct ElectionRootView: View {
     
     init(rootDismiss: DismissAction) {
         self.rootDismiss = rootDismiss
-        
-//        let navItem = UINavigationItem(title: "Title")
-//        navItem.prompt = "Prompt"
-        
-//        let appearance = UINavigationBarAppearance()
-//        appearance.shadowColor = .clear
-//        appearance.backgroundEffect = .none
-//        appearance.backgroundColor = UIColor.clear
-//        UINavigationBar.appearance().standardAppearance = appearance
-//        UINavigationBar.appearance().scrollEdgeAppearance = appearance
-//        UINavigationBar.appearance().items?.append(navItem)
     }
     
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                if showSearchBar { courseSearchFieldView }
-                VStack {
-                    switch selectedCourseListType {
-                    case .search:
-                        if !searchResult.isEmpty {
-                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: searchResult, groupBy: selectedGroupType)
-                        } else {
-                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
-                        }
-                    case .takingList:
-                        if !takingList.isEmpty {
-                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: takingList, groupBy: selectedGroupType)
-                        } else {
-                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
-                        }
-                    case .trackingList:
-                        if !trackingList.isEmpty {
-                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: trackingList, groupBy: selectedGroupType)
-                        } else {
-                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
-                        }
-                    case .registrationList:
-                        if !registrationList.isEmpty {
-                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: registrationList, groupBy: selectedGroupType)
-                        } else {
-                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
-                        }
-                    case .watingList:
-                        if !waitingList.isEmpty {
-                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: waitingList, groupBy: selectedGroupType)
-                        } else {
-                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
-                        }
+        VStack(spacing: 0) {
+            if showSearchBar { courseSearchFieldView }
+            VStack {
+                switch selectedCourseListType {
+                case .search:
+                    if !searchResult.isEmpty {
+                        ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: searchResult, groupBy: selectedGroupType)
+                    } else {
+                        ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
+                    }
+                case .takingList:
+                    if !takingList.isEmpty {
+                        ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: takingList, groupBy: selectedGroupType)
+                    } else {
+                        ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
+                    }
+                case .trackingList:
+                    if !trackingList.isEmpty {
+                        ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: trackingList, groupBy: selectedGroupType)
+                    } else {
+                        ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
+                    }
+                case .registrationList:
+                    if !registrationList.isEmpty {
+                        ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: registrationList, groupBy: selectedGroupType)
+                    } else {
+                        ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
+                    }
+                case .watingList:
+                    if !waitingList.isEmpty {
+                        ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: waitingList, groupBy: selectedGroupType)
+                    } else {
+                        ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .navigationTitle(selectedCourseListType.rawValue)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: [Definitions.ElectionDataStructures.CourseInformation].self) { value in
-                ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: value, groupBy: .none)
-            }
-            .navigationDestination(for: Definitions.ElectionDataStructures.CourseInformation.self) { value in
-                ElectionCourseDetailView(for: value)
-            }
-            // Fixed: Refreshable is not functioning if List view is not present due to empty query (Showing VStack with no items string instead).
-            .refreshable {
-                // Refresh student information and update lists
-                await currentSession.requestElection(method: .st_info_get)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Menu {
-                        Section {
-                            Button {
-                                currentSubsheetView = .announcements
-                            } label: {
-                                Label("選課公告", systemImage: "megaphone")
-                            }
-                            Button {
-                                currentSubsheetView = .events
-                            } label: {
-                                Label("選課時間", systemImage: "calendar")
-                            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .navigationTitle(selectedCourseListType.rawValue)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: [Definitions.ElectionDataStructures.CourseInformation].self) { value in
+            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: value, groupBy: .none)
+        }
+        .navigationDestination(for: Definitions.ElectionDataStructures.CourseInformation.self) { value in
+            ElectionCourseDetailView(for: value)
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Menu {
+                    Section {
+                        Button {
+                            currentSubsheetView = .announcements
+                        } label: {
+                            Label("選課公告", systemImage: "megaphone")
                         }
-                        Section {
-                            Button {
-                                currentSubsheetView = .studentInfo
-                            } label: {
-                                Label("個人資訊", systemImage: "person.text.rectangle")
-                            }
-                            Button {
-                                currentSubsheetView = .history
-                            } label: {
-                                Label("選課紀錄", systemImage: "clock")
-                            }
-                        }
-                        Section {
-                            Button("離開") {
-                                // Dismiss current fullscreen cover
-                                dismiss()
-                                // Dismiss root navigation
-                                rootDismiss()
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Menu {
-                        Section {
-                            Picker("分類方式", selection: $selectedGroupType) {
-                                ForEach(GroupType.allCases, id: \.hashValue) { item in
-                                    Text(item.rawValue)
-                                        .tag(item)
-                                }
-                            }
-                            .pickerStyle(.menu)
-                        }
-                    } label: {
-                        Image(systemName: "list.bullet")
-                    }
-                }
-                ToolbarItem(placement: .bottomBar) {
-                    Picker("Course List Type", selection: $selectedCourseListType) {
-                        ForEach(CourseListType.allCases, id: \.hashValue) { item in
-                            Text(item.rawValue)
-                                .tag(item)
+                        Button {
+                            currentSubsheetView = .events
+                        } label: {
+                            Label("選課時間", systemImage: "calendar")
                         }
                     }
-                    .pickerStyle(.segmented)
+                    Section {
+                        Button {
+                            currentSubsheetView = .studentInfo
+                        } label: {
+                            Label("個人資訊", systemImage: "person.text.rectangle")
+                        }
+                        Button {
+                            currentSubsheetView = .history
+                        } label: {
+                            Label("選課紀錄", systemImage: "clock")
+                        }
+                    }
+                    Section {
+                        Button("離開") {
+                            // Dismiss current fullscreen cover
+                            dismiss()
+                            // Dismiss root navigation
+                            rootDismiss()
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Section {
+                        Picker("分類方式", selection: $selectedGroupType) {
+                            ForEach(GroupType.allCases, id: \.hashValue) { item in
+                                Text(item.rawValue)
+                                    .tag(item)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
+                } label: {
+                    Image(systemName: "list.bullet")
+                }
+            }
+            ToolbarItem(placement: .bottomBar) {
+                Picker("Course List Type", selection: $selectedCourseListType) {
+                    ForEach(CourseListType.allCases, id: \.hashValue) { item in
+                        Text(item.rawValue)
+                            .tag(item)
+                    }
+                }
+                .pickerStyle(.segmented)
             }
         }
-        .sheet(isPresented: $isSubSheetPresented) {
-            switch currentSubsheetView {
-            case .none:
-                EmptyView()
-            case .announcements:
-                ElectionAnnouncementView()
-                    .presentationDetents([.large])
-            case .events:
-                ElectionEventView()
-                    .presentationDetents([.large])
-            case .studentInfo:
-                ElectionStudentBaseInformationView()
-                    .presentationDetents([.large])
-            case .history:
-                ElectionHistoryView()
-                    .presentationDetents([.large])
-            case .searchFilter:
-                ElectionAdvancedSearchView(inheritenced: _searchEntry)
-                    .presentationDetents([.large])
-                    .interactiveDismissDisabled()
-                    .onAppear {
-                        searchEntry = String()
-                    }
-                    .onDisappear {
-//                        searchEntry = ""
-                    }
+        // Fixed: Refreshable is not functioning if List view is not present due to empty query (Showing VStack with no items string instead).
+        .refreshable {
+            // Refresh student information and update lists
+            switch selectedCourseListType {
+            case .search:
+                currentSubsheetView = .searchFilter
+            default:
+                await currentSession.requestElection(method: .st_info_get)
             }
         }
         .onAppear {
-            applicationParameters.hideRootTabbar = true
-            Task {
-                await currentSession.requestElection(method: .ann_get)
-                await currentSession.requestElection(method: .stage_control_get)
-                await currentSession.requestElection(method: .st_base_info)
-                await currentSession.requestElection(method: .st_info_get)
-                await currentSession.requestElection(method: .st_record)
-            }
-        }
-        .onDisappear {
-            applicationParameters.hideRootTabbar = false
+//            Task {
+                // Moved to root
+//                await currentSession.requestElection(method: .ann_get)
+//                await currentSession.requestElection(method: .stage_control_get)
+//                await currentSession.requestElection(method: .st_base_info)
+//                await currentSession.requestElection(method: .st_info_get)
+//                await currentSession.requestElection(method: .st_record)
+//            }
+            // Load all course lists
+            takingList = currentSession.electionInformation_studentInformation?.takeCourseList ?? []
+            trackingList = currentSession.electionInformation_studentInformation?.trackList ?? []
+            registrationList = currentSession.electionInformation_studentInformation?.registerList ?? []
+            waitingList = currentSession.electionInformation_studentInformation?.makeUpList ?? []
         }
         // Sync subsheet view with isSubSheetPresented
         .onChange(of: isSubSheetPresented) { newValue in
@@ -346,6 +314,34 @@ struct ElectionRootView: View {
                 registrationList = currentSession.electionInformation_studentInformation?.registerList ?? []
             case .wait:
                 waitingList = currentSession.electionInformation_studentInformation?.makeUpList ?? []
+            }
+        }
+        .sheet(isPresented: $isSubSheetPresented) {
+            switch currentSubsheetView {
+            case .none:
+                EmptyView()
+            case .announcements:
+                ElectionAnnouncementView()
+                    .presentationDetents([.large])
+            case .events:
+                ElectionEventView()
+                    .presentationDetents([.large])
+            case .studentInfo:
+                ElectionStudentBaseInformationView()
+                    .presentationDetents([.large])
+            case .history:
+                ElectionHistoryView()
+                    .presentationDetents([.large])
+            case .searchFilter:
+                ElectionAdvancedSearchView(inheritenced: _searchEntry)
+                    .presentationDetents([.large])
+                    .interactiveDismissDisabled()
+                    .onAppear {
+                        searchEntry = String()
+                    }
+                    .onDisappear {
+//                        searchEntry = ""
+                    }
             }
         }
     }
@@ -386,7 +382,7 @@ struct ElectionViewDev: View {
             }
         }
         .navigationTitle("選課")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.large)
     }
 }
 

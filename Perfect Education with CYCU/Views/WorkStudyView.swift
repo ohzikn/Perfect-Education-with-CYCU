@@ -28,7 +28,7 @@ struct WorkStudyView: View {
             }
         }
         .navigationTitle("校內工讀")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarTitleDisplayMode(.large)
         .onAppear {
             Task {
                 await currentSession.requestWorkStudy()

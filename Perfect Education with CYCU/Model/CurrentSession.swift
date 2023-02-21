@@ -57,7 +57,7 @@ class CurrentSession: ObservableObject {
     
     // Application token structure
     struct ApplicationToken {
-        let authenticateLocation: String
+        let authenticateLocation: Definitions.QueryLocations
         let authenticateInformation: Definitions.AuthenticateInformation
     }
     
@@ -68,7 +68,7 @@ class CurrentSession: ObservableObject {
         case wait
     }
     
-    @Published var greetingString:String = "請先登入"
+    @Published var greetingString: String = "請先登入"
     
     // User session related data start
     @Published var loginState: LoginState = .notLoggedIn {
@@ -95,7 +95,7 @@ class CurrentSession: ObservableObject {
     @Published var userInformation: Definitions.UserInformation? {
         willSet {
             if let newValue, newValue.didLogIn == "Y" {
-                greetingString = (newValue.userName == nil || newValue.userName.unsafelyUnwrapped.isEmpty) ? "早安。" : "早安，\(newValue.userName!.trimmingCharacters(in: .whitespaces))。"
+                greetingString = (newValue.userName == nil || newValue.userName.unsafelyUnwrapped.isEmpty) ? "\(Definitions().getCurrentDayPart().rawValue)。" : "\(Definitions().getCurrentDayPart().rawValue)，\(newValue.userName.unsafelyUnwrapped)\(Definitions().getCurrentDayPart().getHappyEmoji())。"
             } else {
                 greetingString = "請先登入"
             }
@@ -150,7 +150,7 @@ class CurrentSession: ObservableObject {
             }
             // Request basic information
             Task {
-                try await requestAuthenticateToken(for: Definitions.QueryLocations.getRelatedAuthenticateLocation(.base)())
+                try await requestAuthenticateToken(for: Definitions.QueryLocations.base)
             }
         } catch {
             print("\((error as NSError).code)")
@@ -248,7 +248,7 @@ class CurrentSession: ObservableObject {
             
             // Recieve and decode response
             let responseString = String(data: data, encoding: .utf8)
-//            print(responseString)
+            print(responseString)
             
             // Check if distinct_IP_IDCODE_alert warning activated
             switch await electionDidDeadCheck(data: data) {
@@ -376,14 +376,14 @@ extension CurrentSession {
         }()
         
         // Get app token and set into requestQuery from stored variable if current category is present, otherwise request a new one immediately.
-        requestQuery.APP_AUTH_token = currentApplicationToken?.authenticateLocation == Definitions.QueryLocations.getRelatedAuthenticateLocation(queryLocation)() && currentApplicationToken?.authenticateInformation.APP_AUTH_token != nil ? currentApplicationToken?.authenticateInformation.APP_AUTH_token : try await requestAuthenticateToken(for: Definitions.QueryLocations.getRelatedAuthenticateLocation(queryLocation)())
+        requestQuery.APP_AUTH_token = currentApplicationToken?.authenticateLocation == queryLocation && currentApplicationToken?.authenticateInformation.APP_AUTH_token != nil ? currentApplicationToken?.authenticateInformation.APP_AUTH_token : try await requestAuthenticateToken(for: queryLocation)
         
         // Encode requestQuery into data
         let requestData = try JSONEncoder().encode(requestQuery)
         
         // Get URL object
         let urlWithQuery: URL = {
-            var url: URL = Definitions.QueryLocations.getUrl(queryLocation)()
+            var url: URL = queryLocation.getUrl()
             url.append(queryItems: [.init(name: "method", value: specifiedMethod), .init(name: "loginToken", value: userInformation?.loginToken)])
             return url
         }()
@@ -401,7 +401,7 @@ extension CurrentSession {
     
     // Requests a new application authenticate token
     // Only pass parameter string returned from Definitions.QueryLocations.getRelatedAuthenticateLocation() method.
-    private func requestAuthenticateToken(for query: String) async throws -> String {
+    private func requestAuthenticateToken(for query: Definitions.QueryLocations) async throws -> String {
         // Create a credential data structure that will be converted to JSON data later
         struct Credentials: Codable {
             let authUrl: String
@@ -410,7 +410,7 @@ extension CurrentSession {
         
         do {
             // Create a JSON object that will be posted to the server later.
-            let credentialData = try JSONEncoder().encode(Credentials(authUrl: "/\(Definitions.PortalLocations.auth.lastPathComponent)", authApi: query))
+            let credentialData = try JSONEncoder().encode(Credentials(authUrl: "/\(Definitions.PortalLocations.auth.lastPathComponent)", authApi: query.getRelatedAuthenticateLocation()))
             
             // Create a HTTPS POST Request
             let request: URLRequest = {

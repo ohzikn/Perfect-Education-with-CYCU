@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 extension UserDefaults {
     enum toggleKeyValues: String {
@@ -48,4 +49,3 @@ extension KeyedDecodingContainer {
         return DecodeToStringAndRemoveTrailingSpaces()
     }
 }
-

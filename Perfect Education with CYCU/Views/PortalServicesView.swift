@@ -10,8 +10,10 @@ import SwiftUI
 struct PortalServicesView: View {
     @EnvironmentObject var currentSession: CurrentSession
     
+    @State var isAccountSheetPresented: Bool = false
+    
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 Section("課業") {
                     NavigationLink("選課", destination: ElectionPlaceholderView())
@@ -27,8 +29,20 @@ struct PortalServicesView: View {
                 #endif
             }
             .listStyle(.insetGrouped)
-            .navigationTitle("線上服務")
+            .navigationTitle("CYCU Portal")
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        isAccountSheetPresented.toggle()
+                    } label: {
+                        Label("帳戶", systemImage: "person.circle")
+                    }
+                }
+            }
+            .sheet(isPresented: $isAccountSheetPresented) {
+                AccountView()
+            }
         }
     }
 }

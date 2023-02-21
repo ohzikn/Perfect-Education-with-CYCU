@@ -89,7 +89,7 @@ struct Definitions {
     
     struct UserInformation: Codable, Equatable {
         let userId: String?
-        let userName: String?
+        @DecodeToStringAndRemoveAllSpaces var userName: String?
         let userType: String?
         let connectionName: String?
         let endHostIp: String?
@@ -106,6 +106,41 @@ struct Definitions {
             case loginToken
             case didLogIn = "login_YN"
             case didFinishProcess = "done_YN"
+        }
+    }
+    
+    enum PartOfDay: String {
+        case morning = "早安"
+        case afternoon = "午安"
+        case evening = "晚安"
+        case night = "深夜好"
+        
+        func getHappyEmoji() -> String {
+            switch self {
+            case .morning:
+                return "☺️"
+            case .afternoon:
+                return "🥰"
+            case .evening:
+                return "🥳"
+            case .night:
+                return "😈"
+            }
+        }
+    }
+    func getCurrentDayPart() -> PartOfDay {
+        let currentHour = Calendar.current.component(.hour, from: Date())
+        switch currentHour {
+        case 22...23, 0...5:
+            return .night
+        case 6...11:
+            return .morning
+        case 12...16:
+            return .afternoon
+        case 17...21:
+            return .evening
+        default:
+            return .morning
         }
     }
 }

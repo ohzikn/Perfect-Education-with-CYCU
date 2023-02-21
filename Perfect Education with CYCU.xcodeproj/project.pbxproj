@@ -219,8 +219,8 @@
 				5E3C94052971247E0036B342 /* ControllerView.swift */,
 				5E025605296E1834004E0370 /* LoginView.swift */,
 				5E2AC57B296E16AE00722D02 /* ContentView.swift */,
-				5E3C940329711CD60036B342 /* AccountView.swift */,
 				5E3C93F729710C840036B342 /* PortalServicesView.swift */,
+				5E3C940329711CD60036B342 /* AccountView.swift */,
 				5E3C93F929710F8B0036B342 /* WorkStudyView.swift */,
 				5E3C93FB297114600036B342 /* MentorView.swift */,
 				5EC73A3C2990718800E66CB6 /* ElectionViews */,
@@ -623,7 +623,7 @@
 				SWIFT_DISABLE_SAFETY_CHECKS = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -660,7 +660,7 @@
 				SWIFT_DISABLE_SAFETY_CHECKS = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

@@ -286,7 +286,8 @@ struct LoginWelcomeView: View {
         } else {
             applicationParameters.usesBiometricLogin = true
         }
-        isThisSheetPresented = false
+        // Parent view will dismiss this sheet automatically for .loggedIn state
+        currentSession.loginState = .loggedIn
     }
     
     var body: some View {

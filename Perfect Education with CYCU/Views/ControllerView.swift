@@ -41,6 +41,18 @@ struct ControllerView: View {
         }
         .onChange(of: currentSession.loginState) { newValue in
             switch newValue {
+            case .loggedIn:
+                // Load all related data
+                Task {
+                    // Election
+                    await currentSession.requestElection(method: .ann_get)
+                    await currentSession.requestElection(method: .stage_control_get)
+                    await currentSession.requestElection(method: .st_base_info)
+                    await currentSession.requestElection(method: .st_info_get)
+                    await currentSession.requestElection(method: .st_record)
+                    // Credits
+                    await currentSession.requestCredits()
+                }
             case .notLoggedIn:
                 // Show login sheet if logged out.
                 isContentViewPresented = false
@@ -51,13 +63,13 @@ struct ControllerView: View {
         }
         .onChange(of: isLoginSheetPresented) { newValue in
             if !newValue {
-                withAnimation(.easeOut(duration: 0.25).delay(0)) {
+                withAnimation(.easeInOut(duration: 0.25).delay(0)) {
                     isWelcomeMessageShowed = true
                 }
-                withAnimation(.easeIn(duration: 0.25).delay(0.5)) {
+                withAnimation(.easeIn(duration: 0.5).delay(1)) {
                     isWelcomeMessageShowed = false
                 }
-                withAnimation(.easeOut(duration: 0.25).delay(0.75)) {
+                withAnimation(.easeOut(duration: 0.5).delay(1.25)) {
                     isContentViewPresented = true
                 }
             } else {

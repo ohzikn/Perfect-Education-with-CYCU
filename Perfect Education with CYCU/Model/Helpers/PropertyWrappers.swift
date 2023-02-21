@@ -111,3 +111,28 @@ struct DecodeToStringAndRemoveTrailingSpaces: Codable, Equatable, Hashable {
         hasher.combine(wrappedValue)
     }
 }
+
+@propertyWrapper
+struct DecodeToStringAndRemoveAllSpaces: Codable, Equatable, Hashable {
+    var wrappedValue: String?
+    
+    init() {
+        // Set wrappedValue to nil by default initializer
+        self.wrappedValue = nil
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if var value = try? container.decode(String.self) {
+            wrappedValue = value.trimmingCharacters(in: .whitespaces)
+        }
+    }
+    
+    static func == (lhs: DecodeToStringAndRemoveAllSpaces, rhs: DecodeToStringAndRemoveAllSpaces) -> Bool {
+        return lhs.wrappedValue == rhs.wrappedValue
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(wrappedValue)
+    }
+}
