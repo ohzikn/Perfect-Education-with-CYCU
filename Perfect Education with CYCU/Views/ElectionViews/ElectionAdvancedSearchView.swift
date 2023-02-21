@@ -75,16 +75,22 @@ struct ElectionAdvancedSearchView: View {
             List {
                 Section("快速查詢") {
                     Button("本班所有課程") {
-                        currentSession.requestElection(filterQuery: nil, filterType: 1)
-                        dismiss()
+                        Task {
+                            await currentSession.requestElection(filterQuery: nil, filterType: 1)
+                            dismiss()
+                        }
                     }
                     Button("本系本年級所有課程") {
-                        currentSession.requestElection(filterQuery: nil, filterType: 2)
-                        dismiss()
+                        Task {
+                            await currentSession.requestElection(filterQuery: nil, filterType: 2)
+                            dismiss()
+                        }
                     }
                     Button("本系所有課程") {
-                        currentSession.requestElection(filterQuery: nil, filterType: 3)
-                        dismiss()
+                        Task {
+                            await currentSession.requestElection(filterQuery: nil, filterType: 3)
+                            dismiss()
+                        }
                     }
                 }
                 Section("進階搜尋") {
@@ -270,7 +276,9 @@ struct ElectionAdvancedSearchView: View {
                                   remain: .init(value: selectedManRemainValue1, value2: selectedManRemainValue2, compare: selectedManRemainOperator),
                                   regMan: .init(value: selectedManRegisterValue1, value2: selectedManRegisterValue2, compare: selectedManRegisterOperator),
                                   emiCourse: .init(value: emiCourseToggle))
-                        currentSession.requestElection(filterQuery: query)
+                        Task {
+                            await currentSession.requestElection(filterQuery: query)
+                        }
                         dismiss()
                     }
                 }

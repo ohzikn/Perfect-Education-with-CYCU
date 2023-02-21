@@ -17,11 +17,15 @@ struct ElectionCourseItemsView: View {
     let columnDefinitions: [GridItem] = [.init(.flexible()), .init(.flexible()), .init(.flexible())]
     
     private func requestAddToTracklist(for courses: [Definitions.ElectionDataStructures.CourseInformation]) {
-        currentSession.requestElection(method: .track_insert, courseInformation: courses)
+        Task {
+            await currentSession.requestElection(method: .track_insert, courseInformation: courses)
+        }
     }
     
     private func requestRemoveFromTracklist(for courses: [Definitions.ElectionDataStructures.CourseInformation]) {
-        currentSession.requestElection(method: .track_del, courseInformation: courses)
+        Task {
+            await currentSession.requestElection(method: .track_del, courseInformation: courses)
+        }
     }
     
     var body: some View {

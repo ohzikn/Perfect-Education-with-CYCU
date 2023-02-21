@@ -7,15 +7,41 @@
 
 import Foundation
 import Security
+import LocalAuthentication
 
 @MainActor
 class CurrentSession: ObservableObject {
-    enum LoginState {
+    enum LoginState: Equatable {
         case notLoggedIn
         case processing
-        case failed
+        case failed(LoginError)
         case loginKeychainSetup
         case loggedIn
+        
+        static func == (lhs: LoginState, rhs: LoginState) -> Bool {
+            switch (lhs, rhs) {
+            case (.notLoggedIn, .notLoggedIn):
+                return true
+            case (.processing, .processing):
+                return true
+            case (.loginKeychainSetup, .loginKeychainSetup):
+                return true
+            case (.loggedIn, .loggedIn):
+                return true
+            case (.failed(_), .failed(_)):
+                // Ignoring associated values
+                return true
+            default:
+                return false
+            }
+        }
+    }
+    
+    enum LoginError {
+        case userNameOrPasswordIncorrect
+        case noInternetConnection
+        case failedToEstablishSecureConnection
+        case unknown
     }
     
     enum AuthorizationState {
@@ -85,78 +111,84 @@ class CurrentSession: ObservableObject {
     // User session related data end
     
     // MARK: Login
-    func requestLogin(username: String, password: String) {
-        Task {
+    func requestLogin(username: String, password: String) async {// Authentication start
+        do {
             // Update login state
             loginState = .processing
             // Create a JSON object that will be posted to the server later.
             let loginCredentials = Definitions.LoginCredentials(username: username, password: password)
-            let data = try JSONEncoder().encode(loginCredentials)
+            let queryData = try JSONEncoder().encode(loginCredentials)
             
             // Create a HTTPS POST Request
-            let request = getURLRequest(urlQuery: Definitions.PortalLocations.login, requestData: data)
-            
+            let request = getURLRequest(urlQuery: Definitions.PortalLocations.login, requestData: queryData)
             // Send login request to server
-            do {
-                let (data, _) = try await URLSession.shared.data(for: request)
-                //                print(data)
-                userInformation = try JSONDecoder().decode(Definitions.UserInformation.self, from: data)
-                guard userInformation?.didLogIn == "Y" else {
-                    loginState = .failed
-                    //                    isLoginFailureAlertPresented = true
-                    userInformation = nil
-                    return
-                }
-                
-                // Determine if keychain item exists for current account
-                if (try? KeychainService.retrieveLoginCredentials(for: .init(username: userInformation?.userId ?? "", password: nil))) != nil {
-                    // Keychain item exists
-                    try? KeychainService.updateLoginInformation(for: loginCredentials)
-                    loginState = .loggedIn
-                } else {
-                    // Keychain item do not exist
-                    loginState = .loginKeychainSetup
-                    // Show welcome screen and save login information to keychain
-                    try? KeychainService.registerLoginInformation(for: loginCredentials)
-                }
-                // Request basic information
-                Task {
-                    try await requestAuthenticateToken(for: Definitions.QueryLocations.getRelatedAuthenticateLocation(.base)())
-                }
-            } catch {
-                print(error)
-                loginState = .failed
+//            URLSession.shared.dataTask(with: request) { data, response, error in
+//                print(data)
+//                print(response)
+//                print(error)
+//            }.resume()
+            let (data, response) = try await URLSession.shared.data(for: request)
+            //                print(data)
+            userInformation = try JSONDecoder().decode(Definitions.UserInformation.self, from: data)
+            guard userInformation?.didLogIn == "Y" else {
+                loginState = .failed(.userNameOrPasswordIncorrect)
+                //                    isLoginFailureAlertPresented = true
+                userInformation = nil
+                return
+            }
+            
+            // Determine if keychain item exists for current account
+            if (try? KeychainService.retrieveLoginCredentials(for: .init(username: userInformation?.userId ?? "", password: nil))) != nil {
+                // Keychain item exists
+                try? KeychainService.updateLoginInformation(for: loginCredentials)
+                loginState = .loggedIn
+            } else {
+                // Keychain item do not exist
+                loginState = .loginKeychainSetup
+                // Show welcome screen and save login information to keychain
+                try? KeychainService.registerLoginInformation(for: loginCredentials)
+            }
+            // Request basic information
+            Task {
+                try await requestAuthenticateToken(for: Definitions.QueryLocations.getRelatedAuthenticateLocation(.base)())
+            }
+        } catch {
+            print("\((error as NSError).code)")
+            switch (error as NSError).code {
+            case -1021 ... -998:
+                loginState = .failed(.noInternetConnection)
+            case -1206 ... -1200:
+                loginState = .failed(.failedToEstablishSecureConnection)
+                break
+            default:
+                loginState = .failed(.unknown)
             }
         }
     }
     
     // MARK: WorkStudy
-    func requestWorkStudy() {
-        Task {
-            do {
-                let data = try await requestDataQuery(for: .workStudy)
-                workStudyInformation = try JSONDecoder().decode(Definitions.WorkStudyInformation.self, from: data)
-            } catch {
-                print(error)
-            }
+    func requestWorkStudy() async {
+        do {
+            let data = try await requestDataQuery(for: .workStudy)
+            workStudyInformation = try JSONDecoder().decode(Definitions.WorkStudyInformation.self, from: data)
+        } catch {
+            print(error)
         }
     }
     
     
     // MARK: Credits
-    func requestCredits() {
-        Task {
-            do {
-                let data = try await requestDataQuery(for: .credits)
-                creditsInformation = try JSONDecoder().decode(Definitions.CreditsInformation.self, from: data)
-            } catch {
-                print(error)
-            }
+    func requestCredits() async {
+        do {
+            let data = try await requestDataQuery(for: .credits)
+            creditsInformation = try JSONDecoder().decode(Definitions.CreditsInformation.self, from: data)
+        } catch {
+            print(error)
         }
     }
     
     // MARK: Election
-    func requestElection(method: Definitions.ElectionCommands) {
+    func requestElection(method: Definitions.ElectionCommands) async {
         // Return unsupported commands
         switch method {
         case .course_get, .track_insert, .track_del, .take_course_and_register_insert, .take_course_and_register_del, .volunteer_set, .col_checkbox_upd:
@@ -168,28 +200,28 @@ class CurrentSession: ObservableObject {
                 var APP_AUTH_token: String?
                 var mobile: String = "N"
             }
-            requestElection(method: method, query: CustomQuery())
+            await requestElection(method: method, query: CustomQuery())
         default:
             // Default behaviour
-            requestElection(method: method, query: nil)
+            await requestElection(method: method, query: nil)
         }
     }
     
     // Query with CourseInformation array
-    func requestElection(method: Definitions.ElectionCommands, courseInformation: [Definitions.ElectionDataStructures.CourseInformation]) {
+    func requestElection(method: Definitions.ElectionCommands, courseInformation: [Definitions.ElectionDataStructures.CourseInformation]) async {
         switch method {
         case .track_insert:
             struct CustomQuery: RequestQueryBase, Codable {
                 var APP_AUTH_token: String?
                 var data: [Definitions.ElectionDataStructures.CourseInformation]
             }
-            requestElection(method: method, query: CustomQuery(data: courseInformation))
+            await requestElection(method: method, query: CustomQuery(data: courseInformation))
         case .track_del:
             struct CustomQuery: RequestQueryBase, Codable {
                 var APP_AUTH_token: String?
                 var track_data: [Definitions.ElectionDataStructures.CourseInformation]
             }
-            requestElection(method: method, query: CustomQuery(track_data: courseInformation))
+            await requestElection(method: method, query: CustomQuery(track_data: courseInformation))
         default:
             print("current command (\(method.rawValue)) is not eligible from this method.")
             return
@@ -197,46 +229,43 @@ class CurrentSession: ObservableObject {
     }
     
     // .course_get
-    func requestElection(filterQuery: Definitions.ElectionDataStructures.CourseSearchRequestQuery?, filterType: Int = 0) {
-        
+    func requestElection(filterQuery: Definitions.ElectionDataStructures.CourseSearchRequestQuery?, filterType: Int = 0) async {
         struct CustomQuery: RequestQueryBase, Codable {
             var APP_AUTH_token: String?
             var filters: Definitions.ElectionDataStructures.CourseSearchRequestQuery
             var filter_type: Int
         }
         
-        requestElection(method: .course_get, query: CustomQuery(filters: filterQuery ?? .init(opCode: .init(), cname: .init(), crossCode: .init(), opStdy: .init(), teacher: .init(), nonStop: .init(), betDept: .init(), betBln: .init(), betBlnMdie: .init(), crossPbl: .init(), distance: .init(), deptDiv: .init(), deptCode: .init(), general: .init(), opType: .init(), opTime123: .init(), opCredit: .init(), man: .init(), opManSum: .init(), remain: .init(), regMan: .init(), emiCourse: .init()), filter_type: filterType))
+        await requestElection(method: .course_get, query: CustomQuery(filters: filterQuery ?? .init(opCode: .init(), cname: .init(), crossCode: .init(), opStdy: .init(), teacher: .init(), nonStop: .init(), betDept: .init(), betBln: .init(), betBlnMdie: .init(), crossPbl: .init(), distance: .init(), deptDiv: .init(), deptCode: .init(), general: .init(), opType: .init(), opTime123: .init(), opCredit: .init(), man: .init(), opManSum: .init(), remain: .init(), regMan: .init(), emiCourse: .init()), filter_type: filterType))
     }
     
     // private final method
-    private func requestElection(method: Definitions.ElectionCommands, query: RequestQueryBase?) {
+    private func requestElection(method: Definitions.ElectionCommands, query: RequestQueryBase?) async {
         print("executing command (\(method.rawValue)).")
-        Task {
-            do {
-                // Send query and wait for response
-                let data: Data = try await requestDataQuery(for: .election, using: method.rawValue, query: query)
-                
-                // Recieve and decode response
-                let responseString = String(data: data, encoding: .utf8)
-                print(responseString)
-                
-                // Check if distinct_IP_IDCODE_alert warning activated
-                switch await electionDidDeadCheck(data: data) {
-                case .succeed:
-                    // Continue execution
-                    break
-                case .failed:
-                    // Return
-                    return
-                case .reAuthorized:
-                    // Resend last query
-                    requestElection(method: method, query: query)
-                }
-                
-                decodeElectionResponse(method: method, data: data)
-            } catch {
-                print(error)
+        do {
+            // Send query and wait for response
+            let data: Data = try await requestDataQuery(for: .election, using: method.rawValue, query: query)
+            
+            // Recieve and decode response
+            let responseString = String(data: data, encoding: .utf8)
+//            print(responseString)
+            
+            // Check if distinct_IP_IDCODE_alert warning activated
+            switch await electionDidDeadCheck(data: data) {
+            case .succeed:
+                // Continue execution
+                break
+            case .failed:
+                // Return
+                return
+            case .reAuthorized:
+                // Resend last query
+                await requestElection(method: method, query: query)
             }
+            
+            decodeElectionResponse(method: method, data: data)
+        } catch {
+            print(error)
         }
     }
     

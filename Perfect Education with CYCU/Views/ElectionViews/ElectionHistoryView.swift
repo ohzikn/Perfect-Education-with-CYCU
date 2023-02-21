@@ -69,9 +69,15 @@ struct ElectionHistoryView: View {
                     Button("完成") { dismiss() }
                 }
             }
+            .refreshable {
+                // Refresh history and update lists
+                await currentSession.requestElection(method: .st_record)
+            }
         }
         .onAppear {
-            currentSession.requestElection(method: .st_record)
+            Task {
+                await currentSession.requestElection(method: .st_record)
+            }
         }
     }
 }

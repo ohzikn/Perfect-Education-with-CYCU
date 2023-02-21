@@ -25,5 +25,5 @@ final class ApplicationParameters: ObservableObject {
     // Session parameters
     @Published var hideRootTabbar: Bool = false
     // Saved paraeters
-    @AppStorage(UserDefaults.toggleKeyValues.usesFaceId.rawValue) var usesFaceId: Bool = false
+    @AppStorage(UserDefaults.toggleKeyValues.usesFaceId.rawValue) var usesBiometricLogin: Bool = false
 }

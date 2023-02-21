@@ -130,11 +130,15 @@ struct ElectionRootView: View {
     }
     
     private func requestAddToTracklist(for courses: [Definitions.ElectionDataStructures.CourseInformation]) {
-        currentSession.requestElection(method: .track_insert, courseInformation: courses)
+        Task {
+            await currentSession.requestElection(method: .track_insert, courseInformation: courses)
+        }
     }
     
     private func requestRemoveFromTracklist(for courses: [Definitions.ElectionDataStructures.CourseInformation]) {
-        currentSession.requestElection(method: .track_del, courseInformation: courses)
+        Task {
+            await currentSession.requestElection(method: .track_del, courseInformation: courses)
+        }
     }
     
     init(rootDismiss: DismissAction) {
@@ -162,51 +166,31 @@ struct ElectionRootView: View {
                         if !searchResult.isEmpty {
                             ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: searchResult, groupBy: selectedGroupType)
                         } else {
-                            VStack(spacing: 4) {
-                                Text("沒有項目")
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.secondary)
-                                Text("輸入文字或使用搜尋選項來查詢課程")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding([.bottom])
+                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
                         }
                     case .takingList:
                         if !takingList.isEmpty {
                             ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: takingList, groupBy: selectedGroupType)
                         } else {
-                            Text("沒有項目")
-                                .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
-                                .padding([.bottom])
+                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
                         }
                     case .trackingList:
                         if !trackingList.isEmpty {
                             ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: trackingList, groupBy: selectedGroupType)
                         } else {
-                            Text("沒有項目")
-                                .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
-                                .padding([.bottom])
+                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
                         }
                     case .registrationList:
                         if !registrationList.isEmpty {
                             ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: registrationList, groupBy: selectedGroupType)
                         } else {
-                            Text("沒有項目")
-                                .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
-                                .padding([.bottom])
+                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
                         }
                     case .watingList:
                         if !waitingList.isEmpty {
                             ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: waitingList, groupBy: selectedGroupType)
                         } else {
-                            Text("沒有項目")
-                                .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
-                                .padding([.bottom])
+                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
                         }
                     }
                 }
@@ -220,7 +204,11 @@ struct ElectionRootView: View {
             .navigationDestination(for: Definitions.ElectionDataStructures.CourseInformation.self) { value in
                 ElectionCourseDetailView(for: value)
             }
-//            .searchable(text: $searchEntry)
+            // Fixed: Refreshable is not functioning if List view is not present due to empty query (Showing VStack with no items string instead).
+            .refreshable {
+                // Refresh student information and update lists
+                await currentSession.requestElection(method: .st_info_get)
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Menu {
@@ -316,11 +304,13 @@ struct ElectionRootView: View {
         }
         .onAppear {
             applicationParameters.hideRootTabbar = true
-            currentSession.requestElection(method: .ann_get)
-            currentSession.requestElection(method: .stage_control_get)
-            currentSession.requestElection(method: .st_base_info)
-            currentSession.requestElection(method: .st_info_get)
-            currentSession.requestElection(method: .st_record)
+            Task {
+                await currentSession.requestElection(method: .ann_get)
+                await currentSession.requestElection(method: .stage_control_get)
+                await currentSession.requestElection(method: .st_base_info)
+                await currentSession.requestElection(method: .st_info_get)
+                await currentSession.requestElection(method: .st_record)
+            }
         }
         .onDisappear {
             applicationParameters.hideRootTabbar = false
@@ -361,6 +351,27 @@ struct ElectionRootView: View {
     }
 }
 
+struct ElectionPlaceholderEmptyItemView: View {
+    let courseListType: ElectionRootView.CourseListType
+    
+    var body: some View {
+        ZStack {
+            VStack(spacing: 4) {
+                Text("沒有項目")
+                    .fontWeight(.semibold)
+                    .foregroundColor(.secondary)
+                if courseListType == .search {
+                    Text("輸入文字或使用搜尋選項來查詢課程")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .padding([.bottom])
+            List { }
+        }
+    }
+}
+
 struct ElectionViewDev: View {
     @EnvironmentObject var currentSession: CurrentSession
     
@@ -368,7 +379,9 @@ struct ElectionViewDev: View {
         List {
             ForEach(Definitions.ElectionCommands.allCases, id: \.hashValue) { item in
                 Button(item.rawValue) {
-                    currentSession.requestElection(method: item)
+                    Task {
+                        await currentSession.requestElection(method: item)
+                    }
                 }
             }
         }

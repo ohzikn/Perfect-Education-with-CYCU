@@ -37,7 +37,9 @@ struct CreditsView: View {
             CreditsCourseDetailView(courseItem: value)
         }
         .onAppear {
-            currentSession.requestCredits()
+            Task {
+                await currentSession.requestCredits()
+            }
         }
     }
 }

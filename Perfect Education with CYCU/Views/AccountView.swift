@@ -6,12 +6,21 @@
 //
 
 import SwiftUI
+import LocalAuthentication
 
 struct AccountView: View {
     @EnvironmentObject var applicationParameters: ApplicationParameters
     @EnvironmentObject var currentSession: CurrentSession
     
     @State var isLogoutConfirmationDialogPresented = false
+    
+    let laContext = LAContext()
+    
+    init() {
+        // Call canEvaluatePolicy to ensure device supported biometric type.
+        var nsError: NSError?
+        laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &nsError)
+    }
     
     var body: some View {
         NavigationStack {
@@ -22,7 +31,9 @@ struct AccountView: View {
                     LabeledContent("帳戶類型", value: currentSession.userInformation?.userType ?? "")
                 }
                 Section {
-                    Toggle("使用 Face ID 登入", isOn: applicationParameters.$usesFaceId)
+                    if laContext.biometryType != .none {
+                        Toggle("使用 \(laContext.biometryType == .faceID ? "Face ID" : "Touch ID") 登入", isOn: applicationParameters.$usesBiometricLogin)
+                    }
                 }
                 Section {
                     Button("登出...") {

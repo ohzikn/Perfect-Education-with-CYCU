@@ -7,6 +7,7 @@
 
 import SwiftUI
 import LocalAuthentication
+//import LocalAuthentication
 
 struct LoginView: View {
     @EnvironmentObject var applicationParameters: ApplicationParameters
@@ -37,19 +38,33 @@ struct LoginView: View {
     
     @FocusState private var focusedField: Field?
     
+    let laContext = LAContext()
+    
+    init(isThisSheetPresented: Binding<Bool>) {
+        if let loginInfo = try? KeychainService.retrieveLoginInformation() {
+            usernameField = loginInfo.username
+            isUsernamePlaceholderActive = true
+        }
+        self._isThisSheetPresented = isThisSheetPresented
+        
+        // Call canEvaluatePolicy to ensure device supported biometric type.
+        var nsError: NSError?
+        laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &nsError)
+    }
+    
     private func requestBiometricLogin() {
         // FaceId toggle guard
-        guard applicationParameters.usesFaceId else { return }
-        let context = LAContext()
+        guard applicationParameters.usesBiometricLogin else { return }
+//        let context = LAContext()
 //        context.localizedCancelTitle = "輸入密碼"
         var error: NSError?
-        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
+        guard laContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
             print(error?.localizedDescription ?? "Can't evaluate policy")
             return
         }
         Task {
             do {
-                try await context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "登入 CYCU Portal")
+                try await laContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "登入 CYCU Portal")
                 let credentials = try KeychainService.retrieveLoginCredentials(for: try KeychainService.retrieveLoginInformation())
                 requestLogin(credentials: credentials)
             } catch let error {
@@ -61,30 +76,26 @@ struct LoginView: View {
     // Biometric login
     private func requestLogin(credentials: Definitions.LoginCredentials) {
         // FaceId toggle guard
-        guard applicationParameters.usesFaceId else { return }
+        guard applicationParameters.usesBiometricLogin else { return }
         // Login state check
-        guard (currentSession.loginState == .notLoggedIn || currentSession.loginState == .failed), let password = credentials.password else {
+        guard (currentSession.loginState == .notLoggedIn || currentSession.loginState == .failed(.unknown)), let password = credentials.password else {
             return
         }
         passwordField = "            " // Placeholder update
-        currentSession.requestLogin(username: credentials.username, password: password)
+        Task {
+            await currentSession.requestLogin(username: credentials.username, password: password)
+        }
     }
     
     // Normal login
     private func requestLogin() {
         // Login state check
-        guard !usernameField.isEmpty && !passwordField.isEmpty && (currentSession.loginState == .notLoggedIn || currentSession.loginState == .failed) else {
+        guard !usernameField.isEmpty && !passwordField.isEmpty && (currentSession.loginState == .notLoggedIn || currentSession.loginState == .failed(.unknown)) else {
             return
         }
-        currentSession.requestLogin(username: usernameField, password: passwordField)
-    }
-    
-    init(isThisSheetPresented: Binding<Bool>) {
-        if let loginInfo = try? KeychainService.retrieveLoginInformation() {
-            usernameField = loginInfo.username
-            isUsernamePlaceholderActive = true
+        Task {
+            await currentSession.requestLogin(username: usernameField, password: passwordField)
         }
-        self._isThisSheetPresented = isThisSheetPresented
     }
     
     var body: some View {
@@ -109,7 +120,7 @@ struct LoginView: View {
                             }.frame(width: 100)
                             TextField("學號或教職員編號", text: $usernameField)
                                 .frame(height: 60)
-                                .disabled(isUsernamePlaceholderActive || (currentSession.loginState != .failed && currentSession.loginState != .notLoggedIn))
+                                .disabled(isUsernamePlaceholderActive || (currentSession.loginState != .failed(.unknown) && currentSession.loginState != .notLoggedIn))
                                 .foregroundColor(isUsernamePlaceholderActive ? Color.secondary : Color.primary)
                                 .focused($focusedField, equals: .username)
                                 .submitLabel(.next)
@@ -130,7 +141,7 @@ struct LoginView: View {
                             }.frame(width: 100)
                             SecureField("必填", text: $passwordField)
                                 .frame(height: 60)
-                                .disabled(currentSession.loginState != .failed && currentSession.loginState != .notLoggedIn)
+                                .disabled(currentSession.loginState != .failed(.unknown) && currentSession.loginState != .notLoggedIn)
                                 .focused($focusedField, equals: .password)
                                 .submitLabel(.return)
                                 .onSubmit(requestLogin)
@@ -142,16 +153,16 @@ struct LoginView: View {
                     .padding([.top, .bottom], 18)
                     if(isUsernamePlaceholderActive) {
                         VStack(spacing: 18) {
-                            if applicationParameters.usesFaceId {
+                            if applicationParameters.usesBiometricLogin {
                                 Button {
                                     // Login with Face ID
                                     requestBiometricLogin()
                                 } label: {
-                                    Image(systemName: "faceid")
+                                    Image(systemName: laContext.biometryType == .faceID ? "faceid" : "touchid")
                                         .font(.largeTitle)
                                         .symbolRenderingMode(SymbolRenderingMode.hierarchical)
                                 }
-                                .disabled(!applicationParameters.usesFaceId)
+                                .disabled(!applicationParameters.usesBiometricLogin)
                             }
                             Button("使用其他 CYCU ID 登入...") {
                                 isLogoutConfirmationDialogPresented = true
@@ -197,7 +208,19 @@ struct LoginView: View {
             .alert("登入失敗", isPresented: $isLoginFailureAlertPresented, actions: {
                 Button("好") { }
             }, message: {
-                Text("CYCU ID 或密碼錯誤。")
+                // Completed: Update error message to dynamic message.
+                if case CurrentSession.LoginState.failed(let loginError) = currentSession.loginState {
+                    switch loginError {
+                    case .userNameOrPasswordIncorrect:
+                        Text("CYCU ID 或密碼錯誤。")
+                    case .noInternetConnection:
+                        Text("網際網路尚未連線。")
+                    case .failedToEstablishSecureConnection:
+                        Text("無法建立安全連線。")
+                    case .unknown:
+                        Text("發生未預期的錯誤。")
+                    }
+                }
             })
             .fullScreenCover(isPresented: $isSafariSheetPresented, content: {
                 SFSafariView(url: Definitions.ExternalLocations.passwordReset)
@@ -206,7 +229,7 @@ struct LoginView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("下一步", action: requestLogin)
-                        .disabled(usernameField.isEmpty || passwordField.isEmpty || !(currentSession.loginState == .notLoggedIn || currentSession.loginState == .failed))
+                        .disabled(usernameField.isEmpty || passwordField.isEmpty || !(currentSession.loginState == .notLoggedIn || currentSession.loginState == .failed(.unknown)))
                 }
             }
         }
@@ -225,7 +248,6 @@ struct LoginView: View {
             default:
                 break
             }
-            
             // Other controls
             isLoginProcessRingPresented = (newValue == .processing)
         }
@@ -238,35 +260,80 @@ struct LoginWelcomeView: View {
     
     @Binding var isThisSheetPresented: Bool
     
+    @State var additionalMessage: String = ""
+    
+    let laContext = LAContext()
+    var laError: LAError?
+    
+    init(isThisSheetPresented: Binding<Bool>) {
+        // IMPORTANT!! DO NOT ACCESS ENVIRONMENT OBJECTS HERE!! THIS WILL CAUSE FATAL ERROR!
+        self._isThisSheetPresented = isThisSheetPresented
+        // Call canEvaluatePolicy to ensure device supported biometric type.
+        var nsError: NSError?
+        laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &nsError)
+        if let nsError {
+            laError = LAError(_nsError: nsError)
+        }
+    }
+    
+    private func requestEnableBiometric() {
+        var nsError: NSError?
+        laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &nsError)
+        if let nsError {
+            let laError = LAError(_nsError: nsError)
+            print(laError)
+            applicationParameters.usesBiometricLogin = false
+        } else {
+            applicationParameters.usesBiometricLogin = true
+        }
+        isThisSheetPresented = false
+    }
+    
     var body: some View {
         VStack(spacing: 20) {
-            Image(systemName: "faceid")
+            Image(systemName: laContext.biometryType == .faceID ? "faceid" : laContext.biometryType == .touchID ? "touchid" : "lock.square")
                 .font(.largeTitle)
                 .symbolRenderingMode(SymbolRenderingMode.hierarchical)
-            Text("設定 Face ID")
+            Text("\(laContext.biometryType == .faceID ? "設定 Face ID" : laContext.biometryType == .touchID ? "設定 Touch ID" : "此裝置不支援 Face ID")")
                 .font(.title)
-            Text("Face ID 可以讓你在下次登入時不必再次輸入密碼。")
+            Text("\(laContext.biometryType == .faceID ? "Face ID 可以讓你在下次登入時不必再次輸入密碼。" : laContext.biometryType == .touchID ? "Touch ID 可以讓你在下次登入時不必再次輸入密碼。" : "你需要準備支援的裝置來使用 Face ID")")
                 .font(.title2)
                 .multilineTextAlignment(.center)
+            Text(additionalMessage)
+                .font(.title3)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.secondary)
             Spacer()
             Button {
-                applicationParameters.usesFaceId = true
-                isThisSheetPresented = false
+                requestEnableBiometric()
             } label: {
-                Text("啟用 Face ID")
+                Text("\(laContext.biometryType == .faceID ? "啟用 Face ID" : laContext.biometryType == .touchID ? "啟用 Touch ID" : "好")")
                     .fontWeight(.medium)
                     .padding([.top, .bottom], 10)
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
-            Button("稍後設定") {
-                applicationParameters.usesFaceId = false
-                isThisSheetPresented = false
+            if laContext.biometryType != .none {
+                Button("稍後設定") {
+                    requestEnableBiometric()
+                }
             }
         }
         .padding([.top], 40)
-        .padding([.leading, .trailing])
+        .padding([.bottom])
+        .padding([.horizontal])
         .navigationBarBackButtonHidden()
+        .onAppear {
+            // Set additional message from LAError object returned code
+            switch laError?.code {
+            case .passcodeNotSet:
+                additionalMessage = "你需要先設定裝置密碼來開始使用 \(laContext.biometryType == .faceID ? "Face ID" : "Touch ID")"
+            case .biometryNotEnrolled, .touchIDNotEnrolled:
+                additionalMessage = "你需要先設定 \(laContext.biometryType == .faceID ? "Face ID" : "Touch ID") "
+            default:
+                break
+            }
+        }
     }
 }
 
