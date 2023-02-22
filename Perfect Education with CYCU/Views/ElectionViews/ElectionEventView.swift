@@ -12,13 +12,15 @@ struct ElectionEventView: View {
     @EnvironmentObject var currentSession: CurrentSession
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             List {
                 ForEach(Definitions.ElectionDefinitions.Events.allCases, id: \.hashValue) { event in
                     if let eventName = Definitions.ElectionDefinitions.Events(rawValue: event.rawValue)?.getName(inChinese: true), let stageEvents = currentSession.electionInformation_stageControl?.stageEvents, let filteredStageEvents = stageEvents.filter({ $0.snStageType == event.rawValue }), !filteredStageEvents.isEmpty {
                         Section(eventName) {
                             ForEach(filteredStageEvents) { stageEvent in
-                                NavigationLink(value: stageEvent) {
+                                NavigationLink {
+                                    ElectionEventDetailView(parentDismiss: dismiss, event: stageEvent)
+                                } label: {
                                     HStack {
                                         VStack(alignment: .leading) {
                                             Text(stageEvent.beginTime?.getString() ?? "")
@@ -46,9 +48,6 @@ struct ElectionEventView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("完成") { dismiss() }
                 }
-            }
-            .navigationDestination(for: Definitions.ElectionDataStructures.StageControl.StageEvent.self) { value in
-                ElectionEventDetailView(parentDismiss: dismiss, event: value)
             }
         }
     }

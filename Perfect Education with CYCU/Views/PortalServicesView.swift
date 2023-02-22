@@ -13,7 +13,7 @@ struct PortalServicesView: View {
     @State var isAccountSheetPresented: Bool = false
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             List {
                 Section("課業") {
                     NavigationLink("選課", destination: ElectionPlaceholderView())
@@ -44,6 +44,7 @@ struct PortalServicesView: View {
                 AccountView()
             }
         }
+        .navigationViewStyle(.stack)
     }
 }
 

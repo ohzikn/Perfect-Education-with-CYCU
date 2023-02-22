@@ -48,7 +48,7 @@ struct ElectionStudentBaseInformationView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
                 if let info = currentSession.electionInformation_studentBaseInformation?.studentsInformation?.first {
                     Section("基本資訊") {

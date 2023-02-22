@@ -49,7 +49,7 @@ struct LoginView: View {
         
         // Call canEvaluatePolicy to ensure device supported biometric type.
         var nsError: NSError?
-        laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &nsError)
+        laContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &nsError)
     }
     
     private func requestBiometricLogin() {
@@ -64,7 +64,7 @@ struct LoginView: View {
         }
         Task {
             do {
-                try await laContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "登入 CYCU Portal")
+                try await laContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "登入 CYCU Portal")
                 let credentials = try KeychainService.retrieveLoginCredentials(for: try KeychainService.retrieveLoginInformation())
                 requestLogin(credentials: credentials)
             } catch let error {
@@ -270,7 +270,7 @@ struct LoginWelcomeView: View {
         self._isThisSheetPresented = isThisSheetPresented
         // Call canEvaluatePolicy to ensure device supported biometric type.
         var nsError: NSError?
-        laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &nsError)
+        laContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &nsError)
         if let nsError {
             laError = LAError(_nsError: nsError)
         }
@@ -278,7 +278,7 @@ struct LoginWelcomeView: View {
     
     private func requestEnableBiometric() {
         var nsError: NSError?
-        laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &nsError)
+        laContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &nsError)
         if let nsError {
             let laError = LAError(_nsError: nsError)
             print(laError)

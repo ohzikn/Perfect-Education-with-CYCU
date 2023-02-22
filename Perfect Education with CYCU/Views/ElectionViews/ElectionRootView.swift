@@ -18,6 +18,8 @@ struct ElectionPlaceholderView: View {
         ZStack {
             if didAcceptTerms {
                 ElectionRootView(rootDismiss: dismiss)
+                    .navigationTitle("")
+                    .navigationBarTitleDisplayMode(.large)
             }
         }
         .navigationTitle("選課")
@@ -148,114 +150,116 @@ struct ElectionRootView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            if showSearchBar { courseSearchFieldView }
-            VStack {
-                switch selectedCourseListType {
-                case .search:
-                    if !searchResult.isEmpty {
-                        ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: searchResult, groupBy: selectedGroupType)
-                    } else {
-                        ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
-                    }
-                case .takingList:
-                    if !takingList.isEmpty {
-                        ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: takingList, groupBy: selectedGroupType)
-                    } else {
-                        ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
-                    }
-                case .trackingList:
-                    if !trackingList.isEmpty {
-                        ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: trackingList, groupBy: selectedGroupType)
-                    } else {
-                        ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
-                    }
-                case .registrationList:
-                    if !registrationList.isEmpty {
-                        ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: registrationList, groupBy: selectedGroupType)
-                    } else {
-                        ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
-                    }
-                case .watingList:
-                    if !waitingList.isEmpty {
-                        ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: waitingList, groupBy: selectedGroupType)
-                    } else {
-                        ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
+        NavigationStack {
+            VStack(spacing: 0) {
+                if showSearchBar { courseSearchFieldView }
+                VStack {
+                    switch selectedCourseListType {
+                    case .search:
+                        if !searchResult.isEmpty {
+                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: searchResult, groupBy: selectedGroupType)
+                        } else {
+                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
+                        }
+                    case .takingList:
+                        if !takingList.isEmpty {
+                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: takingList, groupBy: selectedGroupType)
+                        } else {
+                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
+                        }
+                    case .trackingList:
+                        if !trackingList.isEmpty {
+                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: trackingList, groupBy: selectedGroupType)
+                        } else {
+                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
+                        }
+                    case .registrationList:
+                        if !registrationList.isEmpty {
+                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: registrationList, groupBy: selectedGroupType)
+                        } else {
+                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
+                        }
+                    case .watingList:
+                        if !waitingList.isEmpty {
+                            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: waitingList, groupBy: selectedGroupType)
+                        } else {
+                            ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
+                        }
                     }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .navigationTitle(selectedCourseListType.rawValue)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(for: [Definitions.ElectionDataStructures.CourseInformation].self) { value in
-            ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: value, groupBy: .none)
-        }
-        .navigationDestination(for: Definitions.ElectionDataStructures.CourseInformation.self) { value in
-            ElectionCourseDetailView(for: value)
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Menu {
-                    Section {
-                        Button {
-                            currentSubsheetView = .announcements
-                        } label: {
-                            Label("選課公告", systemImage: "megaphone")
-                        }
-                        Button {
-                            currentSubsheetView = .events
-                        } label: {
-                            Label("選課時間", systemImage: "calendar")
-                        }
-                    }
-                    Section {
-                        Button {
-                            currentSubsheetView = .studentInfo
-                        } label: {
-                            Label("個人資訊", systemImage: "person.text.rectangle")
-                        }
-                        Button {
-                            currentSubsheetView = .history
-                        } label: {
-                            Label("選課紀錄", systemImage: "clock")
-                        }
-                    }
-                    Section {
-                        Button("離開") {
-                            // Dismiss current fullscreen cover
-                            dismiss()
-                            // Dismiss root navigation
-                            rootDismiss()
-                        }
-                    }
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                }
+            .navigationTitle(selectedCourseListType.rawValue)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: [Definitions.ElectionDataStructures.CourseInformation].self) { value in
+                ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: value, groupBy: .none)
             }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
-                    Section {
-                        Picker("分類方式", selection: $selectedGroupType) {
-                            ForEach(GroupType.allCases, id: \.hashValue) { item in
-                                Text(item.rawValue)
-                                    .tag(item)
+            .navigationDestination(for: Definitions.ElectionDataStructures.CourseInformation.self) { value in
+                ElectionCourseDetailView(for: value)
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Menu {
+                        Section {
+                            Button {
+                                currentSubsheetView = .announcements
+                            } label: {
+                                Label("選課公告", systemImage: "megaphone")
+                            }
+                            Button {
+                                currentSubsheetView = .events
+                            } label: {
+                                Label("選課時間", systemImage: "calendar")
                             }
                         }
-                        .pickerStyle(.menu)
+                        Section {
+                            Button {
+                                currentSubsheetView = .studentInfo
+                            } label: {
+                                Label("個人資訊", systemImage: "person.text.rectangle")
+                            }
+                            Button {
+                                currentSubsheetView = .history
+                            } label: {
+                                Label("選課紀錄", systemImage: "clock")
+                            }
+                        }
+                        Section {
+                            Button("離開") {
+                                // Dismiss current fullscreen cover
+                                dismiss()
+                                // Dismiss root navigation
+                                rootDismiss()
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
                     }
-                } label: {
-                    Image(systemName: "list.bullet")
                 }
-            }
-            ToolbarItem(placement: .bottomBar) {
-                Picker("Course List Type", selection: $selectedCourseListType) {
-                    ForEach(CourseListType.allCases, id: \.hashValue) { item in
-                        Text(item.rawValue)
-                            .tag(item)
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Menu {
+                        Section {
+                            Picker("分類方式", selection: $selectedGroupType) {
+                                ForEach(GroupType.allCases, id: \.hashValue) { item in
+                                    Text(item.rawValue)
+                                        .tag(item)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                        }
+                    } label: {
+                        Image(systemName: "list.bullet")
                     }
                 }
-                .pickerStyle(.segmented)
+                ToolbarItem(placement: .bottomBar) {
+                    Picker("Course List Type", selection: $selectedCourseListType) {
+                        ForEach(CourseListType.allCases, id: \.hashValue) { item in
+                            Text(item.rawValue)
+                                .tag(item)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
             }
         }
         // Fixed: Refreshable is not functioning if List view is not present due to empty query (Showing VStack with no items string instead).

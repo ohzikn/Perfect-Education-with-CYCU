@@ -14,12 +14,16 @@ struct ElectionAnnouncementView: View {
     @State var selectedAnnouncement: Definitions.ElectionDefinitions.AnnouncementRoles = .guide
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack {
                 List {
                     if let billBoard = currentSession.electionInformation_announcement?.billboard, let filteredBillboard = billBoard.filter({ $0.announcementType == selectedAnnouncement.rawValue }), !filteredBillboard.isEmpty {
                         ForEach(filteredBillboard) { item in
-                            NavigationLink(item.title ?? "沒有標題", value: item)
+                            NavigationLink {
+                                ElectionAnnouncementDetailView(parentDismiss: dismiss, billboard: item)
+                            } label: {
+                                Text(item.title ?? "沒有標題")
+                            }
                         }
                     } else {
                         Text("沒有項目")
@@ -43,9 +47,6 @@ struct ElectionAnnouncementView: View {
                     }
                     .pickerStyle(.segmented)
                 }
-            }
-            .navigationDestination(for: Definitions.ElectionDataStructures.Announcement.Billboard.self) { value in
-                ElectionAnnouncementDetailView(parentDismiss: dismiss, billboard: value)
             }
         }
     }

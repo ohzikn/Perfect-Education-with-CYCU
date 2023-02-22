@@ -21,7 +21,7 @@ struct AccountView: View {
     init() {
         // Call canEvaluatePolicy to ensure device supported biometric type.
         var nsError: NSError?
-        laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &nsError)
+        laContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &nsError)
     }
     
     var body: some View {

@@ -71,7 +71,7 @@ struct ElectionAdvancedSearchView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationView {
             List {
                 Section("快速查詢") {
                     Button("本班所有課程") {
