@@ -88,8 +88,10 @@ struct ElectionRootView: View {
         case studentInfo
         case history
         
-        case searchFilter
+        case advancedSearch
     }
+    @State private var currentSubSheetView: SubsheetViews = .none
+    @State private var isSubSheetPresented = false
     
     enum CourseListType: String, CaseIterable {
         case search = "課程查詢"
@@ -120,9 +122,6 @@ struct ElectionRootView: View {
         }
     }
     @State private var selectedGroupType: GroupType = .none
-    
-    @State private var currentSubsheetView: SubsheetViews = .none
-    @State private var isSubSheetPresented = false
     
     @State private var showSearchBar = true
     @State private var isFilterActivated: Bool = false
@@ -156,7 +155,10 @@ struct ElectionRootView: View {
                 VStack {
                     switch selectedCourseListType {
                     case .search:
-                        if !searchResult.isEmpty {
+                        if currentSubSheetView == .advancedSearch {
+                            // To prevent refresh indicator freezes (SwiftUI bug)
+                            EmptyView()
+                        } else if !searchResult.isEmpty {
                             ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: searchResult, groupBy: selectedGroupType)
                         } else {
                             ElectionPlaceholderEmptyItemView(courseListType: selectedCourseListType)
@@ -202,24 +204,24 @@ struct ElectionRootView: View {
                     Menu {
                         Section {
                             Button {
-                                currentSubsheetView = .announcements
+                                currentSubSheetView = .announcements
                             } label: {
                                 Label("選課公告", systemImage: "megaphone")
                             }
                             Button {
-                                currentSubsheetView = .events
+                                currentSubSheetView = .events
                             } label: {
                                 Label("選課時間", systemImage: "calendar")
                             }
                         }
                         Section {
                             Button {
-                                currentSubsheetView = .studentInfo
+                                currentSubSheetView = .studentInfo
                             } label: {
                                 Label("個人資訊", systemImage: "person.text.rectangle")
                             }
                             Button {
-                                currentSubsheetView = .history
+                                currentSubSheetView = .history
                             } label: {
                                 Label("選課紀錄", systemImage: "clock")
                             }
@@ -267,7 +269,7 @@ struct ElectionRootView: View {
             // Refresh student information and update lists
             switch selectedCourseListType {
             case .search:
-                currentSubsheetView = .searchFilter
+                currentSubSheetView = .advancedSearch
             default:
                 await currentSession.requestElection(method: .st_info_get)
             }
@@ -289,13 +291,13 @@ struct ElectionRootView: View {
         }
         // Sync subsheet view with isSubSheetPresented
         .onChange(of: isSubSheetPresented) { newValue in
-            if !newValue { currentSubsheetView = .none }
+            if !newValue { currentSubSheetView = .none }
         }
-        .onChange(of: currentSubsheetView) { newValue in
+        .onChange(of: currentSubSheetView) { newValue in
             isSubSheetPresented = (newValue != .none)
         }
         .onChange(of: isFilterActivated) { newValue in
-            if newValue { currentSubsheetView = .searchFilter }
+            if newValue { currentSubSheetView = .advancedSearch }
         }
         // Sync end
         .onChange(of: selectedCourseListType) { newValue in
@@ -321,7 +323,7 @@ struct ElectionRootView: View {
             }
         }
         .sheet(isPresented: $isSubSheetPresented) {
-            switch currentSubsheetView {
+            switch currentSubSheetView {
             case .none:
                 EmptyView()
             case .announcements:
@@ -336,7 +338,7 @@ struct ElectionRootView: View {
             case .history:
                 ElectionHistoryView()
                     .presentationDetents([.large])
-            case .searchFilter:
+            case .advancedSearch:
                 ElectionAdvancedSearchView(inheritenced: _searchEntry)
                     .presentationDetents([.large])
                     .interactiveDismissDisabled()
@@ -356,6 +358,14 @@ struct ElectionPlaceholderEmptyItemView: View {
     
     var body: some View {
         ZStack {
+            if courseListType == .search {
+                VStack {
+                    Text("下拉來顯示搜尋選項")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+            }
             VStack(spacing: 4) {
                 Text("沒有項目")
                     .fontWeight(.semibold)
@@ -367,7 +377,7 @@ struct ElectionPlaceholderEmptyItemView: View {
                 }
             }
             .padding([.bottom])
-            List { }
+            ScrollView { }
         }
     }
 }

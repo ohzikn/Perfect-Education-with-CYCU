@@ -24,4 +24,5 @@ struct Perfect_Education_with_CYCUApp: App {
 final class ApplicationParameters: ObservableObject {
     // Saved paraeters
     @AppStorage(UserDefaults.toggleKeyValues.usesFaceId.rawValue) var usesBiometricLogin: Bool = false
+    @AppStorage(UserDefaults.toggleKeyValues.isExtendedPersonalDataUseAuthorized.rawValue) var isExtendedPersonalDataUseAuthorized: Bool = false
 }

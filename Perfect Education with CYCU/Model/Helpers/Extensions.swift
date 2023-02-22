@@ -11,6 +11,7 @@ import SwiftUI
 extension UserDefaults {
     enum toggleKeyValues: String {
         case usesFaceId
+        case isExtendedPersonalDataUseAuthorized
     }
 }
 
