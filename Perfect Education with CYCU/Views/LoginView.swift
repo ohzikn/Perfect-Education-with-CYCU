@@ -13,8 +13,6 @@ struct LoginView: View {
     @EnvironmentObject var applicationParameters: ApplicationParameters
     @EnvironmentObject var currentSession: CurrentSession
     
-    @Binding var isThisSheetPresented: Bool
-    
     @State var isLoginProcessRingPresented = false
     @State var isLoginFailureAlertPresented = false
     @State var isSafariSheetPresented = false
@@ -40,14 +38,7 @@ struct LoginView: View {
     
     let laContext = LAContext()
     
-    init(isThisSheetPresented: Binding<Bool>) {
-        if let loginInfo = try? KeychainService.retrieveLoginInformation() {
-            usernameField = loginInfo.username
-            isUsernamePlaceholderActive = true
-        }
-        self._isThisSheetPresented = isThisSheetPresented
-        
-        // Call canEvaluatePolicy to ensure device supported biometric type.
+    init() {// Call canEvaluatePolicy to ensure device supported biometric type.
         var nsError: NSError?
         laContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &nsError)
     }
@@ -202,7 +193,7 @@ struct LoginView: View {
             .navigationDestination(for: Functions.self) { value in
                 switch value {
                 case .loginWelcome:
-                    LoginWelcomeView(isThisSheetPresented: $isThisSheetPresented)
+                    LoginWelcomeView()
                 }
             }
             .alert("登入失敗", isPresented: $isLoginFailureAlertPresented, actions: {
@@ -217,6 +208,8 @@ struct LoginView: View {
                         Text("網際網路尚未連線。")
                     case .failedToEstablishSecureConnection:
                         Text("無法建立安全連線。")
+                    case .failedToRequestAuthenticateToken:
+                        Text("無法取得認證密鑰。")
                     case .unknown:
                         Text("發生未預期的錯誤。")
                     }
@@ -233,6 +226,16 @@ struct LoginView: View {
                 }
             }
         }
+        .onAppear {
+            if let loginInfo = try? KeychainService.retrieveLoginInformation() {
+                usernameField = loginInfo.username
+                isUsernamePlaceholderActive = true
+            }
+            if currentSession.loginState == CurrentSession.LoginState.failed(.unknown) {
+                // Show login failure alert
+                isLoginFailureAlertPresented = true
+            }
+        }
         .onChange(of: currentSession.loginState) { newValue in
             // Switch statements
             switch newValue {
@@ -242,9 +245,6 @@ struct LoginView: View {
             case .loginKeychainSetup:
                 // Navigate to first setup
                 presentedFunctions.append(.loginWelcome)
-            case .loggedIn:
-                // Dismiss this sheet, ControllerView will handle the rest.
-                isThisSheetPresented = false
             default:
                 break
             }
@@ -258,16 +258,13 @@ struct LoginWelcomeView: View {
     @EnvironmentObject var applicationParameters: ApplicationParameters
     @EnvironmentObject var currentSession: CurrentSession
     
-    @Binding var isThisSheetPresented: Bool
-    
     @State var additionalMessage: String = ""
     
     let laContext = LAContext()
     var laError: LAError?
     
-    init(isThisSheetPresented: Binding<Bool>) {
+    init() {
         // IMPORTANT!! DO NOT ACCESS ENVIRONMENT OBJECTS HERE!! THIS WILL CAUSE FATAL ERROR!
-        self._isThisSheetPresented = isThisSheetPresented
         // Call canEvaluatePolicy to ensure device supported biometric type.
         var nsError: NSError?
         laContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &nsError)
@@ -344,10 +341,10 @@ struct LoginView_Previews: PreviewProvider {
         return session
     }()
     static var previews: some View {
-        LoginView(isThisSheetPresented: .constant(true))
+        LoginView()
             .environmentObject(currentSession)
             .previewDisplayName("Login")
-        LoginWelcomeView(isThisSheetPresented: .constant(true))
+        LoginWelcomeView()
             .environmentObject(currentSession)
             .previewDisplayName("Login Welcome")
     }

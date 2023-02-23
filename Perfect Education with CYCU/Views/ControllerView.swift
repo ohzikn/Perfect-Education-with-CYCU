@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ControllerView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @EnvironmentObject var currentSession: CurrentSession
     
     @State private var isLoginSheetPresented = false
@@ -30,7 +31,7 @@ struct ControllerView: View {
             }
         }
         .sheet(isPresented: $isLoginSheetPresented) {
-            LoginView(isThisSheetPresented: $isLoginSheetPresented)
+            LoginView()
                 .interactiveDismissDisabled()
         }
         .onAppear {
@@ -39,9 +40,22 @@ struct ControllerView: View {
                 isLoginSheetPresented = true
             }
         }
+        .onChange(of: scenePhase) { newValue in
+            // Check if login has died and try to recover if so.
+            if newValue == .active {
+//                // Only proceed if currently logged in
+//                guard currentSession.loginState == .loggedIn else { return }
+//                // Log in again if scene phase became active
+//                Task {
+//                    let credentials = try KeychainService.retrieveLoginCredentials(for: try KeychainService.retrieveLoginInformation())
+//                    await currentSession.requestLogin(username: credentials.username, password: credentials.password ?? "")
+//                }
+            }
+        }
         .onChange(of: currentSession.loginState) { newValue in
             switch newValue {
             case .loggedIn:
+                isLoginSheetPresented = false
                 // Load all related data
                 Task {
                     // Election
@@ -56,6 +70,8 @@ struct ControllerView: View {
             case .notLoggedIn:
                 // Show login sheet if logged out.
                 isContentViewPresented = false
+                isLoginSheetPresented = true
+            case .failed(_):
                 isLoginSheetPresented = true
             default:
                 break

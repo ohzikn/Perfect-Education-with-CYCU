@@ -53,27 +53,19 @@ struct Definitions {
         func getRelatedAuthenticateLocation() -> String {
             switch self {
             case .base:
-                return AuthenticateLocations.base.rawValue
+                return "/home/json/ss_loginUser.jsp"
             case .workStudy:
-                return AuthenticateLocations.workStudy.rawValue
+                return "/Hire_workStudy/json/ss_loginUser.jsp"
             case .credits:
-                return AuthenticateLocations.credits.rawValue
+                return "/credit/json/ss_loginUser.jsp"
             case .election:
-                return AuthenticateLocations.election.rawValue
+                return "/elective/json/ss_loginUser_student.jsp"
             }
         }
         
         func getUrl() -> URL {
             return PortalLocations.auth.appending(path: self.rawValue)
         }
-    }
-    
-    // Declared as private to prevent accident direct access from other structs or classes
-    private enum AuthenticateLocations: String {
-        case base = "/home/json/ss_loginUser.jsp"
-        case workStudy = "/Hire_workStudy/json/ss_loginUser.jsp"
-        case credits = "/credit/json/ss_loginUser.jsp"
-        case election = "/elective/json/ss_loginUser_student.jsp"
     }
     
     // Data structure for storing account name and password strings

@@ -41,6 +41,7 @@ class CurrentSession: ObservableObject {
         case userNameOrPasswordIncorrect
         case noInternetConnection
         case failedToEstablishSecureConnection
+        case failedToRequestAuthenticateToken
         case unknown
     }
     
@@ -149,8 +150,10 @@ class CurrentSession: ObservableObject {
                 try? KeychainService.registerLoginInformation(for: loginCredentials)
             }
             // Request basic information
-            Task {
-                try await requestAuthenticateToken(for: Definitions.QueryLocations.base)
+            do {
+                try await requestBaseAuthenticateToken()
+            } catch {
+                loginState = .failed(.failedToRequestAuthenticateToken)
             }
         } catch {
             print("\((error as NSError).code)")
@@ -164,6 +167,10 @@ class CurrentSession: ObservableObject {
                 loginState = .failed(.unknown)
             }
         }
+    }
+    
+    func requestBaseAuthenticateToken() async throws {
+        let baseToken = try await requestAuthenticateToken(for: Definitions.QueryLocations.base)
     }
     
     // MARK: WorkStudy
