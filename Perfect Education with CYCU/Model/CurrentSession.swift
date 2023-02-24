@@ -38,9 +38,8 @@ class CurrentSession: ObservableObject {
     }
     
     enum LoginError {
+        case networkError(NetworkError)
         case userNameOrPasswordIncorrect
-        case noInternetConnection
-        case failedToEstablishSecureConnection
         case failedToRequestAuthenticateToken
         case unknown
     }
@@ -51,9 +50,10 @@ class CurrentSession: ObservableObject {
         case reAuthorized
     }
     
-    enum RequestError: Error {
-        case authenticateTokenRequestFailed
-        case queryRequestFailed
+    enum NetworkError: Error {
+        case noInternetConnection
+        case failedToEstablishSecureConnection
+        case unknown
     }
     
     // Application token structure
@@ -121,14 +121,14 @@ class CurrentSession: ObservableObject {
             let queryData = try JSONEncoder().encode(loginCredentials)
             
             // Create a HTTPS POST Request
-            let request = getURLRequest(urlQuery: Definitions.PortalLocations.login, requestData: queryData)
+            let request = getURLRequest(urlQuery: Definitions.PortalLocations.login, headerData: queryData)
             // Send login request to server
 //            URLSession.shared.dataTask(with: request) { data, response, error in
 //                print(data)
 //                print(response)
 //                print(error)
 //            }.resume()
-            let (data, response) = try await URLSession.shared.data(for: request)
+            let (data, _) = try await URLSession.shared.data(for: request)
             //                print(data)
             userInformation = try JSONDecoder().decode(Definitions.UserInformation.self, from: data)
             guard userInformation?.didLogIn == "Y" else {
@@ -159,17 +159,18 @@ class CurrentSession: ObservableObject {
             print("\((error as NSError).code)")
             switch (error as NSError).code {
             case -1021 ... -998:
-                loginState = .failed(.noInternetConnection)
+                loginState = .failed(.networkError(.noInternetConnection))
             case -1206 ... -1200:
-                loginState = .failed(.failedToEstablishSecureConnection)
+                loginState = .failed(.networkError(.failedToEstablishSecureConnection))
                 break
             default:
-                loginState = .failed(.unknown)
+                loginState = .failed(.networkError(.unknown))
             }
         }
     }
     
     func requestBaseAuthenticateToken() async throws {
+        // There is no need to use base token, but leave for further use.
         let baseToken = try await requestAuthenticateToken(for: Definitions.QueryLocations.base)
     }
     
@@ -362,12 +363,12 @@ class CurrentSession: ObservableObject {
 }
 
 extension CurrentSession {
-    // Returns URLRequest Object
-    private func getURLRequest(urlQuery: URL, requestData: Data) -> URLRequest {
+    // Returns URLRequest Object with header injection
+    private func getURLRequest(urlQuery: URL, headerData: Data) -> URLRequest {
         var request = URLRequest(url: urlQuery, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
-        request.httpBody = requestData
+        request.httpBody = headerData
         return request
     }
     
@@ -381,7 +382,6 @@ extension CurrentSession {
             }
             return DefaultQuery()
         }()
-        
         // Get app token and set into requestQuery from stored variable if current category is present, otherwise request a new one immediately.
         requestQuery.APP_AUTH_token = currentApplicationToken?.authenticateLocation == queryLocation && currentApplicationToken?.authenticateInformation.APP_AUTH_token != nil ? currentApplicationToken?.authenticateInformation.APP_AUTH_token : try await requestAuthenticateToken(for: queryLocation)
         
@@ -396,13 +396,21 @@ extension CurrentSession {
         }()
         
         // Get URLRequest object
-        let request = getURLRequest(urlQuery: urlWithQuery, requestData: requestData)
+        let request = getURLRequest(urlQuery: urlWithQuery, headerData: requestData)
         
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             return data
         } catch {
-            throw RequestError.queryRequestFailed
+            print("\((error as NSError).code)")
+            switch (error as NSError).code {
+            case -1021 ... -998:
+                throw NetworkError.noInternetConnection
+            case -1206 ... -1200:
+                throw NetworkError.failedToEstablishSecureConnection
+            default:
+                throw NetworkError.unknown
+            }
         }
     }
     
@@ -435,7 +443,16 @@ extension CurrentSession {
 //            print(currentApplicationToken)
             return currentApplicationToken?.authenticateInformation.APP_AUTH_token ?? ""
         } catch {
-            throw RequestError.authenticateTokenRequestFailed
+            print("\((error as NSError).code)")
+            throw error
+//            switch (error as NSError).code {
+//            case -1021 ... -998:
+//                throw NetworkError.noInternetConnection
+//            case -1206 ... -1200:
+//                throw NetworkError.failedToEstablishSecureConnection
+//            default:
+//                throw NetworkError.unknown
+//            }
         }
     }
 }
