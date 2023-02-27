@@ -204,13 +204,13 @@ struct LoginView: View {
                     switch loginError {
                     case .userNameOrPasswordIncorrect:
                         Text("CYCU ID 或密碼錯誤。")
-                    case .noInternetConnection:
-                        Text("網際網路尚未連線。")
-                    case .failedToEstablishSecureConnection:
-                        Text("無法建立安全連線。")
                     case .failedToRequestAuthenticateToken:
                         Text("無法取得認證密鑰。")
-                    case .unknown:
+                    case .networkError(.noInternetConnection):
+                        Text("網際網路尚未連線。")
+                    case .networkError(.failedToEstablishSecureConnection):
+                        Text("無法建立安全連線。")
+                    case .unknown, .networkError(.unknown):
                         Text("發生未預期的錯誤。")
                     }
                 }

@@ -57,10 +57,10 @@ class CurrentSession: ObservableObject {
     }
     
     // Application token structure
-    struct ApplicationToken {
-        let authenticateLocation: Definitions.QueryLocations
-        let authenticateInformation: Definitions.AuthenticateInformation
-    }
+//    struct ApplicationToken {
+//        let authenticateLocation: Definitions.QueryLocations
+//        let authenticateInformation: Definitions.AuthenticateInformation
+//    }
     
     enum CourseListType: CaseIterable {
         case take
@@ -76,7 +76,8 @@ class CurrentSession: ObservableObject {
         willSet {
             switch newValue {
             case .notLoggedIn, .failed:
-                currentApplicationToken = nil
+//                currentApplicationToken = nil
+                currentSessionTokens.removeAll()
                 userInformation = nil
                 workStudyInformation = nil
                 creditsInformation = nil
@@ -90,7 +91,8 @@ class CurrentSession: ObservableObject {
             }
         }
     }
-    @Published var currentApplicationToken: ApplicationToken?
+//    @Published var currentApplicationToken: ApplicationToken?
+    @Published var currentSessionTokens: [Definitions.QueryLocations: Definitions.AuthenticateInformation] = [:]
     
     // User data queries
     @Published var userInformation: Definitions.UserInformation? {
@@ -171,7 +173,7 @@ class CurrentSession: ObservableObject {
     
     func requestBaseAuthenticateToken() async throws {
         // There is no need to use base token, but leave for further use.
-        let baseToken = try await requestAuthenticateToken(for: Definitions.QueryLocations.base)
+        try await requestAuthenticateToken(for: Definitions.QueryLocations.base)
     }
     
     // MARK: WorkStudy
@@ -256,7 +258,6 @@ class CurrentSession: ObservableObject {
             
             // Recieve and decode response
             let responseString = String(data: data, encoding: .utf8)
-            print(responseString)
             
             // Check if distinct_IP_IDCODE_alert warning activated
             switch await electionDidDeadCheck(data: data) {
@@ -382,8 +383,9 @@ extension CurrentSession {
             }
             return DefaultQuery()
         }()
+        
         // Get app token and set into requestQuery from stored variable if current category is present, otherwise request a new one immediately.
-        requestQuery.APP_AUTH_token = currentApplicationToken?.authenticateLocation == queryLocation && currentApplicationToken?.authenticateInformation.APP_AUTH_token != nil ? currentApplicationToken?.authenticateInformation.APP_AUTH_token : try await requestAuthenticateToken(for: queryLocation)
+        requestQuery.APP_AUTH_token = currentSessionTokens[queryLocation]?.APP_AUTH_token != nil ? currentSessionTokens[queryLocation]?.APP_AUTH_token : try await requestAuthenticateToken(for: queryLocation)
         
         // Encode requestQuery into data
         let requestData = try JSONEncoder().encode(requestQuery)
@@ -400,6 +402,7 @@ extension CurrentSession {
         
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
+            print("Query response: \(String(data: data, encoding: .utf8))")
             return data
         } catch {
             print("\((error as NSError).code)")
@@ -414,9 +417,10 @@ extension CurrentSession {
         }
     }
     
-    // Requests a new application authenticate token
+    // Force requests a new application authenticate token even if token is already available
     // Only pass parameter string returned from Definitions.QueryLocations.getRelatedAuthenticateLocation() method.
-    private func requestAuthenticateToken(for query: Definitions.QueryLocations) async throws -> String {
+    @discardableResult
+    private func requestAuthenticateToken(for queryLocation: Definitions.QueryLocations) async throws -> String {
         // Create a credential data structure that will be converted to JSON data later
         struct Credentials: Codable {
             let authUrl: String
@@ -425,7 +429,7 @@ extension CurrentSession {
         
         do {
             // Create a JSON object that will be posted to the server later.
-            let credentialData = try JSONEncoder().encode(Credentials(authUrl: "/\(Definitions.PortalLocations.auth.lastPathComponent)", authApi: query.getRelatedAuthenticateLocation()))
+            let credentialData = try JSONEncoder().encode(Credentials(authUrl: "/\(Definitions.PortalLocations.auth.lastPathComponent)", authApi: queryLocation.getRelatedAuthenticateLocation()))
             
             // Create a HTTPS POST Request
             let request: URLRequest = {
@@ -438,10 +442,14 @@ extension CurrentSession {
             
             // Send request to server
             let (data, _) = try await URLSession.shared.data(for: request)
-//            print(String(data: data, encoding: .utf8))
-            currentApplicationToken = .init(authenticateLocation: query, authenticateInformation: try JSONDecoder().decode(Definitions.AuthenticateInformation.self, from: data))
+            print("Auth return: \(String(data: data, encoding: .utf8))")
+            
+            currentSessionTokens[queryLocation] = try JSONDecoder().decode(Definitions.AuthenticateInformation.self, from: data)
+            print("Dictionary Token: \(currentSessionTokens[queryLocation]?.APP_AUTH_token)")
+            
+//            currentApplicationToken = .init(authenticateLocation: queryLocation, authenticateInformation: try JSONDecoder().decode(Definitions.AuthenticateInformation.self, from: data))
 //            print(currentApplicationToken)
-            return currentApplicationToken?.authenticateInformation.APP_AUTH_token ?? ""
+            return currentSessionTokens[queryLocation]?.APP_AUTH_token ?? ""
         } catch {
             print("\((error as NSError).code)")
             throw error
