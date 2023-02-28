@@ -19,7 +19,7 @@ struct Definitions {
         static let root: URL! = URL(string: "https://myself.cycu.edu.tw")
         static let login: URL = root.appending(path: "/auth/myselfLogin")
         static let auth: URL = root.appending(path: "/myself_api_127")
-        static let baseInfo: URL = root.appending(path: "baseInfo")
+        static let baseInfo: URL = root.appending(path: "/baseInfo")
         // Requests
 //        static let baseApi: URL = auth.appending(path: "/home/json/ss_loginUser.jsp")
 //        static let electionApi: URL = auth.appending(path: "/elective/mvc/elective_system.jsp")
