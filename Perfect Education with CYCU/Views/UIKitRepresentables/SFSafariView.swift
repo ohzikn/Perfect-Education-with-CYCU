@@ -19,11 +19,11 @@ struct SFSafariView: UIViewControllerRepresentable {
         sfSafariView = SFSafariViewController(url: url, configuration: configuration)
     }
     
-    init(syllabusInfo: Definitions.ElectionDataStructures.SyllabusInfo) {
+    init(syllabusInfo: MyselfDefinitions.ElectionDataStructures.SyllabusInfo) {
         let configuration = SFSafariViewController.Configuration()
         configuration.barCollapsingEnabled = false
         configuration.entersReaderIfAvailable = false
-        var url: URL = Definitions.ExternalLocations.syllabus
+        var url: URL = MyselfDefinitions.ExternalLocations.syllabus
         url.append(queryItems: [.init(name: "yearTerm", value: syllabusInfo.yearTerm), .init(name: "opCode", value: syllabusInfo.opCode)])
         sfSafariView = SFSafariViewController(url: url, configuration: configuration)
     }

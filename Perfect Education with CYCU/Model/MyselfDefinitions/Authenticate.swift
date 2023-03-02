@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Definitions {
+extension MyselfDefinitions {
     // MARK: Data structure
     struct AuthenticateInformation: Codable {
         var APP_AUTH: AppAuth?

@@ -38,7 +38,7 @@ struct ElectionHistoryView: View {
             }
             .navigationTitle("選課紀錄")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: Definitions.ElectionDataStructures.History.HistoryItem.self) { value in
+            .navigationDestination(for: MyselfDefinitions.ElectionDataStructures.History.HistoryItem.self) { value in
                 
             }
             .toolbar {
@@ -60,7 +60,7 @@ struct ElectionHistoryView: View {
 }
 
 struct ElectionHistoryDetail: View {
-    let item: Definitions.ElectionDataStructures.History.HistoryItem
+    let item: MyselfDefinitions.ElectionDataStructures.History.HistoryItem
     let rootDismiss: DismissAction
     
     var body: some View {

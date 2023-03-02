@@ -14,8 +14,8 @@ struct ElectionEventView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(Definitions.ElectionDefinitions.Events.allCases, id: \.hashValue) { event in
-                    if let eventName = Definitions.ElectionDefinitions.Events(rawValue: event.rawValue)?.getName(inChinese: true), let stageEvents = currentSession.electionInformation_stageControl?.stageEvents, let filteredStageEvents = stageEvents.filter({ $0.snStageType == event.rawValue }), !filteredStageEvents.isEmpty {
+                ForEach(MyselfDefinitions.ElectionDefinitions.Events.allCases, id: \.hashValue) { event in
+                    if let eventName = MyselfDefinitions.ElectionDefinitions.Events(rawValue: event.rawValue)?.getName(inChinese: true), let stageEvents = currentSession.electionInformation_stageControl?.stageEvents, let filteredStageEvents = stageEvents.filter({ $0.snStageType == event.rawValue }), !filteredStageEvents.isEmpty {
                         Section(eventName) {
                             ForEach(filteredStageEvents) { stageEvent in
                                 NavigationLink {
@@ -55,12 +55,12 @@ struct ElectionEventView: View {
 
 struct ElectionEventDetailView: View {
     let parentDismiss: DismissAction
-    let event: Definitions.ElectionDataStructures.StageControl.StageEvent
+    let event: MyselfDefinitions.ElectionDataStructures.StageControl.StageEvent
     
     private func getActionString(_ queue: [Int]?) -> String? {
         guard let queue else { return nil }
         var resultArray: [String] = []
-        Definitions.ElectionDefinitions.Actions.allCases.forEach { item in
+        MyselfDefinitions.ElectionDefinitions.Actions.allCases.forEach { item in
             if queue.contains(item.rawValue) {
                 resultArray.append(item.getName(inChinese: true))
             }
@@ -72,7 +72,7 @@ struct ElectionEventDetailView: View {
     private func getRolesString(_ queue: [Int]?) -> String? {
         guard let queue else { return nil }
         var resultArray: [String] = []
-        Definitions.ElectionDefinitions.PositionRoles.allCases.forEach { item in
+        MyselfDefinitions.ElectionDefinitions.PositionRoles.allCases.forEach { item in
             if queue.contains(item.rawValue) {
                 resultArray.append(item.getName(inChinese: true))
             }
@@ -84,7 +84,7 @@ struct ElectionEventDetailView: View {
     private func getCourseRolesString(_ queue: [Int]?) -> String? {
         guard let queue else { return nil }
         var resultArray: [String] = []
-        Definitions.ElectionDefinitions.CourseRoles.allCases.forEach { item in
+        MyselfDefinitions.ElectionDefinitions.CourseRoles.allCases.forEach { item in
             if queue.contains(item.rawValue) {
                 resultArray.append(item.getName(inChinese: true))
             }
@@ -123,7 +123,7 @@ struct ElectionEventDetailView: View {
                 }
             }
         }
-        .navigationTitle(Definitions.ElectionDefinitions.Events(rawValue: event.snStageType ?? -1)?.getName(inChinese: true) ?? "選課階段代號 \(String(describing: event.snStageType))")
+        .navigationTitle(MyselfDefinitions.ElectionDefinitions.Events(rawValue: event.snStageType ?? -1)?.getName(inChinese: true) ?? "選課階段代號 \(String(describing: event.snStageType))")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {

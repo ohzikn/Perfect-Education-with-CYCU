@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Definitions {
+extension MyselfDefinitions {
     // MARK: Data structure
         struct WorkStudyInformation: Codable {
             let remoteAddress: String?

@@ -65,7 +65,7 @@ struct LoginView: View {
     }
     
     // Biometric login
-    private func requestLogin(credentials: Definitions.LoginCredentials) {
+    private func requestLogin(credentials: MyselfDefinitions.LoginCredentials) {
         // FaceId toggle guard
         guard applicationParameters.usesBiometricLogin else { return }
         // Login state check
@@ -216,7 +216,7 @@ struct LoginView: View {
                 }
             })
             .fullScreenCover(isPresented: $isSafariSheetPresented, content: {
-                SFSafariView(url: Definitions.ExternalLocations.passwordReset)
+                SFSafariView(url: MyselfDefinitions.ExternalLocations.passwordReset)
                     .ignoresSafeArea()
             })
             .toolbar {

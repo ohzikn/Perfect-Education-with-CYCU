@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Definitions {
+extension MyselfDefinitions {
     
     // MARK: Commands
     enum ElectionCommands: String, CaseIterable {

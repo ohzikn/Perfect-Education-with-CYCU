@@ -15,7 +15,7 @@ class KeychainService {
     }
     
     // Query first stored login credential without passsword
-    static func retrieveLoginInformation() throws -> Definitions.LoginCredentials {
+    static func retrieveLoginInformation() throws -> MyselfDefinitions.LoginCredentials {
         let searchQuery: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecMatchLimit as String: kSecMatchLimitAll,
                                     kSecReturnRef as String: true,
@@ -34,7 +34,7 @@ class KeychainService {
     }
     
     // Query for specified login credential
-    static func retrieveLoginCredentials(for credentials: Definitions.LoginCredentials) throws -> Definitions.LoginCredentials {
+    static func retrieveLoginCredentials(for credentials: MyselfDefinitions.LoginCredentials) throws -> MyselfDefinitions.LoginCredentials {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccount as String: credentials.username,
                                     kSecMatchLimit as String: kSecMatchLimitOne,
@@ -52,7 +52,7 @@ class KeychainService {
     }
     
     // Creates new login credential
-    static func registerLoginInformation(for credentials: Definitions.LoginCredentials) throws {
+    static func registerLoginInformation(for credentials: MyselfDefinitions.LoginCredentials) throws {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccount as String: credentials.username,
                                     kSecValueData as String: credentials.password?.data(using: .utf8) ?? Data()]
@@ -63,7 +63,7 @@ class KeychainService {
     }
     
     // Updates credential information from keychain
-    static func updateLoginInformation(for credentials: Definitions.LoginCredentials) throws {
+    static func updateLoginInformation(for credentials: MyselfDefinitions.LoginCredentials) throws {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccount as String: credentials.username,
                                     kSecMatchLimit as String: kSecMatchLimitOne]
@@ -75,7 +75,7 @@ class KeychainService {
     }
     
     // Removes specified credential from keychain
-    static func removeLoginInformation(for credentials: Definitions.LoginCredentials) throws {
+    static func removeLoginInformation(for credentials: MyselfDefinitions.LoginCredentials) throws {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccount as String: credentials.username,
                                     kSecMatchLimit as String: kSecMatchLimitOne]

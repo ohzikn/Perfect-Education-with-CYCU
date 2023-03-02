@@ -19,6 +19,9 @@ struct PortalServicesView: View {
                     NavigationLink("選課", destination: ElectionPlaceholderView())
                     NavigationLink("修課查詢", destination: CreditsView())
                 }
+                Section("Social Palace") {
+                    NavigationLink("Social Palace", destination: <#T##() -> View#>)
+                }
                 #if DEBUG
                 Section("Developer") {
                     NavigationLink("校內工讀", destination: WorkStudyView())

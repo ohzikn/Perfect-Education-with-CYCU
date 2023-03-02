@@ -25,23 +25,23 @@ struct ElectionAdvancedSearchView: View {
     @State var cName_Entry = ""
     @State var teacher_Entry = ""
     
-    @State var selectedCreditsOperator: Definitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
+    @State var selectedCreditsOperator: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
     @State var selectedCreditsValue1: Int = 0
     @State var selectedCreditsValue2: Int = 0
     
-    @State var selectedManCurrentOperator: Definitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
+    @State var selectedManCurrentOperator: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
     @State var selectedManCurrentValue1: Int = 0
     @State var selectedManCurrentValue2: Int = 0
     
-    @State var selectedManSumOperator: Definitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
+    @State var selectedManSumOperator: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
     @State var selectedManSumValue1: Int = 0
     @State var selectedManSumValue2: Int = 0
     
-    @State var selectedManRemainOperator: Definitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
+    @State var selectedManRemainOperator: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
     @State var selectedManRemainValue1: Int = 0
     @State var selectedManRemainValue2: Int = 0
     
-    @State var selectedManRegisterOperator: Definitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
+    @State var selectedManRegisterOperator: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols = .none
     @State var selectedManRegisterValue1: Int = 0
     @State var selectedManRegisterValue2: Int = 0
     
@@ -52,8 +52,8 @@ struct ElectionAdvancedSearchView: View {
     @State var selectedCrossPblValue: Int = 0
     @State var selectedDistanceCourseValue: Int = 0
     
-    private func getCrossInfo(_ id: UUID?) -> Definitions.ElectionDataStructures.StudentInformation.CrossType.CrossIdentifier? {
-        var result: Definitions.ElectionDataStructures.StudentInformation.CrossType.CrossIdentifier?
+    private func getCrossInfo(_ id: UUID?) -> MyselfDefinitions.ElectionDataStructures.StudentInformation.CrossType.CrossIdentifier? {
+        var result: MyselfDefinitions.ElectionDataStructures.StudentInformation.CrossType.CrossIdentifier?
         
         if let id, let definitions = currentSession.electionInformation_studentInformation?.crossTypeDefinitions {
             definitions.forEach { crossType in
@@ -253,7 +253,7 @@ struct ElectionAdvancedSearchView: View {
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("搜尋") {
-                        let query: Definitions.ElectionDataStructures.CourseSearchRequestQuery =
+                        let query: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery =
                             .init(opCode: .init(value: opCode_Entry),
                                   cname: .init(value: cName_Entry),
                                   crossCode: .init(value: getCrossInfo(selectedCrossId)?.crossCode ?? ""),
@@ -289,7 +289,7 @@ struct ElectionAdvancedSearchView: View {
 
 struct AdvancedSearchRangePickerView: View {
     var title: String
-    @Binding var selectedOperator: Definitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols
+    @Binding var selectedOperator: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols
     @Binding var value1: Int
     @Binding var value2: Int
     
@@ -297,7 +297,7 @@ struct AdvancedSearchRangePickerView: View {
         VStack {
             LabeledContent(title, value: "")
             Picker(title, selection: $selectedOperator) {
-                ForEach(Definitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols.allCases, id: \.hashValue) { item in
+                ForEach(MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery.CompareSymbols.allCases, id: \.hashValue) { item in
                     Text(item.getSymbols())
                         .tag(item)
                 }

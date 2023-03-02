@@ -11,7 +11,7 @@ struct ElectionAnnouncementView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var currentSession: CurrentSession
     
-    @State var selectedAnnouncement: Definitions.ElectionDefinitions.AnnouncementRoles = .guide
+    @State var selectedAnnouncement: MyselfDefinitions.ElectionDefinitions.AnnouncementRoles = .guide
     
     var body: some View {
         NavigationView {
@@ -40,7 +40,7 @@ struct ElectionAnnouncementView: View {
                 }
                 ToolbarItem(placement: .bottomBar) {
                     Picker("Announcement Type", selection: $selectedAnnouncement) {
-                        ForEach(Definitions.ElectionDefinitions.AnnouncementRoles.allCases, id: \.hashValue) { item in
+                        ForEach(MyselfDefinitions.ElectionDefinitions.AnnouncementRoles.allCases, id: \.hashValue) { item in
                             Text(item.getName(inChinese: true))
                                 .tag(item)
                         }
@@ -54,7 +54,7 @@ struct ElectionAnnouncementView: View {
 
 struct ElectionAnnouncementDetailView: View {
     let parentDismiss: DismissAction
-    let billboard: Definitions.ElectionDataStructures.Announcement.Billboard
+    let billboard: MyselfDefinitions.ElectionDataStructures.Announcement.Billboard
     
     var body: some View {
         VStack {

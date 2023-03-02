@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ElectionCourseItemsView: View {
     let courseListType: ElectionRootView.CourseListType
-    let courseList: [Definitions.ElectionDataStructures.CourseInformation]
+    let courseList: [MyselfDefinitions.ElectionDataStructures.CourseInformation]
     let groupBy: ElectionRootView.GroupType
     
     let columnDefinitions: [GridItem] = [.init(.flexible()), .init(.flexible()), .init(.flexible())]
@@ -88,7 +88,7 @@ struct ElectionCourseItemsView: View {
                     if let grouped = groupBy.getGroupedResult(for: courseList) {
                         let sorted = grouped.keys.sorted(by: { ($0 ?? "").localizedStandardCompare($1 ?? "") == .orderedAscending })
                         ForEach(sorted, id: \.?.hashValue) { groupItem in
-                            if let list: [Definitions.ElectionDataStructures.CourseInformation] = grouped[groupItem] {
+                            if let list: [MyselfDefinitions.ElectionDataStructures.CourseInformation] = grouped[groupItem] {
                                 NavigationLink(value: list) {
                                     VStack {
                                         ZStack {
@@ -117,9 +117,9 @@ struct ElectionCourseItemsView: View {
 }
 
 struct ElectionCourseListItemView: View {
-    var info: Definitions.ElectionDataStructures.CourseInformation
+    var info: MyselfDefinitions.ElectionDataStructures.CourseInformation
     
-    init(for info: Definitions.ElectionDataStructures.CourseInformation) {
+    init(for info: MyselfDefinitions.ElectionDataStructures.CourseInformation) {
         self.info = info
     }
     
@@ -142,11 +142,11 @@ struct ElectionCourseListItemView: View {
 struct ElectionCourseDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var currentSession: CurrentSession
-    var info: Definitions.ElectionDataStructures.CourseInformation
+    var info: MyselfDefinitions.ElectionDataStructures.CourseInformation
     
     @State var isSyllabusSheetPresented = false
     
-    init(for info: Definitions.ElectionDataStructures.CourseInformation) {
+    init(for info: MyselfDefinitions.ElectionDataStructures.CourseInformation) {
         self.info = info
     }
     
@@ -235,7 +235,7 @@ struct ElectionCourseDetailView: View {
 
 struct ElectionTrackingActionMenu: View {
     @EnvironmentObject var currentSession: CurrentSession // Used only to execute election functions
-    let courseItem: Definitions.ElectionDataStructures.CourseInformation
+    let courseItem: MyselfDefinitions.ElectionDataStructures.CourseInformation
     let menuType: MenuType
     
     enum MenuType {
@@ -244,18 +244,18 @@ struct ElectionTrackingActionMenu: View {
         case toolbarMenu
     }
     
-    init(for courseItem: Definitions.ElectionDataStructures.CourseInformation, menuType: MenuType) {
+    init(for courseItem: MyselfDefinitions.ElectionDataStructures.CourseInformation, menuType: MenuType) {
         self.courseItem = courseItem
         self.menuType = menuType
     }
     
-    private func requestAddToTracklist(for courses: [Definitions.ElectionDataStructures.CourseInformation]) {
+    private func requestAddToTracklist(for courses: [MyselfDefinitions.ElectionDataStructures.CourseInformation]) {
         Task {
             await currentSession.requestElection(method: .track_insert, courseInformation: courses)
         }
     }
     
-    private func requestRemoveFromTracklist(for courses: [Definitions.ElectionDataStructures.CourseInformation]) {
+    private func requestRemoveFromTracklist(for courses: [MyselfDefinitions.ElectionDataStructures.CourseInformation]) {
         Task {
             await currentSession.requestElection(method: .track_del, courseInformation: courses)
         }
@@ -294,7 +294,7 @@ struct ElectionTrackingActionMenu: View {
 }
 
 struct ElectionCourseItemView_Previews: PreviewProvider {
-    static var courseInformation: Definitions.ElectionDataStructures.CourseInformation = .init(deptName: "", opRmName1: "教學113", cursCode: "", cname: "熱力學", opCode: "ABCD12", deptCode: "", opStdy: "", opType: "", dataToken: "", opTime1: "1-34", opQuality: "", teacher: "", crossName: "", memo1: "Memo", opRmName2: "", opTime2: "", nameStatus: "", mgDeptCode: "", opStdyDept: "", cursLang: "", divCode: "", beginTf: true, actionBits: "", crossType: "")
+    static var courseInformation: MyselfDefinitions.ElectionDataStructures.CourseInformation = .init(deptName: "", opRmName1: "教學113", cursCode: "", cname: "熱力學", opCode: "ABCD12", deptCode: "", opStdy: "", opType: "", dataToken: "", opTime1: "1-34", opQuality: "", teacher: "", crossName: "", memo1: "Memo", opRmName2: "", opTime2: "", nameStatus: "", mgDeptCode: "", opStdyDept: "", cursLang: "", divCode: "", beginTf: true, actionBits: "", crossType: "")
     
     static var previews: some View {
         

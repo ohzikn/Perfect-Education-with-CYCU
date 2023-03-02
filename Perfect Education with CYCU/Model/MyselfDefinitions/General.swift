@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Definitions {
+struct MyselfDefinitions {
     
     struct ExternalLocations {
         static let passwordReset: URL! = URL(string: "https://itouch.cycu.edu.tw/active_system/login/login_board.jsp")
@@ -15,32 +15,10 @@ struct Definitions {
     }
     
     struct PortalLocations {
-        // Commons
         static let root: URL! = URL(string: "https://myself.cycu.edu.tw")
         static let login: URL = root.appending(path: "/auth/myselfLogin")
         static let auth: URL = root.appending(path: "/myself_api_127")
         static let baseInfo: URL = root.appending(path: "/baseInfo")
-        // Requests
-//        static let baseApi: URL = auth.appending(path: "/home/json/ss_loginUser.jsp")
-//        static let electionApi: URL = auth.appending(path: "/elective/mvc/elective_system.jsp")
-//        static let workStudy: URL = auth.appending(path: "/Hire_workStudy/mvc/welcome.jsp")
-        
-        
-//        static let getNavData: URL! = URL(string: "/common/getNavData", relativeTo: base)
-        
-        
-//        // Nodes
-//        static private let _life: URL! = URL(string: "/life", relativeTo: base)
-//        static private let _health: URL! = URL(string: "/health", relativeTo: base)
-//        // Navigations (Life)
-//        static let workStudyHome: URL! = URL(string: "/workStudy/welcome", relativeTo: _life)
-//        static let workStudyCheck: URL! = URL(string: "/schedule/welcome", relativeTo: _life)
-//        static let mentor: URL! = URL(string: "/mentor", relativeTo: _life)
-//        static let election: URL! = URL(string: "/elective_system", relativeTo: _life)
-//        static let credit: URL! = URL(string: "/std_Credit", relativeTo: _life)
-//        static let yearTermCredit: URL! = URL(string: "/std_YearTerm_Credit", relativeTo: _life)
-//        // Navigations (Health)
-//        static let healthReporting: URL! = URL(string: "/healthTracking", relativeTo: _health)
     }
     
     enum QueryLocations: String {

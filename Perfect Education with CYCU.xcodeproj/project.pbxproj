@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		5E025606296E1834004E0370 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E025605296E1834004E0370 /* LoginView.swift */; };
 		5E02560A296E2F92004E0370 /* General.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E025609296E2F92004E0370 /* General.swift */; };
-		5E02560C296E35DD004E0370 /* CurrentSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E02560B296E35DD004E0370 /* CurrentSession.swift */; };
+		5E02560C296E35DD004E0370 /* CurrentMyselfSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E02560B296E35DD004E0370 /* CurrentMyselfSession.swift */; };
 		5E2321F92999991300565D59 /* TempView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2321F82999991300565D59 /* TempView.swift */; };
 		5E2AC57A296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC579296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift */; };
 		5E2AC57C296E16AE00722D02 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2AC57B296E16AE00722D02 /* ContentView.swift */; };
@@ -40,6 +40,8 @@
 		5EC73A442990723C00E66CB6 /* ElectionHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC73A432990723C00E66CB6 /* ElectionHistoryView.swift */; };
 		5EC73A482991A5B500E66CB6 /* ElectionDataStructures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC73A472991A5B500E66CB6 /* ElectionDataStructures.swift */; };
 		5EC73A4A2991C83700E66CB6 /* CourseSearchFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC73A492991C83700E66CB6 /* CourseSearchFieldView.swift */; };
+		5ED036CB29B11F2C00B960B7 /* SocialPalaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED036CA29B11F2C00B960B7 /* SocialPalaceView.swift */; };
+		5ED036CE29B11F8100B960B7 /* General.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED036CD29B11F8100B960B7 /* General.swift */; };
 		5EEF506829A2B7A60037BAE0 /* Perfect-Education-with-CYCU-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5EEF506729A2B7A60037BAE0 /* Perfect-Education-with-CYCU-Info.plist */; };
 		5EF1128329763A0A008A4373 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF1128229763A0A008A4373 /* KeychainService.swift */; };
 		5EFB304A29858731006F8D9E /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EFB304929858731006F8D9E /* WebView.swift */; };
@@ -67,7 +69,7 @@
 /* Begin PBXFileReference section */
 		5E025605296E1834004E0370 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		5E025609296E2F92004E0370 /* General.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = General.swift; sourceTree = "<group>"; };
-		5E02560B296E35DD004E0370 /* CurrentSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentSession.swift; sourceTree = "<group>"; };
+		5E02560B296E35DD004E0370 /* CurrentMyselfSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentMyselfSession.swift; sourceTree = "<group>"; };
 		5E2321F82999991300565D59 /* TempView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempView.swift; sourceTree = "<group>"; };
 		5E2AC576296E16AE00722D02 /* Perfect Education with CYCU.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Perfect Education with CYCU.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E2AC579296E16AE00722D02 /* Perfect_Education_with_CYCUApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Perfect_Education_with_CYCUApp.swift; sourceTree = "<group>"; };
@@ -101,6 +103,8 @@
 		5EC73A432990723C00E66CB6 /* ElectionHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionHistoryView.swift; sourceTree = "<group>"; };
 		5EC73A472991A5B500E66CB6 /* ElectionDataStructures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionDataStructures.swift; sourceTree = "<group>"; };
 		5EC73A492991C83700E66CB6 /* CourseSearchFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseSearchFieldView.swift; sourceTree = "<group>"; };
+		5ED036CA29B11F2C00B960B7 /* SocialPalaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialPalaceView.swift; sourceTree = "<group>"; };
+		5ED036CD29B11F8100B960B7 /* General.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = General.swift; sourceTree = "<group>"; };
 		5EEF506729A2B7A60037BAE0 /* Perfect-Education-with-CYCU-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Perfect-Education-with-CYCU-Info.plist"; sourceTree = "<group>"; };
 		5EF1128229763A0A008A4373 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
 		5EFB304929858731006F8D9E /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
@@ -147,8 +151,9 @@
 			isa = PBXGroup;
 			children = (
 				5E68CFA02978FF0B008AF377 /* Protocols.swift */,
-				5E02560B296E35DD004E0370 /* CurrentSession.swift */,
-				5E68CF972978FABD008AF377 /* Definitions */,
+				5E02560B296E35DD004E0370 /* CurrentMyselfSession.swift */,
+				5E68CF972978FABD008AF377 /* MyselfDefinitions */,
+				5ED036CC29B11F6D00B960B7 /* SocialPalaceDefinitions */,
 				5EFB304B2991831B006F8D9E /* Helpers */,
 			);
 			path = Model;
@@ -221,18 +226,15 @@
 				5E2AC57B296E16AE00722D02 /* ContentView.swift */,
 				5E3C93F729710C840036B342 /* PortalServicesView.swift */,
 				5E3C940329711CD60036B342 /* AccountView.swift */,
-				5E3C93F929710F8B0036B342 /* WorkStudyView.swift */,
-				5E3C93FB297114600036B342 /* MentorView.swift */,
-				5EC73A3C2990718800E66CB6 /* ElectionViews */,
-				5E3C93FF29711C240036B342 /* CreditsView.swift */,
-				5E3C940129711C900036B342 /* HealthView.swift */,
+				5ED036C829B11EF400B960B7 /* Myself */,
+				5ED036C929B11F1500B960B7 /* SocialPalace */,
 				5EFB304E29986CA4006F8D9E /* Helpers */,
 				5E025607296E2F5F004E0370 /* UIKitRepresentables */,
 			);
 			path = Views;
 			sourceTree = "<group>";
 		};
-		5E68CF972978FABD008AF377 /* Definitions */ = {
+		5E68CF972978FABD008AF377 /* MyselfDefinitions */ = {
 			isa = PBXGroup;
 			children = (
 				5E025609296E2F92004E0370 /* General.swift */,
@@ -242,7 +244,7 @@
 				5E68CF9C2978FB83008AF377 /* ElectionDefinitions.swift */,
 				5EC73A472991A5B500E66CB6 /* ElectionDataStructures.swift */,
 			);
-			path = Definitions;
+			path = MyselfDefinitions;
 			sourceTree = "<group>";
 		};
 		5EC73A3C2990718800E66CB6 /* ElectionViews */ = {
@@ -256,6 +258,34 @@
 				5EC73A432990723C00E66CB6 /* ElectionHistoryView.swift */,
 			);
 			path = ElectionViews;
+			sourceTree = "<group>";
+		};
+		5ED036C829B11EF400B960B7 /* Myself */ = {
+			isa = PBXGroup;
+			children = (
+				5EC73A3C2990718800E66CB6 /* ElectionViews */,
+				5E3C93F929710F8B0036B342 /* WorkStudyView.swift */,
+				5E3C93FB297114600036B342 /* MentorView.swift */,
+				5E3C93FF29711C240036B342 /* CreditsView.swift */,
+				5E3C940129711C900036B342 /* HealthView.swift */,
+			);
+			path = Myself;
+			sourceTree = "<group>";
+		};
+		5ED036C929B11F1500B960B7 /* SocialPalace */ = {
+			isa = PBXGroup;
+			children = (
+				5ED036CA29B11F2C00B960B7 /* SocialPalaceView.swift */,
+			);
+			path = SocialPalace;
+			sourceTree = "<group>";
+		};
+		5ED036CC29B11F6D00B960B7 /* SocialPalaceDefinitions */ = {
+			isa = PBXGroup;
+			children = (
+				5ED036CD29B11F8100B960B7 /* General.swift */,
+			);
+			path = SocialPalaceDefinitions;
 			sourceTree = "<group>";
 		};
 		5EFB304B2991831B006F8D9E /* Helpers */ = {
@@ -407,6 +437,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5ED036CB29B11F2C00B960B7 /* SocialPalaceView.swift in Sources */,
 				5EC73A442990723C00E66CB6 /* ElectionHistoryView.swift in Sources */,
 				5E3C94062971247E0036B342 /* ControllerView.swift in Sources */,
 				5E3C940229711C900036B342 /* HealthView.swift in Sources */,
@@ -414,7 +445,7 @@
 				5E02560A296E2F92004E0370 /* General.swift in Sources */,
 				5E3C940029711C240036B342 /* CreditsView.swift in Sources */,
 				5E3C93FE29711C190036B342 /* ElectionRootView.swift in Sources */,
-				5E02560C296E35DD004E0370 /* CurrentSession.swift in Sources */,
+				5E02560C296E35DD004E0370 /* CurrentMyselfSession.swift in Sources */,
 				5E2321F92999991300565D59 /* TempView.swift in Sources */,
 				5EC73A422990722200E66CB6 /* ElectionStudentBaseInformationView.swift in Sources */,
 				5E68CF9D2978FB83008AF377 /* ElectionDefinitions.swift in Sources */,
@@ -422,6 +453,7 @@
 				5E68CF9F2978FBDC008AF377 /* Authenticate.swift in Sources */,
 				5E68CFA12978FF0B008AF377 /* Protocols.swift in Sources */,
 				5E9763712998BEA70046F5C4 /* ElectionAdvancedSearchView.swift in Sources */,
+				5ED036CE29B11F8100B960B7 /* General.swift in Sources */,
 				5EC73A3E299071BC00E66CB6 /* ElectionAnnouncementView.swift in Sources */,
 				5E3C940429711CD60036B342 /* AccountView.swift in Sources */,
 				5EFB304D29918385006F8D9E /* PropertyWrappers.swift in Sources */,

@@ -18,7 +18,7 @@ struct ElectionStudentBaseInformationView: View {
         case overStudyByApply = "申請超修外加學分"
         case overStudyByResearch = "專題超修外加學分"
         
-        func getCreditDetail(_ studentInformation: Definitions.ElectionDataStructures.StudentBaseInformation.StudentInformation) -> CreditDetail? {
+        func getCreditDetail(_ studentInformation: MyselfDefinitions.ElectionDataStructures.StudentBaseInformation.StudentInformation) -> CreditDetail? {
             switch self {
             case .general:
                 if let maxLimit0 = studentInformation.maxLimit0, let creditTotalNormal = studentInformation.creditTotalNormal {

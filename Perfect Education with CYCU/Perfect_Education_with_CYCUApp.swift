@@ -23,6 +23,19 @@ struct Perfect_Education_with_CYCUApp: App {
 
 final class ApplicationParameters: ObservableObject {
     // Saved paraeters
+    
+    // Is the application launched initially after install.
+    @AppStorage(UserDefaults.toggleKeyValues.isFirstLaunch.rawValue) var isFirstLaunch: Bool = true
+    // Authenticate using FaceId or TouchId
     @AppStorage(UserDefaults.toggleKeyValues.usesFaceId.rawValue) var usesBiometricLogin: Bool = false
+    // Extended personal data use (for extended features not maintained by school.)
     @AppStorage(UserDefaults.toggleKeyValues.isExtendedPersonalDataUseAuthorized.rawValue) var isExtendedPersonalDataUseAuthorized: Bool = false
+    
+    init() {
+        // Reset keychain if application is launched at the first time (unremoved credentials while uninstalled.)
+        if isFirstLaunch {
+            try? KeychainService.resetKeychain()
+            isFirstLaunch = false
+        }
+    }
 }

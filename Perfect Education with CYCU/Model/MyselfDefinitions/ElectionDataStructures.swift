@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension Definitions {
+extension MyselfDefinitions {
     
     // MARK: Data Structures
     struct ElectionDataStructures {
@@ -487,10 +487,10 @@ extension Definitions {
                 
                 // Custom encoder to convert integer to string
                 func encode(to encoder: Encoder) throws {
-                    var container = encoder.container(keyedBy: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.self)
-                    try container.encode(compare != .none ? String(self.value) : "", forKey: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.value)
-                    try container.encode(compare == .between ? String(self.value2) : "", forKey: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.value2)
-                    try container.encode(self.compare.rawValue, forKey: Definitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.compare)
+                    var container = encoder.container(keyedBy: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.self)
+                    try container.encode(compare != .none ? String(self.value) : "", forKey: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.value)
+                    try container.encode(compare == .between ? String(self.value2) : "", forKey: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.value2)
+                    try container.encode(self.compare.rawValue, forKey: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery.WrappedCompared.CodingKeys.compare)
                 }
             }
             

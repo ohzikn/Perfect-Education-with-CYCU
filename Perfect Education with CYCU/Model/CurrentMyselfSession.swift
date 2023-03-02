@@ -92,25 +92,25 @@ class CurrentSession: ObservableObject {
         }
     }
 //    @Published var currentApplicationToken: ApplicationToken?
-    @Published var currentSessionTokens: [Definitions.QueryLocations: Definitions.AuthenticateInformation] = [:]
+    @Published var currentSessionTokens: [MyselfDefinitions.QueryLocations: MyselfDefinitions.AuthenticateInformation] = [:]
     
     // User data queries
-    @Published var userInformation: Definitions.UserInformation? {
+    @Published var userInformation: MyselfDefinitions.UserInformation? {
         willSet {
             if let newValue, newValue.didLogIn == "Y" {
-                greetingString = (newValue.userName == nil || newValue.userName.unsafelyUnwrapped.isEmpty) ? "\(Definitions().getCurrentDayPart().rawValue)。" : "\(Definitions().getCurrentDayPart().rawValue)，\(newValue.userName.unsafelyUnwrapped)\(Definitions().getCurrentDayPart().getHappyEmoji())。"
+                greetingString = (newValue.userName == nil || newValue.userName.unsafelyUnwrapped.isEmpty) ? "\(MyselfDefinitions().getCurrentDayPart().rawValue)。" : "\(MyselfDefinitions().getCurrentDayPart().rawValue)，\(newValue.userName.unsafelyUnwrapped)\(MyselfDefinitions().getCurrentDayPart().getHappyEmoji())。"
             } else {
                 greetingString = "請先登入"
             }
         }
     }
-    @Published var workStudyInformation: Definitions.WorkStudyInformation?
-    @Published var creditsInformation: Definitions.CreditsInformation?
-    @Published var electionInformation_stageControl: Definitions.ElectionDataStructures.StageControl?
-    @Published var electionInformation_studentBaseInformation: Definitions.ElectionDataStructures.StudentBaseInformation?
-    @Published var electionInformation_studentInformation: Definitions.ElectionDataStructures.StudentInformation?
-    @Published var electionInformation_announcement: Definitions.ElectionDataStructures.Announcement?
-    @Published var electionInformation_history: Definitions.ElectionDataStructures.History?
+    @Published var workStudyInformation: MyselfDefinitions.WorkStudyInformation?
+    @Published var creditsInformation: MyselfDefinitions.CreditsInformation?
+    @Published var electionInformation_stageControl: MyselfDefinitions.ElectionDataStructures.StageControl?
+    @Published var electionInformation_studentBaseInformation: MyselfDefinitions.ElectionDataStructures.StudentBaseInformation?
+    @Published var electionInformation_studentInformation: MyselfDefinitions.ElectionDataStructures.StudentInformation?
+    @Published var electionInformation_announcement: MyselfDefinitions.ElectionDataStructures.Announcement?
+    @Published var electionInformation_history: MyselfDefinitions.ElectionDataStructures.History?
     // User session related data end
     
     // MARK: Login
@@ -119,11 +119,11 @@ class CurrentSession: ObservableObject {
             // Update login state
             loginState = .processing
             // Create a JSON object that will be posted to the server later.
-            let loginCredentials = Definitions.LoginCredentials(username: username, password: password)
+            let loginCredentials = MyselfDefinitions.LoginCredentials(username: username, password: password)
             let queryData = try JSONEncoder().encode(loginCredentials)
             
             // Create a HTTPS POST Request
-            let request = getURLRequest(urlQuery: Definitions.PortalLocations.login, headerData: queryData)
+            let request = getURLRequest(urlQuery: MyselfDefinitions.PortalLocations.login, headerData: queryData)
             // Send login request to server
 //            URLSession.shared.dataTask(with: request) { data, response, error in
 //                print(data)
@@ -132,7 +132,7 @@ class CurrentSession: ObservableObject {
 //            }.resume()
             let (data, _) = try await URLSession.shared.data(for: request)
             //                print(data)
-            userInformation = try JSONDecoder().decode(Definitions.UserInformation.self, from: data)
+            userInformation = try JSONDecoder().decode(MyselfDefinitions.UserInformation.self, from: data)
             guard userInformation?.didLogIn == "Y" else {
                 loginState = .failed(.userNameOrPasswordIncorrect)
                 //                    isLoginFailureAlertPresented = true
@@ -173,14 +173,14 @@ class CurrentSession: ObservableObject {
     
     func requestBaseAuthenticateToken() async throws {
         // There is no need to use base token, but leave for further use.
-        try await requestAuthenticateToken(for: Definitions.QueryLocations.base)
+        try await requestAuthenticateToken(for: MyselfDefinitions.QueryLocations.base)
     }
     
     // MARK: WorkStudy
     func requestWorkStudy() async {
         do {
             let data = try await requestDataQuery(for: .workStudy)
-            workStudyInformation = try JSONDecoder().decode(Definitions.WorkStudyInformation.self, from: data)
+            workStudyInformation = try JSONDecoder().decode(MyselfDefinitions.WorkStudyInformation.self, from: data)
         } catch {
             print(error)
         }
@@ -191,14 +191,14 @@ class CurrentSession: ObservableObject {
     func requestCredits() async {
         do {
             let data = try await requestDataQuery(for: .credits)
-            creditsInformation = try JSONDecoder().decode(Definitions.CreditsInformation.self, from: data)
+            creditsInformation = try JSONDecoder().decode(MyselfDefinitions.CreditsInformation.self, from: data)
         } catch {
             print(error)
         }
     }
     
     // MARK: Election
-    func requestElection(method: Definitions.ElectionCommands) async {
+    func requestElection(method: MyselfDefinitions.ElectionCommands) async {
         // Return unsupported commands
         switch method {
         case .course_get, .track_insert, .track_del, .take_course_and_register_insert, .take_course_and_register_del, .volunteer_set, .col_checkbox_upd:
@@ -218,18 +218,18 @@ class CurrentSession: ObservableObject {
     }
     
     // Query with CourseInformation array
-    func requestElection(method: Definitions.ElectionCommands, courseInformation: [Definitions.ElectionDataStructures.CourseInformation]) async {
+    func requestElection(method: MyselfDefinitions.ElectionCommands, courseInformation: [MyselfDefinitions.ElectionDataStructures.CourseInformation]) async {
         switch method {
         case .track_insert:
             struct CustomQuery: RequestQueryBase, Codable {
                 var APP_AUTH_token: String?
-                var data: [Definitions.ElectionDataStructures.CourseInformation]
+                var data: [MyselfDefinitions.ElectionDataStructures.CourseInformation]
             }
             await requestElection(method: method, query: CustomQuery(data: courseInformation))
         case .track_del:
             struct CustomQuery: RequestQueryBase, Codable {
                 var APP_AUTH_token: String?
-                var track_data: [Definitions.ElectionDataStructures.CourseInformation]
+                var track_data: [MyselfDefinitions.ElectionDataStructures.CourseInformation]
             }
             await requestElection(method: method, query: CustomQuery(track_data: courseInformation))
         default:
@@ -239,10 +239,10 @@ class CurrentSession: ObservableObject {
     }
     
     // .course_get
-    func requestElection(filterQuery: Definitions.ElectionDataStructures.CourseSearchRequestQuery?, filterType: Int = 0) async {
+    func requestElection(filterQuery: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery?, filterType: Int = 0) async {
         struct CustomQuery: RequestQueryBase, Codable {
             var APP_AUTH_token: String?
-            var filters: Definitions.ElectionDataStructures.CourseSearchRequestQuery
+            var filters: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery
             var filter_type: Int
         }
         
@@ -250,7 +250,7 @@ class CurrentSession: ObservableObject {
     }
     
     // private final method
-    private func requestElection(method: Definitions.ElectionCommands, query: RequestQueryBase?) async {
+    private func requestElection(method: MyselfDefinitions.ElectionCommands, query: RequestQueryBase?) async {
         print("executing command (\(method.rawValue)).")
         do {
             // Send query and wait for response
@@ -295,7 +295,7 @@ class CurrentSession: ObservableObject {
             }
             
             // Ask server to pass election authorization
-            guard let responseData = try? await requestDataQuery(for: .election, using: Definitions.ElectionCommands.login_sys_upd.rawValue), let response = try? JSONDecoder().decode(DistinctIpIdCodeResponse.self, from: responseData), response.insSuccess ?? false else {
+            guard let responseData = try? await requestDataQuery(for: .election, using: MyselfDefinitions.ElectionCommands.login_sys_upd.rawValue), let response = try? JSONDecoder().decode(DistinctIpIdCodeResponse.self, from: responseData), response.insSuccess ?? false else {
                 // Failed to inheirit election authorization
                 return .failed
             }
@@ -306,29 +306,29 @@ class CurrentSession: ObservableObject {
         return .succeed
     }
     
-    private func decodeElectionResponse(method: Definitions.ElectionCommands, data: Data) {
+    private func decodeElectionResponse(method: MyselfDefinitions.ElectionCommands, data: Data) {
         do {
             switch method {
             case .st_info_get:
-                electionInformation_studentInformation = try JSONDecoder().decode(Definitions.ElectionDataStructures.StudentInformation.self, from: data)
+                electionInformation_studentInformation = try JSONDecoder().decode(MyselfDefinitions.ElectionDataStructures.StudentInformation.self, from: data)
                 CourseListType.allCases.forEach { value in
                     NotificationCenter.default.post(name: .courseListDidUpdate, object: value)
                 }
             case .stage_control_get:
-                electionInformation_stageControl = try JSONDecoder().decode(Definitions.ElectionDataStructures.StageControl.self, from: data)
+                electionInformation_stageControl = try JSONDecoder().decode(MyselfDefinitions.ElectionDataStructures.StageControl.self, from: data)
             case .st_base_info:
-                electionInformation_studentBaseInformation = try JSONDecoder().decode(Definitions.ElectionDataStructures.StudentBaseInformation.self, from: data)
+                electionInformation_studentBaseInformation = try JSONDecoder().decode(MyselfDefinitions.ElectionDataStructures.StudentBaseInformation.self, from: data)
             case .track_get, .track_insert, .track_del: // These methods returns the same data structure
-                let response = try JSONDecoder().decode(Definitions.ElectionDataStructures.TrackingListResponse.self, from: data)
+                let response = try JSONDecoder().decode(MyselfDefinitions.ElectionDataStructures.TrackingListResponse.self, from: data)
                 updateStudentInformation(for: .track, courses: response.trackingList)
                 // Broadcast updated list type to observers
                 NotificationCenter.default.post(name: .courseListDidUpdate, object: CourseListType.track)
             case .st_record:
-                electionInformation_history = try JSONDecoder().decode(Definitions.ElectionDataStructures.History.self, from: data)
+                electionInformation_history = try JSONDecoder().decode(MyselfDefinitions.ElectionDataStructures.History.self, from: data)
             case .ann_get:
-                electionInformation_announcement = try JSONDecoder().decode(Definitions.ElectionDataStructures.Announcement.self, from: data)
+                electionInformation_announcement = try JSONDecoder().decode(MyselfDefinitions.ElectionDataStructures.Announcement.self, from: data)
             case .course_get:
-                let response = try JSONDecoder().decode(Definitions.ElectionDataStructures.CourseSearchRequestResponse.self, from: data)
+                let response = try JSONDecoder().decode(MyselfDefinitions.ElectionDataStructures.CourseSearchRequestResponse.self, from: data)
                 // Broadcast result to observers
                 NotificationCenter.default.post(name: .searchResultDidUpdate, object: response)
             case .take_course_and_register_insert:
@@ -348,7 +348,7 @@ class CurrentSession: ObservableObject {
     }
     
     // Execute this method to publish changes to observers
-    private func updateStudentInformation(for listType: CourseListType, courses: [Definitions.ElectionDataStructures.CourseInformation]?) {
+    private func updateStudentInformation(for listType: CourseListType, courses: [MyselfDefinitions.ElectionDataStructures.CourseInformation]?) {
         guard let courses else { return }
         switch listType {
         case .take:
@@ -374,7 +374,7 @@ extension CurrentSession {
     }
     
     // Request data query. "query" is the default using parameter if not specified
-    private func requestDataQuery(for queryLocation: Definitions.QueryLocations, using specifiedMethod: String = "query", query specifiedQuery: RequestQueryBase? = nil) async throws -> Data {
+    private func requestDataQuery(for queryLocation: MyselfDefinitions.QueryLocations, using specifiedMethod: String = "query", query specifiedQuery: RequestQueryBase? = nil) async throws -> Data {
         
         // Create new request query to send along with the request following "RequestQueryBase" protocol
         var requestQuery = specifiedQuery ?? {
@@ -420,7 +420,7 @@ extension CurrentSession {
     // Force requests a new application authenticate token even if token is already available
     // Only pass parameter string returned from Definitions.QueryLocations.getRelatedAuthenticateLocation() method.
     @discardableResult
-    private func requestAuthenticateToken(for queryLocation: Definitions.QueryLocations) async throws -> String {
+    private func requestAuthenticateToken(for queryLocation: MyselfDefinitions.QueryLocations) async throws -> String {
         // Create a credential data structure that will be converted to JSON data later
         struct Credentials: Codable {
             let authUrl: String
@@ -429,11 +429,11 @@ extension CurrentSession {
         
         do {
             // Create a JSON object that will be posted to the server later.
-            let credentialData = try JSONEncoder().encode(Credentials(authUrl: "/\(Definitions.PortalLocations.auth.lastPathComponent)", authApi: queryLocation.getRelatedAuthenticateLocation()))
+            let credentialData = try JSONEncoder().encode(Credentials(authUrl: "/\(MyselfDefinitions.PortalLocations.auth.lastPathComponent)", authApi: queryLocation.getRelatedAuthenticateLocation()))
             
             // Create a HTTPS POST Request
             let request: URLRequest = {
-               var req = URLRequest(url: Definitions.PortalLocations.baseInfo, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 15)
+               var req = URLRequest(url: MyselfDefinitions.PortalLocations.baseInfo, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 15)
                 req.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 req.httpMethod = "POST"
                 req.httpBody = credentialData
@@ -444,7 +444,7 @@ extension CurrentSession {
             let (data, _) = try await URLSession.shared.data(for: request)
             print("Auth return: \(String(data: data, encoding: .utf8))")
             
-            currentSessionTokens[queryLocation] = try JSONDecoder().decode(Definitions.AuthenticateInformation.self, from: data)
+            currentSessionTokens[queryLocation] = try JSONDecoder().decode(MyselfDefinitions.AuthenticateInformation.self, from: data)
             print("Dictionary Token: \(currentSessionTokens[queryLocation]?.APP_AUTH_token)")
             
 //            currentApplicationToken = .init(authenticateLocation: queryLocation, authenticateInformation: try JSONDecoder().decode(Definitions.AuthenticateInformation.self, from: data))

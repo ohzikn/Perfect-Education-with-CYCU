@@ -10,8 +10,8 @@ import SwiftUI
 struct TempView: View {
     @EnvironmentObject var currentSession: CurrentSession
     
-    private func getCrossInfo(_ id: UUID) -> Definitions.ElectionDataStructures.StudentInformation.CrossType.CrossIdentifier? {
-        var result: Definitions.ElectionDataStructures.StudentInformation.CrossType.CrossIdentifier?
+    private func getCrossInfo(_ id: UUID) -> MyselfDefinitions.ElectionDataStructures.StudentInformation.CrossType.CrossIdentifier? {
+        var result: MyselfDefinitions.ElectionDataStructures.StudentInformation.CrossType.CrossIdentifier?
         
         if let definitions = currentSession.electionInformation_studentInformation?.crossTypeDefinitions {
             definitions.forEach { crossType in

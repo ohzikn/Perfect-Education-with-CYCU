@@ -10,6 +10,7 @@ import SwiftUI
 
 extension UserDefaults {
     enum toggleKeyValues: String {
+        case isFirstLaunch
         case usesFaceId
         case isExtendedPersonalDataUseAuthorized
     }

@@ -74,10 +74,10 @@ struct ElectionRootView: View {
     @EnvironmentObject var applicationParameters: ApplicationParameters
     @EnvironmentObject var currentSession: CurrentSession
     
-    @State var takingList: [Definitions.ElectionDataStructures.CourseInformation] = []
-    @State var trackingList: [Definitions.ElectionDataStructures.CourseInformation] = []
-    @State var registrationList: [Definitions.ElectionDataStructures.CourseInformation] = []
-    @State var waitingList: [Definitions.ElectionDataStructures.CourseInformation] = []
+    @State var takingList: [MyselfDefinitions.ElectionDataStructures.CourseInformation] = []
+    @State var trackingList: [MyselfDefinitions.ElectionDataStructures.CourseInformation] = []
+    @State var registrationList: [MyselfDefinitions.ElectionDataStructures.CourseInformation] = []
+    @State var waitingList: [MyselfDefinitions.ElectionDataStructures.CourseInformation] = []
     
     var rootDismiss: DismissAction
     
@@ -108,7 +108,7 @@ struct ElectionRootView: View {
         case byTeacher = "授課老師"
         case byDept = "開課班級"
         
-        func getGroupedResult(for courseList: [Definitions.ElectionDataStructures.CourseInformation]) -> Dictionary<String?, [Array<Definitions.ElectionDataStructures.CourseInformation>.Element]>? {
+        func getGroupedResult(for courseList: [MyselfDefinitions.ElectionDataStructures.CourseInformation]) -> Dictionary<String?, [Array<MyselfDefinitions.ElectionDataStructures.CourseInformation>.Element]>? {
             switch self {
             case .none:
                 return nil
@@ -126,19 +126,19 @@ struct ElectionRootView: View {
     @State private var showSearchBar = true
     @State private var isFilterActivated: Bool = false
     @State private var searchEntry: String = ""
-    @State private var searchResult: [Definitions.ElectionDataStructures.CourseInformation] = []
+    @State private var searchResult: [MyselfDefinitions.ElectionDataStructures.CourseInformation] = []
     
     private var courseSearchFieldView: CourseSearchFieldView {
         CourseSearchFieldView(isFilterActivated: $isFilterActivated, searchText: $searchEntry)
     }
     
-    private func requestAddToTracklist(for courses: [Definitions.ElectionDataStructures.CourseInformation]) {
+    private func requestAddToTracklist(for courses: [MyselfDefinitions.ElectionDataStructures.CourseInformation]) {
         Task {
             await currentSession.requestElection(method: .track_insert, courseInformation: courses)
         }
     }
     
-    private func requestRemoveFromTracklist(for courses: [Definitions.ElectionDataStructures.CourseInformation]) {
+    private func requestRemoveFromTracklist(for courses: [MyselfDefinitions.ElectionDataStructures.CourseInformation]) {
         Task {
             await currentSession.requestElection(method: .track_del, courseInformation: courses)
         }
@@ -193,10 +193,10 @@ struct ElectionRootView: View {
             }
             .navigationTitle(selectedCourseListType.rawValue)
             .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: [Definitions.ElectionDataStructures.CourseInformation].self) { value in
+            .navigationDestination(for: [MyselfDefinitions.ElectionDataStructures.CourseInformation].self) { value in
                 ElectionCourseItemsView(courseListType: selectedCourseListType, courseList: value, groupBy: .none)
             }
-            .navigationDestination(for: Definitions.ElectionDataStructures.CourseInformation.self) { value in
+            .navigationDestination(for: MyselfDefinitions.ElectionDataStructures.CourseInformation.self) { value in
                 ElectionCourseDetailView(for: value)
             }
             .toolbar {
@@ -306,7 +306,7 @@ struct ElectionRootView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .searchResultDidUpdate)) { notification in
-            guard let response = notification.object as? Definitions.ElectionDataStructures.CourseSearchRequestResponse, let courseData = response.courseData else { return }
+            guard let response = notification.object as? MyselfDefinitions.ElectionDataStructures.CourseSearchRequestResponse, let courseData = response.courseData else { return }
             searchResult = courseData
         }
         .onReceive(NotificationCenter.default.publisher(for: .courseListDidUpdate)) { notification in
@@ -387,7 +387,7 @@ struct ElectionViewDev: View {
     
     var body: some View {
         List {
-            ForEach(Definitions.ElectionCommands.allCases, id: \.hashValue) { item in
+            ForEach(MyselfDefinitions.ElectionCommands.allCases, id: \.hashValue) { item in
                 Button(item.rawValue) {
                     Task {
                         await currentSession.requestElection(method: item)
