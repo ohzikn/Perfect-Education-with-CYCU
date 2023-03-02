@@ -11,7 +11,7 @@ import LocalAuthentication
 
 struct LoginView: View {
     @EnvironmentObject var applicationParameters: ApplicationParameters
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     
     @State var isLoginProcessRingPresented = false
     @State var isLoginFailureAlertPresented = false
@@ -69,23 +69,23 @@ struct LoginView: View {
         // FaceId toggle guard
         guard applicationParameters.usesBiometricLogin else { return }
         // Login state check
-        guard (currentSession.loginState == .notLoggedIn || currentSession.loginState == .failed(.unknown)), let password = credentials.password else {
+        guard (currentMyselfSession.loginState == .notLoggedIn || currentMyselfSession.loginState == .failed(.unknown)), let password = credentials.password else {
             return
         }
         passwordField = "            " // Placeholder update
         Task {
-            await currentSession.requestLogin(username: credentials.username, password: password)
+            await currentMyselfSession.requestLogin(username: credentials.username, password: password)
         }
     }
     
     // Normal login
     private func requestLogin() {
         // Login state check
-        guard !usernameField.isEmpty && !passwordField.isEmpty && (currentSession.loginState == .notLoggedIn || currentSession.loginState == .failed(.unknown)) else {
+        guard !usernameField.isEmpty && !passwordField.isEmpty && (currentMyselfSession.loginState == .notLoggedIn || currentMyselfSession.loginState == .failed(.unknown)) else {
             return
         }
         Task {
-            await currentSession.requestLogin(username: usernameField, password: passwordField)
+            await currentMyselfSession.requestLogin(username: usernameField, password: passwordField)
         }
     }
     
@@ -111,7 +111,7 @@ struct LoginView: View {
                             }.frame(width: 100)
                             TextField("學號或教職員編號", text: $usernameField)
                                 .frame(height: 60)
-                                .disabled(isUsernamePlaceholderActive || (currentSession.loginState != .failed(.unknown) && currentSession.loginState != .notLoggedIn))
+                                .disabled(isUsernamePlaceholderActive || (currentMyselfSession.loginState != .failed(.unknown) && currentMyselfSession.loginState != .notLoggedIn))
                                 .foregroundColor(isUsernamePlaceholderActive ? Color.secondary : Color.primary)
                                 .focused($focusedField, equals: .username)
                                 .submitLabel(.next)
@@ -132,7 +132,7 @@ struct LoginView: View {
                             }.frame(width: 100)
                             SecureField("必填", text: $passwordField)
                                 .frame(height: 60)
-                                .disabled(currentSession.loginState != .failed(.unknown) && currentSession.loginState != .notLoggedIn)
+                                .disabled(currentMyselfSession.loginState != .failed(.unknown) && currentMyselfSession.loginState != .notLoggedIn)
                                 .focused($focusedField, equals: .password)
                                 .submitLabel(.return)
                                 .onSubmit(requestLogin)
@@ -200,7 +200,7 @@ struct LoginView: View {
                 Button("好") { }
             }, message: {
                 // Completed: Update error message to dynamic message.
-                if case CurrentSession.LoginState.failed(let loginError) = currentSession.loginState {
+                if case CurrentMyselfSession.LoginState.failed(let loginError) = currentMyselfSession.loginState {
                     switch loginError {
                     case .userNameOrPasswordIncorrect:
                         Text("CYCU ID 或密碼錯誤。")
@@ -222,7 +222,7 @@ struct LoginView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("下一步", action: requestLogin)
-                        .disabled(usernameField.isEmpty || passwordField.isEmpty || !(currentSession.loginState == .notLoggedIn || currentSession.loginState == .failed(.unknown)))
+                        .disabled(usernameField.isEmpty || passwordField.isEmpty || !(currentMyselfSession.loginState == .notLoggedIn || currentMyselfSession.loginState == .failed(.unknown)))
                 }
             }
         }
@@ -231,12 +231,12 @@ struct LoginView: View {
                 usernameField = loginInfo.username
                 isUsernamePlaceholderActive = true
             }
-            if currentSession.loginState == CurrentSession.LoginState.failed(.unknown) {
+            if currentMyselfSession.loginState == CurrentMyselfSession.LoginState.failed(.unknown) {
                 // Show login failure alert
                 isLoginFailureAlertPresented = true
             }
         }
-        .onChange(of: currentSession.loginState) { newValue in
+        .onChange(of: currentMyselfSession.loginState) { newValue in
             // Switch statements
             switch newValue {
             case .failed:
@@ -256,7 +256,7 @@ struct LoginView: View {
 
 struct LoginWelcomeView: View {
     @EnvironmentObject var applicationParameters: ApplicationParameters
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentSession: CurrentMyselfSession
     
     @State var additionalMessage: String = ""
     
@@ -336,8 +336,8 @@ struct LoginWelcomeView: View {
 }
 
 struct LoginView_Previews: PreviewProvider {
-    static var currentSession: CurrentSession = {
-        var session = CurrentSession()
+    static var currentSession: CurrentMyselfSession = {
+        var session = CurrentMyselfSession()
         return session
     }()
     static var previews: some View {

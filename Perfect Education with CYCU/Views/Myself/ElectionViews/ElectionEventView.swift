@@ -9,13 +9,13 @@ import SwiftUI
 
 struct ElectionEventView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     
     var body: some View {
         NavigationView {
             List {
                 ForEach(MyselfDefinitions.ElectionDefinitions.Events.allCases, id: \.hashValue) { event in
-                    if let eventName = MyselfDefinitions.ElectionDefinitions.Events(rawValue: event.rawValue)?.getName(inChinese: true), let stageEvents = currentSession.electionInformation_stageControl?.stageEvents, let filteredStageEvents = stageEvents.filter({ $0.snStageType == event.rawValue }), !filteredStageEvents.isEmpty {
+                    if let eventName = MyselfDefinitions.ElectionDefinitions.Events(rawValue: event.rawValue)?.getName(inChinese: true), let stageEvents = currentMyselfSession.electionInformation_stageControl?.stageEvents, let filteredStageEvents = stageEvents.filter({ $0.snStageType == event.rawValue }), !filteredStageEvents.isEmpty {
                         Section(eventName) {
                             ForEach(filteredStageEvents) { stageEvent in
                                 NavigationLink {

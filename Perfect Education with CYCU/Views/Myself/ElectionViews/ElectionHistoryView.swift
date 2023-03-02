@@ -9,12 +9,12 @@ import SwiftUI
 
 struct ElectionHistoryView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     
     var body: some View {
         NavigationView {
             List {
-                if let history = currentSession.electionInformation_history?.historyList {
+                if let history = currentMyselfSession.electionInformation_history?.historyList {
                     ForEach(history) { item in
                         NavigationLink {
                             ElectionHistoryDetail(item: item, rootDismiss: dismiss)
@@ -48,12 +48,12 @@ struct ElectionHistoryView: View {
             }
             .refreshable {
                 // Refresh history and update lists
-                await currentSession.requestElection(method: .st_record)
+                await currentMyselfSession.requestElection(method: .st_record)
             }
         }
         .onAppear {
             Task {
-                await currentSession.requestElection(method: .st_record)
+                await currentMyselfSession.requestElection(method: .st_record)
             }
         }
     }

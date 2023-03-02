@@ -8,18 +8,18 @@
 import SwiftUI
 
 struct CreditsView: View {
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     
     var body: some View {
         List {
             Section("個人資訊") {
-                LabeledContent("姓名", value: currentSession.creditsInformation?.stdInfo?.userName ?? "")
-                LabeledContent("學號", value: currentSession.creditsInformation?.stdInfo?.userId ?? "")
-                LabeledContent("學院代號", value: currentSession.creditsInformation?.stdInfo?.departmentCode ?? "")
-                LabeledContent("年級", value: currentSession.creditsInformation?.stdInfo?.departmentGradeName ?? "")
-                LabeledContent("學生身份", value: currentSession.creditsInformation?.stdInfo?.typeName?.trimmingCharacters(in: .whitespaces) ?? "")
+                LabeledContent("姓名", value: currentMyselfSession.creditsInformation?.stdInfo?.userName ?? "")
+                LabeledContent("學號", value: currentMyselfSession.creditsInformation?.stdInfo?.userId ?? "")
+                LabeledContent("學院代號", value: currentMyselfSession.creditsInformation?.stdInfo?.departmentCode ?? "")
+                LabeledContent("年級", value: currentMyselfSession.creditsInformation?.stdInfo?.departmentGradeName ?? "")
+                LabeledContent("學生身份", value: currentMyselfSession.creditsInformation?.stdInfo?.typeName?.trimmingCharacters(in: .whitespaces) ?? "")
             }
-            if let courseList = currentSession.creditsInformation?.stdCourseList {
+            if let courseList = currentMyselfSession.creditsInformation?.stdCourseList {
                 Section("修課資訊") {
                     ForEach(courseList) { item in
                         if let courseName = item.courseName {
@@ -68,6 +68,6 @@ struct CreditsCourseDetailView: View {
 struct CreditsView_Previews: PreviewProvider {
     static var previews: some View {
         CreditsView()
-            .environmentObject(CurrentSession())
+            .environmentObject(CurrentMyselfSession())
     }
 }

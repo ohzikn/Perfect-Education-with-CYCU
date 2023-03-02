@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ElectionStudentBaseInformationView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     
     enum CreditType: String, CaseIterable {
         
@@ -50,7 +50,7 @@ struct ElectionStudentBaseInformationView: View {
     var body: some View {
         NavigationView {
             Form {
-                if let info = currentSession.electionInformation_studentBaseInformation?.studentsInformation?.first {
+                if let info = currentMyselfSession.electionInformation_studentBaseInformation?.studentsInformation?.first {
                     Section("基本資訊") {
                         LabeledContent("姓名", value: info.stmdName ?? "-")
                         LabeledContent("學號", value: info.idcode ?? "-")

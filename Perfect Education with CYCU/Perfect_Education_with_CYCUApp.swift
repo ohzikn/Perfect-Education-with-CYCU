@@ -10,13 +10,15 @@ import SwiftUI
 @main
 struct Perfect_Education_with_CYCUApp: App {
     @StateObject var applicationParameters = ApplicationParameters()
-    @StateObject var currentSession = CurrentSession()
+    @StateObject var currentMyselfSession = CurrentMyselfSession()
+    @StateObject var currentPalaceSession = CurrentPalaceSession()
     
     var body: some Scene {
         WindowGroup {
             ControllerView()
                 .environmentObject(applicationParameters)
-                .environmentObject(currentSession)
+                .environmentObject(currentMyselfSession)
+                .environmentObject(currentPalaceSession)
         }
     }
 }

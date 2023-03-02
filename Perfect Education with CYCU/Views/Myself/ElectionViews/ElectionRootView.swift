@@ -72,7 +72,7 @@ struct ElectionPlaceholderView: View {
 struct ElectionRootView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var applicationParameters: ApplicationParameters
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     
     @State var takingList: [MyselfDefinitions.ElectionDataStructures.CourseInformation] = []
     @State var trackingList: [MyselfDefinitions.ElectionDataStructures.CourseInformation] = []
@@ -134,13 +134,13 @@ struct ElectionRootView: View {
     
     private func requestAddToTracklist(for courses: [MyselfDefinitions.ElectionDataStructures.CourseInformation]) {
         Task {
-            await currentSession.requestElection(method: .track_insert, courseInformation: courses)
+            await currentMyselfSession.requestElection(method: .track_insert, courseInformation: courses)
         }
     }
     
     private func requestRemoveFromTracklist(for courses: [MyselfDefinitions.ElectionDataStructures.CourseInformation]) {
         Task {
-            await currentSession.requestElection(method: .track_del, courseInformation: courses)
+            await currentMyselfSession.requestElection(method: .track_del, courseInformation: courses)
         }
     }
     
@@ -271,7 +271,7 @@ struct ElectionRootView: View {
             case .search:
                 currentSubSheetView = .advancedSearch
             default:
-                await currentSession.requestElection(method: .st_info_get)
+                await currentMyselfSession.requestElection(method: .st_info_get)
             }
         }
         .onAppear {
@@ -284,10 +284,10 @@ struct ElectionRootView: View {
 //                await currentSession.requestElection(method: .st_record)
 //            }
             // Load all course lists
-            takingList = currentSession.electionInformation_studentInformation?.takeCourseList ?? []
-            trackingList = currentSession.electionInformation_studentInformation?.trackList ?? []
-            registrationList = currentSession.electionInformation_studentInformation?.registerList ?? []
-            waitingList = currentSession.electionInformation_studentInformation?.makeUpList ?? []
+            takingList = currentMyselfSession.electionInformation_studentInformation?.takeCourseList ?? []
+            trackingList = currentMyselfSession.electionInformation_studentInformation?.trackList ?? []
+            registrationList = currentMyselfSession.electionInformation_studentInformation?.registerList ?? []
+            waitingList = currentMyselfSession.electionInformation_studentInformation?.makeUpList ?? []
         }
         // Sync subsheet view with isSubSheetPresented
         .onChange(of: isSubSheetPresented) { newValue in
@@ -310,16 +310,16 @@ struct ElectionRootView: View {
             searchResult = courseData
         }
         .onReceive(NotificationCenter.default.publisher(for: .courseListDidUpdate)) { notification in
-            guard let response = notification.object as? CurrentSession.CourseListType else { return }
+            guard let response = notification.object as? CurrentMyselfSession.CourseListType else { return }
             switch response {
             case .take:
-                takingList = currentSession.electionInformation_studentInformation?.takeCourseList ?? []
+                takingList = currentMyselfSession.electionInformation_studentInformation?.takeCourseList ?? []
             case .track:
-                trackingList = currentSession.electionInformation_studentInformation?.trackList ?? []
+                trackingList = currentMyselfSession.electionInformation_studentInformation?.trackList ?? []
             case .register:
-                registrationList = currentSession.electionInformation_studentInformation?.registerList ?? []
+                registrationList = currentMyselfSession.electionInformation_studentInformation?.registerList ?? []
             case .wait:
-                waitingList = currentSession.electionInformation_studentInformation?.makeUpList ?? []
+                waitingList = currentMyselfSession.electionInformation_studentInformation?.makeUpList ?? []
             }
         }
         .sheet(isPresented: $isSubSheetPresented) {
@@ -383,7 +383,7 @@ struct ElectionPlaceholderEmptyItemView: View {
 }
 
 struct ElectionViewDev: View {
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentSession: CurrentMyselfSession
     
     var body: some View {
         List {
@@ -402,8 +402,8 @@ struct ElectionViewDev: View {
 
 struct ElectionView_Previews: PreviewProvider {
     @Environment(\.dismiss) static var dismiss
-    static var currentSession: CurrentSession {
-        let session = CurrentSession()
+    static var currentSession: CurrentMyselfSession {
+        let session = CurrentMyselfSession()
         session.electionInformation_studentInformation = .init(alertText: nil, distinctIPIDCODEAlert: nil, language: nil, courseCacheKey: nil, announcementText: nil, dataSource: nil, isAuthorized: nil, crossTypeDefinitions: nil, departmentGroupDefinitions: nil, depqrtmentBuildingDefinitions: nil, departmentDefinitions: nil, generalOpDefinitions: nil, opDefinitions: nil, opStudyTypeDefinitions: nil, systemControl: nil, takeCourseList: nil, trackList: nil, registerList: nil, makeUpList: nil)
         return session
     }
@@ -411,10 +411,10 @@ struct ElectionView_Previews: PreviewProvider {
     static var previews: some View {
         ElectionRootView(rootDismiss: dismiss)
             .environmentObject(ApplicationParameters())
-            .environmentObject(CurrentSession())
+            .environmentObject(CurrentMyselfSession())
             .previewDisplayName("Election View")
         ElectionViewDev()
-            .environmentObject(CurrentSession())
+            .environmentObject(CurrentMyselfSession())
             .previewDisplayName("Election View Dev")
     }
 }

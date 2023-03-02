@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var applicationParameters: ApplicationParameters
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     
     var body: some View {
         PortalServicesView()
@@ -17,8 +17,8 @@ struct ContentView: View {
 }
 
 struct ContentView_Previews: PreviewProvider {
-    static var currentSession: CurrentSession = {
-        var session = CurrentSession()
+    static var currentSession: CurrentMyselfSession = {
+        var session = CurrentMyselfSession()
         return session
     }()
     static var previews: some View {

@@ -10,7 +10,7 @@ import Security
 import LocalAuthentication
 
 @MainActor
-class CurrentSession: ObservableObject {
+class CurrentMyselfSession: ObservableObject {
     enum LoginState: Equatable {
         case notLoggedIn
         case processing
@@ -102,6 +102,7 @@ class CurrentSession: ObservableObject {
             } else {
                 greetingString = "請先登入"
             }
+            NotificationCenter.default.post(name: .myselfLoginInfoDidUpdate, object: newValue)
         }
     }
     @Published var workStudyInformation: MyselfDefinitions.WorkStudyInformation?
@@ -206,7 +207,7 @@ class CurrentSession: ObservableObject {
             return
         case .st_info_get:
             // Get student info
-            struct CustomQuery: RequestQueryBase, Codable {
+            struct CustomQuery: MyselfRequestQueryBase, Codable {
                 var APP_AUTH_token: String?
                 var mobile: String = "N"
             }
@@ -221,13 +222,13 @@ class CurrentSession: ObservableObject {
     func requestElection(method: MyselfDefinitions.ElectionCommands, courseInformation: [MyselfDefinitions.ElectionDataStructures.CourseInformation]) async {
         switch method {
         case .track_insert:
-            struct CustomQuery: RequestQueryBase, Codable {
+            struct CustomQuery: MyselfRequestQueryBase, Codable {
                 var APP_AUTH_token: String?
                 var data: [MyselfDefinitions.ElectionDataStructures.CourseInformation]
             }
             await requestElection(method: method, query: CustomQuery(data: courseInformation))
         case .track_del:
-            struct CustomQuery: RequestQueryBase, Codable {
+            struct CustomQuery: MyselfRequestQueryBase, Codable {
                 var APP_AUTH_token: String?
                 var track_data: [MyselfDefinitions.ElectionDataStructures.CourseInformation]
             }
@@ -240,7 +241,7 @@ class CurrentSession: ObservableObject {
     
     // .course_get
     func requestElection(filterQuery: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery?, filterType: Int = 0) async {
-        struct CustomQuery: RequestQueryBase, Codable {
+        struct CustomQuery: MyselfRequestQueryBase, Codable {
             var APP_AUTH_token: String?
             var filters: MyselfDefinitions.ElectionDataStructures.CourseSearchRequestQuery
             var filter_type: Int
@@ -250,7 +251,7 @@ class CurrentSession: ObservableObject {
     }
     
     // private final method
-    private func requestElection(method: MyselfDefinitions.ElectionCommands, query: RequestQueryBase?) async {
+    private func requestElection(method: MyselfDefinitions.ElectionCommands, query: MyselfRequestQueryBase?) async {
         print("executing command (\(method.rawValue)).")
         do {
             // Send query and wait for response
@@ -363,7 +364,7 @@ class CurrentSession: ObservableObject {
     }
 }
 
-extension CurrentSession {
+extension CurrentMyselfSession {
     // Returns URLRequest Object with header injection
     private func getURLRequest(urlQuery: URL, headerData: Data) -> URLRequest {
         var request = URLRequest(url: urlQuery, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: 10)
@@ -374,11 +375,11 @@ extension CurrentSession {
     }
     
     // Request data query. "query" is the default using parameter if not specified
-    private func requestDataQuery(for queryLocation: MyselfDefinitions.QueryLocations, using specifiedMethod: String = "query", query specifiedQuery: RequestQueryBase? = nil) async throws -> Data {
+    private func requestDataQuery(for queryLocation: MyselfDefinitions.QueryLocations, using specifiedMethod: String = "query", query specifiedQuery: MyselfRequestQueryBase? = nil) async throws -> Data {
         
         // Create new request query to send along with the request following "RequestQueryBase" protocol
         var requestQuery = specifiedQuery ?? {
-            struct DefaultQuery: RequestQueryBase, Codable {
+            struct DefaultQuery: MyselfRequestQueryBase, Codable {
                 var APP_AUTH_token: String?
             }
             return DefaultQuery()
@@ -402,7 +403,7 @@ extension CurrentSession {
         
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
-            print("Query response: \(String(data: data, encoding: .utf8))")
+//            print("Query response: \(String(data: data, encoding: .utf8))")
             return data
         } catch {
             print("\((error as NSError).code)")

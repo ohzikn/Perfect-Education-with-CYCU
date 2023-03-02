@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct CourseSearchFieldView: UIViewRepresentable {
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     @Binding var searchText: String
     
     let uiSearchBar = UISearchBar()
@@ -34,15 +34,15 @@ struct CourseSearchFieldView: UIViewRepresentable {
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(currentSession: currentSession, isFilterActivated: self.isFilterActivated, searchText: $searchText)
+        Coordinator(currentSession: currentMyselfSession, isFilterActivated: self.isFilterActivated, searchText: $searchText)
     }
     
     class Coordinator: NSObject, UISearchBarDelegate {
-        let currentSession: CurrentSession
+        let currentSession: CurrentMyselfSession
         var isFilterActivated: Binding<Bool>
         @Binding var searchText: String
         
-        init(currentSession: CurrentSession, isFilterActivated: Binding<Bool>, searchText: Binding<String>) {
+        init(currentSession: CurrentMyselfSession, isFilterActivated: Binding<Bool>, searchText: Binding<String>) {
             self.currentSession = currentSession
             self.isFilterActivated = isFilterActivated
             self._searchText = searchText

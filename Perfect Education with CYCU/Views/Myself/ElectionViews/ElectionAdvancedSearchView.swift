@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ElectionAdvancedSearchView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     // MARK: Text fields
     @State var selectedDepartmentIds = Set<String>()
     @State var selectedOpIds = Set<String>()
@@ -55,7 +55,7 @@ struct ElectionAdvancedSearchView: View {
     private func getCrossInfo(_ id: UUID?) -> MyselfDefinitions.ElectionDataStructures.StudentInformation.CrossType.CrossIdentifier? {
         var result: MyselfDefinitions.ElectionDataStructures.StudentInformation.CrossType.CrossIdentifier?
         
-        if let id, let definitions = currentSession.electionInformation_studentInformation?.crossTypeDefinitions {
+        if let id, let definitions = currentMyselfSession.electionInformation_studentInformation?.crossTypeDefinitions {
             definitions.forEach { crossType in
                 if let target = crossType.crossIdentifiers?.first(where: { $0.id == id }) {
                     result = target
@@ -76,25 +76,25 @@ struct ElectionAdvancedSearchView: View {
                 Section("快速查詢") {
                     Button("本班所有課程") {
                         Task {
-                            await currentSession.requestElection(filterQuery: nil, filterType: 1)
+                            await currentMyselfSession.requestElection(filterQuery: nil, filterType: 1)
                         }
                         dismiss()
                     }
                     Button("本系本年級所有課程") {
                         Task {
-                            await currentSession.requestElection(filterQuery: nil, filterType: 2)
+                            await currentMyselfSession.requestElection(filterQuery: nil, filterType: 2)
                         }
                         dismiss()
                     }
                     Button("本系所有課程") {
                         Task {
-                            await currentSession.requestElection(filterQuery: nil, filterType: 3)
+                            await currentMyselfSession.requestElection(filterQuery: nil, filterType: 3)
                         }
                         dismiss()
                     }
                 }
                 Section("進階搜尋") {
-                    if let studentInfo = currentSession.electionInformation_studentInformation {
+                    if let studentInfo = currentMyselfSession.electionInformation_studentInformation {
                         Group {
                             NavigationLink {
                                 ElectionSearchDepartmentIdView(selectedDepartmentIds: _selectedDepartmentIds)
@@ -277,7 +277,7 @@ struct ElectionAdvancedSearchView: View {
                                   regMan: .init(value: selectedManRegisterValue1, value2: selectedManRegisterValue2, compare: selectedManRegisterOperator),
                                   emiCourse: .init(value: emiCourseToggle))
                         Task {
-                            await currentSession.requestElection(filterQuery: query)
+                            await currentMyselfSession.requestElection(filterQuery: query)
                         }
                         dismiss()
                     }
@@ -321,7 +321,7 @@ struct AdvancedSearchRangePickerView: View {
 }
 
 struct ElectionSearchDepartmentIdView: View {
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentSession: CurrentMyselfSession
     @State var selectedDepartmentIds: Set<String>
     
     init(selectedDepartmentIds: State<Set<String>>) {
@@ -350,7 +350,7 @@ struct ElectionSearchDepartmentIdView: View {
 }
 
 struct ElectionSearchOpIdView: View {
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentSession: CurrentMyselfSession
     @State var selectedOpIds: Set<String>
     
     init(selectedOpIds: State<Set<String>>) {
@@ -373,7 +373,7 @@ struct ElectionSearchOpIdView: View {
 }
 
 struct ElectionSearchGeneralOpIdView: View {
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentSession: CurrentMyselfSession
     @State var selectedGeneralOpIds: Set<String>
     
     init(selectedGeneralOpIds: State<Set<String>>) {
@@ -398,7 +398,7 @@ struct ElectionSearchGeneralOpIdView: View {
 struct ElectionSearchCrossIdView: View {
     @Environment(\.dismiss) private var dismiss
     
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentSession: CurrentMyselfSession
     @State var selectedCrossId: UUID?
     
     init(selectedCrossId: State<UUID?>) {
@@ -452,8 +452,8 @@ struct ElectionSearchCrossIdView: View {
 
 struct ElectionAdvancedSearchView_Previews: PreviewProvider {
     @State static var dummyString = ""
-    static var currentSession: CurrentSession {
-        let session = CurrentSession()
+    static var currentSession: CurrentMyselfSession {
+        let session = CurrentMyselfSession()
         session.electionInformation_studentInformation = .init(alertText: nil, distinctIPIDCODEAlert: nil, language: nil, courseCacheKey: nil, announcementText: nil, dataSource: nil, isAuthorized: nil, crossTypeDefinitions: nil, departmentGroupDefinitions: nil, depqrtmentBuildingDefinitions: nil, departmentDefinitions: nil, generalOpDefinitions: nil, opDefinitions: nil, opStudyTypeDefinitions: nil, systemControl: nil, takeCourseList: nil, trackList: nil, registerList: nil, makeUpList: nil)
         return session
     }

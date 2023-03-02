@@ -8,16 +8,16 @@
 import SwiftUI
 
 struct WorkStudyView: View {
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     
     var body: some View {
         List {
             Section("資訊") {
-                LabeledContent("Remote address", value: currentSession.workStudyInformation?.remoteAddress ?? "")
-                LabeledContent("Fowarded for", value: currentSession.workStudyInformation?.xFowardedFor ?? "")
+                LabeledContent("Remote address", value: currentMyselfSession.workStudyInformation?.remoteAddress ?? "")
+                LabeledContent("Fowarded for", value: currentMyselfSession.workStudyInformation?.xFowardedFor ?? "")
             }
             Section("工讀資料") {
-                if let hireData = currentSession.workStudyInformation?.hireData, !hireData.isEmpty {
+                if let hireData = currentMyselfSession.workStudyInformation?.hireData, !hireData.isEmpty {
                     ForEach(hireData) { data in
                         Text(data.id.uuidString)
                     }
@@ -31,15 +31,15 @@ struct WorkStudyView: View {
         .navigationBarTitleDisplayMode(.large)
         .onAppear {
             Task {
-                await currentSession.requestWorkStudy()
+                await currentMyselfSession.requestWorkStudy()
             }
         }
     }
 }
 
 struct WorkStudyView_Previews: PreviewProvider {
-    static var currentSession: CurrentSession = {
-        var session = CurrentSession()
+    static var currentSession: CurrentMyselfSession = {
+        var session = CurrentMyselfSession()
         return session
     }()
     static var previews: some View {

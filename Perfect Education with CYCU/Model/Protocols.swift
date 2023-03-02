@@ -8,6 +8,10 @@
 import Foundation
 
 // Protocol data structure for minimum data to send along with http request
-protocol RequestQueryBase: Codable {
+protocol MyselfRequestQueryBase: Codable {
     var APP_AUTH_token: String? { get set }
+}
+
+protocol PalaceRequestQueryBase: Codable {
+    var authenticateToken: String? { get set }
 }

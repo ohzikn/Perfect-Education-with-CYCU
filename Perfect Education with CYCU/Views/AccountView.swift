@@ -12,7 +12,7 @@ struct AccountView: View {
     @Environment(\.dismiss) private var dismiss
     
     @EnvironmentObject var applicationParameters: ApplicationParameters
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     
     @State var isLogoutConfirmationDialogPresented = false
     
@@ -28,9 +28,9 @@ struct AccountView: View {
         NavigationStack {
             List {
                 Section("基本資料") {
-                    LabeledContent("姓名", value: currentSession.userInformation?.userName ?? "")
-                    LabeledContent("CYCU ID", value: currentSession.userInformation?.userId ?? "")
-                    LabeledContent("帳戶類型", value: currentSession.userInformation?.userType ?? "")
+                    LabeledContent("姓名", value: currentMyselfSession.userInformation?.userName ?? "")
+                    LabeledContent("CYCU ID", value: currentMyselfSession.userInformation?.userId ?? "")
+                    LabeledContent("帳戶類型", value: currentMyselfSession.userInformation?.userType ?? "")
                 }
                 Section {
                     if laContext.biometryType != .none {
@@ -43,10 +43,10 @@ struct AccountView: View {
                     }
                     .confirmationDialog("", isPresented: $isLogoutConfirmationDialogPresented) {
                         Button("登出") {
-                            currentSession.loginState = .notLoggedIn
+                            currentMyselfSession.loginState = .notLoggedIn
                         }
                         Button("登出並刪除資料", role: .destructive) {
-                            currentSession.loginState = .notLoggedIn
+                            currentMyselfSession.loginState = .notLoggedIn
                             try? KeychainService.resetKeychain()
                         }
                         Button("取消", role: .cancel) { }
@@ -65,8 +65,8 @@ struct AccountView: View {
 }
 
 struct AccountView_Previews: PreviewProvider {
-    static var currentSession: CurrentSession = {
-        var session = CurrentSession()
+    static var currentSession: CurrentMyselfSession = {
+        var session = CurrentMyselfSession()
         return session
     }()
     static var previews: some View {

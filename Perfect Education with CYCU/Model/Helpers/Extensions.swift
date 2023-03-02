@@ -17,6 +17,7 @@ extension UserDefaults {
 }
 
 extension Notification.Name {
+    static let myselfLoginInfoDidUpdate = Notification.Name("MyselfLoginInfoDidUpdate")
     static let searchResultDidUpdate = Notification.Name("SearchResultDidUpdate")
     static let courseListDidUpdate = Notification.Name("CourseListDidUpdate")
 }

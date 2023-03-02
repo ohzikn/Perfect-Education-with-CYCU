@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ElectionAnnouncementView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     
     @State var selectedAnnouncement: MyselfDefinitions.ElectionDefinitions.AnnouncementRoles = .guide
     
@@ -17,7 +17,7 @@ struct ElectionAnnouncementView: View {
         NavigationView {
             VStack {
                 List {
-                    if let billBoard = currentSession.electionInformation_announcement?.billboard, let filteredBillboard = billBoard.filter({ $0.announcementType == selectedAnnouncement.rawValue }), !filteredBillboard.isEmpty {
+                    if let billBoard = currentMyselfSession.electionInformation_announcement?.billboard, let filteredBillboard = billBoard.filter({ $0.announcementType == selectedAnnouncement.rawValue }), !filteredBillboard.isEmpty {
                         ForEach(filteredBillboard) { item in
                             NavigationLink {
                                 ElectionAnnouncementDetailView(parentDismiss: dismiss, billboard: item)

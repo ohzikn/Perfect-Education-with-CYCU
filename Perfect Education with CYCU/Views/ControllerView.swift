@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ControllerView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     
     @State private var isLoginSheetPresented = false
     
@@ -25,7 +25,7 @@ struct ControllerView: View {
                 // Dummy navigation stack for displaying welcome message
                 NavigationStack {
                     ZStack { }
-                    .navigationTitle(currentSession.greetingString)
+                    .navigationTitle(currentMyselfSession.greetingString)
                 }
                 .disabled(true)
             }
@@ -36,7 +36,7 @@ struct ControllerView: View {
         }
         .onAppear {
             // Decide whether to show the login sheet when this view (controller) appears
-            if currentSession.userInformation == nil || currentSession.userInformation?.didLogIn != "Y" {
+            if currentMyselfSession.userInformation == nil || currentMyselfSession.userInformation?.didLogIn != "Y" {
                 isLoginSheetPresented = true
             }
         }
@@ -52,20 +52,20 @@ struct ControllerView: View {
 //                }
             }
         }
-        .onChange(of: currentSession.loginState) { newValue in
+        .onChange(of: currentMyselfSession.loginState) { newValue in
             switch newValue {
             case .loggedIn:
                 isLoginSheetPresented = false
                 // Load all related data
                 Task {
                     // Election
-                    await currentSession.requestElection(method: .ann_get)
-                    await currentSession.requestElection(method: .stage_control_get)
-                    await currentSession.requestElection(method: .st_base_info)
-                    await currentSession.requestElection(method: .st_info_get)
-                    await currentSession.requestElection(method: .st_record)
+                    await currentMyselfSession.requestElection(method: .ann_get)
+                    await currentMyselfSession.requestElection(method: .stage_control_get)
+                    await currentMyselfSession.requestElection(method: .st_base_info)
+                    await currentMyselfSession.requestElection(method: .st_info_get)
+                    await currentMyselfSession.requestElection(method: .st_record)
                     // Credits
-                    await currentSession.requestCredits()
+                    await currentMyselfSession.requestCredits()
                 }
             case .notLoggedIn:
                 // Show login sheet if logged out.
@@ -96,8 +96,8 @@ struct ControllerView: View {
 }
 
 struct ControllerView_Previews: PreviewProvider {
-    static var currentSession: CurrentSession = {
-        var session = CurrentSession()
+    static var currentSession: CurrentMyselfSession = {
+        var session = CurrentMyselfSession()
 //        session.isLoginSheetPresented = false
         return session
     }()

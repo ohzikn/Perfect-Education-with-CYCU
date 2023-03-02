@@ -141,7 +141,7 @@ struct ElectionCourseListItemView: View {
 
 struct ElectionCourseDetailView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     var info: MyselfDefinitions.ElectionDataStructures.CourseInformation
     
     @State var isSyllabusSheetPresented = false
@@ -227,14 +227,14 @@ struct ElectionCourseDetailView: View {
             }
         }
         .fullScreenCover(isPresented: $isSyllabusSheetPresented) {
-            SFSafariView(syllabusInfo: .init(yearTerm: currentSession.electionInformation_studentInformation?.systemControl?.yearTerm ?? "", opCode: info.opCode ?? ""))
+            SFSafariView(syllabusInfo: .init(yearTerm: currentMyselfSession.electionInformation_studentInformation?.systemControl?.yearTerm ?? "", opCode: info.opCode ?? ""))
                 .ignoresSafeArea()
         }
     }
 }
 
 struct ElectionTrackingActionMenu: View {
-    @EnvironmentObject var currentSession: CurrentSession // Used only to execute election functions
+    @EnvironmentObject var currentSession: CurrentMyselfSession // Used only to execute election functions
     let courseItem: MyselfDefinitions.ElectionDataStructures.CourseInformation
     let menuType: MenuType
     

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PortalServicesView: View {
-    @EnvironmentObject var currentSession: CurrentSession
+    @EnvironmentObject var currentMyselfSession: CurrentMyselfSession
     
     @State var isAccountSheetPresented: Bool = false
     
@@ -20,7 +20,7 @@ struct PortalServicesView: View {
                     NavigationLink("修課查詢", destination: CreditsView())
                 }
                 Section("Social Palace") {
-                    NavigationLink("Social Palace", destination: <#T##() -> View#>)
+                    NavigationLink("留言板", destination: SocialPalaceView())
                 }
                 #if DEBUG
                 Section("Developer") {
@@ -52,8 +52,8 @@ struct PortalServicesView: View {
 }
 
 struct PortalServicesView_Previews: PreviewProvider {
-    static var currentSession: CurrentSession = {
-        var session = CurrentSession()
+    static var currentSession: CurrentMyselfSession = {
+        var session = CurrentMyselfSession()
         return session
     }()
     static var previews: some View {
