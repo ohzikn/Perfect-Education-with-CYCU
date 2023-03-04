@@ -24,6 +24,7 @@ struct PortalServicesView: View {
                 }
                 #if DEBUG
                 Section("Developer") {
+                    NavigationLink("課表", destination: LessonListView())
                     NavigationLink("校內工讀", destination: WorkStudyView())
                     NavigationLink("自選學術導師申請", destination: MentorView())
                     NavigationLink("健康回報", destination: HealthView())

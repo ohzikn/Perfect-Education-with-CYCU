@@ -40,6 +40,7 @@
 		5EC73A442990723C00E66CB6 /* ElectionHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC73A432990723C00E66CB6 /* ElectionHistoryView.swift */; };
 		5EC73A482991A5B500E66CB6 /* MyselfElectionDataStructures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC73A472991A5B500E66CB6 /* MyselfElectionDataStructures.swift */; };
 		5EC73A4A2991C83700E66CB6 /* CourseSearchFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC73A492991C83700E66CB6 /* CourseSearchFieldView.swift */; };
+		5ECB9BA029B3C08300E03E63 /* LessonListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ECB9B9F29B3C08300E03E63 /* LessonListView.swift */; };
 		5ED036CB29B11F2C00B960B7 /* SocialPalaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED036CA29B11F2C00B960B7 /* SocialPalaceView.swift */; };
 		5ED036CE29B11F8100B960B7 /* PalaceGeneral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED036CD29B11F8100B960B7 /* PalaceGeneral.swift */; };
 		5ED036D029B1271C00B960B7 /* CurrentPalaceSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED036CF29B1271C00B960B7 /* CurrentPalaceSession.swift */; };
@@ -104,6 +105,7 @@
 		5EC73A432990723C00E66CB6 /* ElectionHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElectionHistoryView.swift; sourceTree = "<group>"; };
 		5EC73A472991A5B500E66CB6 /* MyselfElectionDataStructures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyselfElectionDataStructures.swift; sourceTree = "<group>"; };
 		5EC73A492991C83700E66CB6 /* CourseSearchFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseSearchFieldView.swift; sourceTree = "<group>"; };
+		5ECB9B9F29B3C08300E03E63 /* LessonListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonListView.swift; sourceTree = "<group>"; };
 		5ED036CA29B11F2C00B960B7 /* SocialPalaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialPalaceView.swift; sourceTree = "<group>"; };
 		5ED036CD29B11F8100B960B7 /* PalaceGeneral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PalaceGeneral.swift; sourceTree = "<group>"; };
 		5ED036CF29B1271C00B960B7 /* CurrentPalaceSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentPalaceSession.swift; sourceTree = "<group>"; };
@@ -279,6 +281,7 @@
 			isa = PBXGroup;
 			children = (
 				5ED036CA29B11F2C00B960B7 /* SocialPalaceView.swift */,
+				5ECB9B9F29B3C08300E03E63 /* LessonListView.swift */,
 			);
 			path = SocialPalace;
 			sourceTree = "<group>";
@@ -458,6 +461,7 @@
 				5E68CFA12978FF0B008AF377 /* Protocols.swift in Sources */,
 				5E9763712998BEA70046F5C4 /* ElectionAdvancedSearchView.swift in Sources */,
 				5ED036CE29B11F8100B960B7 /* PalaceGeneral.swift in Sources */,
+				5ECB9BA029B3C08300E03E63 /* LessonListView.swift in Sources */,
 				5EC73A3E299071BC00E66CB6 /* ElectionAnnouncementView.swift in Sources */,
 				5E3C940429711CD60036B342 /* AccountView.swift in Sources */,
 				5EFB304D29918385006F8D9E /* PropertyWrappers.swift in Sources */,

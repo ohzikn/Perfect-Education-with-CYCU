@@ -18,7 +18,12 @@ struct SocialPalaceView: View {
         VStack {
             List(currentPalaceSession.messageBoardItems) { item in
                 if let message = item.message {
-                    Text(message)
+                    VStack(alignment: .leading) {
+                        Text(message)
+                        Text("\(item.userName ?? "Annoymous") \(item.userId ?? "")")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
             .listStyle(.plain)
@@ -27,9 +32,9 @@ struct SocialPalaceView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-            Text("伺服器目前還在調整中，尚未建構完成。")
+            Text("目前留言板僅載入最近十則訊息")
                 .font(.caption)
-                .foregroundColor(.red)
+                .foregroundColor(.orange)
             HStack {
                 TextField("訊息", text: $messageEntry)
                     .focused($isTextFieldFocused)
@@ -60,6 +65,9 @@ struct SocialPalaceView: View {
             Task {
                 await currentPalaceSession.recieveMessageBoard()
             }
+        }
+        .refreshable {
+            await currentPalaceSession.recieveMessageBoard()
         }
         .navigationTitle("留言板")
         .navigationBarTitleDisplayMode(.large)

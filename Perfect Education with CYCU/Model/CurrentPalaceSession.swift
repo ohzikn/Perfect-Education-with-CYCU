@@ -12,7 +12,7 @@ class CurrentPalaceSession: ObservableObject {
     @Published var palaceCredentials: PalaceDefinitions.Credentials?
     @Published var authenticateToken: UUID?
     
-    @Published var messageBoardItems: [PalaceDefinitions.MessageBoardItem] = []
+    @Published var messageBoardItems: [PalaceDefinitions.MessageBoardResponse.MessageBoardItem] = []
     
     enum NetworkError: Error {
         case noInternetConnection

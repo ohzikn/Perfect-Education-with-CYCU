@@ -247,7 +247,7 @@ struct ElectionRootView: View {
                                         .tag(item)
                                 }
                             }
-                            .pickerStyle(.menu)
+                            .pickerStyle(.automatic)
                         }
                     } label: {
                         Image(systemName: "list.bullet")
