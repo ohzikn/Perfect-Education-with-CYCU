@@ -10,7 +10,12 @@ import Foundation
 struct PalaceDefinitions {
     
     struct PortalLocations {
-        static let root: URL! = URL(string: "https://zyozi.jp")
+        #if DEBUG
+        static let root: URL! = URL(string: "http://10.0.1.2:8080") // Mac Studio Local Development
+        #else
+        static let root: URL! = URL(string: "https://zyozi.jp") // Production Domain
+        #endif
+        
         static let auth: URL = root.appending(path: "/authenticate")
     }
     
@@ -28,7 +33,7 @@ struct PalaceDefinitions {
     }
     
     enum MessageBoardCommands: String, CaseIterable {
-        case recieve
+        case retrieve
         case upload
     }
     
@@ -47,9 +52,10 @@ struct PalaceDefinitions {
         }
     }
     
-    enum LessonListCommands: String, CaseIterable {
-        case recieve
-        case upload
+    enum LessonInfoCommands: String, CaseIterable {
+        case retrieve
+        case fetch
+        case sync
     }
     
     struct LessonList: Codable {
