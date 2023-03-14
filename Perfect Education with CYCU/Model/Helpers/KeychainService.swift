@@ -68,7 +68,7 @@ class KeychainService {
                                     kSecAttrAccount as String: credentials.username,
                                     kSecMatchLimit as String: kSecMatchLimitOne]
         let attributes: [String: Any] = [kSecAttrAccount as String: credentials.username,
-                                         kSecValueData as String: credentials.password ?? ""]
+                                         kSecValueData as String: credentials.password?.data(using: .utf8) ?? Data()]
         let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
         guard status != errSecItemNotFound else { throw KeychainError.noPassword }
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
