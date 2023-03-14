@@ -26,7 +26,7 @@ class CurrentPalaceSession: ObservableObject {
     
     func recieveMessageBoard() async {
         do {
-            let data: Data = try await requestDataQuery(for: .messageBoard, using: PalaceDefinitions.MessageBoardCommands.recieve.rawValue)
+            let data: Data = try await requestDataQuery(for: .messageBoard, using: PalaceDefinitions.MessageBoardCommands.retrieve.rawValue)
             messageBoardItems = try JSONDecoder().decode(PalaceDefinitions.MessageBoardResponse.self, from: data).items
             print(messageBoardItems)
         } catch {
